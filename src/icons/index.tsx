@@ -1,3 +1,4 @@
+'use client'
 const sizes = {
     xs: "h-auto w-3",
     sm: "h-auto w-4",

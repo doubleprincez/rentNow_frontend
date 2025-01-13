@@ -1,3 +1,4 @@
+'use client'
 import { Grid2x2Check, ListCheck, MailQuestion, Quote } from 'lucide-react'
 import React from 'react'
 import { Barchart, LineBar } from './Graphs'
