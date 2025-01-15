@@ -12,14 +12,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      {/* <head>
+      <head>
         <title>{typeof metadata.title === 'string' ? metadata.title : 'RentNaija'}</title>
         <meta
           name="description"
           content={metadata.description || 'Online apartment leasing agency'}
         />
         <link rel="icon" href="/favicon.ico" />
-      </head> */}
+      </head>
       <body className={`w-full flex flex-col`} >
         <div className="">
           <Provider store={store}>

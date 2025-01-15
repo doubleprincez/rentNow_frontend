@@ -5,8 +5,6 @@ import { fadeIn } from '@/lib/variants';
 import House from '@/components/assets/house2.jpeg';
 import House2 from '@/components/assets/house1.jpeg';
 import House3 from '@/components/assets/house4.jpeg';
-import House4 from '@/components/assets/house5.jpeg';
-import House5 from '@/components/assets/house3.jpeg';
 import Reviews from './Reviews';
 import Subscribe from './Subscribe';
 
