@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ interface FormData {
 
 const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [csrfToken, setCsrfToken] = useState<string>("");
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -33,6 +34,22 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
   });
 
   const router = useRouter();
+
+  // Get CSRF token when component mounts
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        // First, get the CSRF cookie
+        await axios.get('https://api.rent9ja.com.ng/sanctum/csrf-cookie', {
+          withCredentials: true // Important for cookie handling
+        });
+      } catch (error) {
+        console.error("Error fetching CSRF token:", error);
+      }
+    };
+
+    fetchCsrfToken();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLInputElement>
@@ -71,15 +88,17 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
 
     try {
       const response = await axios.post(
-        "http://rent.infinityfreeapp.com/api/register",
+        "https://api.rent9ja.com.ng/api/register",
         requestData,
         {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
           },
+          withCredentials: true // Important for sending cookies
         }
       );
+      
       setIsLoading(false);
       alert("Registration successful!");
       router.push("/auth/login");

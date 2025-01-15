@@ -81,7 +81,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
         try {
             const response = await axios({
                 method: 'GET',
-                url: 'http://rent.infinityfreeapp.com/api/login',
+                url: 'https://api.rent9ja.com.ng/api/login',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
