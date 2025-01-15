@@ -80,8 +80,9 @@
 // export default Maps;
 // components/Map.tsx
 
+// components/Map.tsx
 "use client";
-import React from 'react';
+import React, { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 
@@ -123,13 +124,22 @@ const MapComponent = () => {
   const { MapContainer, TileLayer, Marker, Popup } = require('react-leaflet');
   const L = require('leaflet');
   
-  // Fix for default marker icons
-  delete (L.Icon.Default.prototype as any)._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-  });
+  useEffect(() => {
+    // Fix for default marker icons
+    delete (L.Icon.Default.prototype as any)._getIconUrl;
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    });
+
+    return () => {
+      // Cleanup function to remove map container when component unmounts
+      if (document.querySelector('.leaflet-container')) {
+        (document.querySelector('.leaflet-container') as any)._leaflet_id = null;
+      }
+    };
+  }, []); // Empty dependency array means this effect runs once on mount
 
   const lagosCenter: [number, number] = [6.5244, 3.3792];
 
@@ -139,6 +149,7 @@ const MapComponent = () => {
         center={lagosCenter}
         zoom={12}
         style={{ height: '100%', width: '100%', borderRadius: '0.5rem' }}
+        key="map" // Add a key to force re-render when needed
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
