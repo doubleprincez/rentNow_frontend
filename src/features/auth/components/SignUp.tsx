@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { AppleIcon, GoogleIcon } from "@/icons";
 import axios from "axios";
+import { useToast } from "@/components/ui/use-toast";
 
 interface FormData {
   firstName: string;
@@ -21,8 +22,8 @@ interface FormData {
 }
 
 const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [csrfToken, setCsrfToken] = useState<string>("");
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -35,20 +36,11 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
 
   const router = useRouter();
 
-  // Get CSRF token when component mounts
+  // Configure axios defaults
   useEffect(() => {
-    const fetchCsrfToken = async () => {
-      try {
-        // First, get the CSRF cookie
-        await axios.get('https://api.rent9ja.com.ng/sanctum/csrf-cookie', {
-          withCredentials: true // Important for cookie handling
-        });
-      } catch (error) {
-        console.error("Error fetching CSRF token:", error);
-      }
-    };
-
-    fetchCsrfToken();
+    axios.defaults.withCredentials = true;
+    axios.defaults.headers.common['Accept'] = 'application/json';
+    axios.defaults.headers.common['Content-Type'] = 'application/json';
   }, []);
 
   const handleChange = (
@@ -61,54 +53,91 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
     }));
   };
 
+  const validateForm = (): string | null => {
+    if (!formData.firstName || !formData.lastName) {
+      return "Please enter your full name";
+    }
+    if (!formData.email) {
+      return "Please enter your email";
+    }
+    if (!formData.phoneNumber) {
+      return "Please enter your phone number";
+    }
+    if (formData.password.length < 8) {
+      return "Password must be at least 8 characters long";
+    }
+    if (formData.password !== formData.confirmPassword) {
+      return "Passwords do not match";
+    }
+    if (!formData.agreeTerms) {
+      return "You must agree to the terms and policy";
+    }
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    
+    const validationError = validateForm();
+    if (validationError) {
+      toast({
+        variant: "destructive",
+        title: "Validation Error",
+        description: validationError
+      });
+      return;
+    }
+
     setIsLoading(true);
-
-    // Validation
-    if (formData.password !== formData.confirmPassword) {
-      setIsLoading(false);
-      alert("Passwords do not match.");
-      return;
-    }
-
-    if (!formData.agreeTerms) {
-      setIsLoading(false);
-      alert("You must agree to the terms and policy.");
-      return;
-    }
 
     const requestData = {
       name: `${formData.firstName} ${formData.lastName}`,
-      account_id: 1, // Users only
+      account_id: 1,
       email: formData.email,
+      phone: formData.phoneNumber,
       password: formData.password,
       password_confirmation: formData.confirmPassword,
     };
 
     try {
-      const response = await axios.post(
-        "https://api.rent9ja.com.ng/api/register",
-        requestData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          withCredentials: true // Important for sending cookies
-        }
-      );
+      console.log('Sending registration request:', requestData); // Debug log
+      const response = await axios.post('/api/register', requestData);
       
+      console.log('Registration response:', response.data); // Debug log
+
+      toast({
+        title: "Success!",
+        description: "Registration successful. Redirecting to login...",
+      });
+      
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 2000);
+
+    } catch (error: any) {
+      console.error('Full error object:', error); // Debug log
+
+      let errorMessage = "An error occurred during registration";
+      
+      // Handle different types of error responses
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.data?.errors) {
+        // If we have validation errors, take the first one
+        const firstError = Object.values(error.response.data.errors)[0];
+        errorMessage = Array.isArray(firstError) ? firstError[0] : String(firstError);
+      }
+      
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: errorMessage
+      });
+    } finally {
       setIsLoading(false);
-      alert("Registration successful!");
-      router.push("/auth/login");
-    } catch (error: unknown) {
-      setIsLoading(false);
-      const errorMessage = (error as any)?.response?.data?.message || "An error occurred during registration. Please try again.";
-      console.error("Error during registration:", error);
-      alert(errorMessage);
     }
   };
+
 
   return (
     <div className="w-full lg:w-[70%] mx-auto">
