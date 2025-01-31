@@ -16,9 +16,25 @@ const initialState: UserState = {
   phoneNumber: null,
 };
 
+const loadState = (): UserState => {
+  if (typeof window !== 'undefined') {
+      const savedState = localStorage.getItem('userState');
+      if (savedState) {
+          return JSON.parse(savedState);
+      }
+  }
+  return {
+      isLoggedIn: false,
+      firstName: '',
+      lastName: '',
+      email: '',
+      phoneNumber: null,
+  };
+};
+
 const userSlice = createSlice({
   name: 'user',
-  initialState,
+  initialState: loadState(),
   reducers: {
     login: (state, action: PayloadAction<{ 
       firstName: string;
@@ -31,6 +47,16 @@ const userSlice = createSlice({
       state.lastName = action.payload.lastName;
       state.email = action.payload.email;
       state.phoneNumber = action.payload.phoneNumber;
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('userState', JSON.stringify({
+            isLoggedIn: true,
+            firstName: action.payload.firstName,
+            lastName: action.payload.lastName,
+            email: action.payload.email,
+            phoneNumber: action.payload.phoneNumber,
+        }));
+      }
     },
     logout: (state) => {
       state.isLoggedIn = false;
@@ -38,10 +64,13 @@ const userSlice = createSlice({
       state.lastName = '';
       state.email = '';
       state.phoneNumber = null;
+
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('userState');
+      }
     },
   },
 });
 
 export const { login, logout } = userSlice.actions;
-
 export default userSlice.reducer;

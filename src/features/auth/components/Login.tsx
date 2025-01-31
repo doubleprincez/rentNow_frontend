@@ -15,7 +15,6 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { useDispatch } from "react-redux";
 import { login } from "@/redux/userSlice";
 import { useAlert } from '@/contexts/AlertContext';
-import axios from 'axios';
 
 const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
     const { showAlert } = useAlert();
@@ -28,85 +27,51 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
     const router = useRouter();
     const dispatch = useDispatch();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
-  };
-
-    // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    // e.preventDefault();
-    // setIsLoading(true);
-
-    // try {
-    //     const response = await fetch("/api/login", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify(formData),
-    //     });
-
-    //     if (!response.ok) {
-    //         throw new Error("Invalid email or password");
-    //     }
-
-    //     const data = await response.json();
-
-    //     dispatch(
-    //         login({
-    //             firstName: data.firstName,
-    //             lastName: data.lastName,
-    //             email: data.email,
-    //             phoneNumber: data.phoneNumber,
-    //         })
-    //     );
-    //     showAlert("Login Successful", "success")
-
-    //     router.push("/");
-    //     } catch (error: any) {
-    //         showAlert(error.message, "error");
-    //     } finally {
-    //         setIsLoading(false);
-
-    //     }
-    // };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value, type, checked } = e.target;
+        setFormData({
+            ...formData,
+            [name]: type === "checkbox" ? checked : value,
+        });
+    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
-            const response = await axios({
-                method: 'GET',
-                url: 'https://api.rent9ja.com.ng/api/login',
+            const response = await fetch('https://api.rent9ja.com.ng/api/login', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
                 },
-                data: {
+                body: JSON.stringify({
                     email: formData.email,
                     password: formData.password
-                }
+                })
             });
 
-            const data = response.data;
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Login failed');
+            }
 
             dispatch(
                 login({
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    email: data.email,
-                    phoneNumber: data.phoneNumber,
+                    firstName: data.firstName || '',
+                    lastName: data.lastName || '',
+                    email: data.email || '',
+                    phoneNumber: data.phoneNumber || null,
                 })
             );
+            
             showAlert("Login Successful", "success");
             router.push("/");
         } catch (error: any) {
+            console.error('Login error:', error);
             showAlert(
-                error.response?.data?.message || "Login failed. Please try again.",
+                error.message || "Login failed. Please try again.",
                 "error"
             );
         } finally {

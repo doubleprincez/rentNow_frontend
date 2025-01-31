@@ -21,7 +21,7 @@ const ForgetPwd = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post("/api/password-reset", { email });
+      const response = await axios.post("https://api.rent9ja.com.ng/api/forgot-password", { email });
       console.log("Response:", response.data);
       setStep(2);
     } catch (error) {
