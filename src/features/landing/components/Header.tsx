@@ -52,7 +52,7 @@ const Header = () => {
       <div className="hidden lg:flex justify-center items-center gap-4">
         {user.isLoggedIn ? (
           <span className="text-orange-500 font-semibold">
-            WELCOME {user.firstName.toUpperCase()}
+            WELCOME {user.firstName} {user.lastName} {user.email}
           </span>
         ) : (
           <>
