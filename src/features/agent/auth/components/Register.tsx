@@ -3,8 +3,11 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
+import { useAlert } from '@/contexts/AlertContext'; 
 
 const Register: React.FC = () => {
+  const { showAlert } = useAlert();
+
   const [formData, setFormData] = useState({
     firstname: '',
     lastname: '',
@@ -17,7 +20,7 @@ const Register: React.FC = () => {
   });
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const navigate = useRouter();
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -38,10 +41,12 @@ const Register: React.FC = () => {
       const response = await axios.post('/api/agents/register', formData);
       if (response.status === 201) {
         setSuccess('Registration successful! Redirecting...');
-        setTimeout(() => navigate.push('/agents/login'), 2000);
+        showAlert("Registration successful! Redirecting...", "success");
+        setTimeout(() => router.push('/agents/login'), 2000);
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed. Please try again.');
+      showAlert(err.response?.data?.message || 'Registration failed. Please try again.', "error");
     }
   };
 

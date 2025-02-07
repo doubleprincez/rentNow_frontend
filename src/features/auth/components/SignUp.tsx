@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { AppleIcon, GoogleIcon } from "@/icons";
 import axios from "axios";
-import { useToast } from "@/components/ui/use-toast";
+import { useAlert } from '@/contexts/AlertContext';
 
 interface FormData {
   firstName: string;
@@ -22,7 +22,7 @@ interface FormData {
 }
 
 const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
-  const { toast } = useToast();
+  const { showAlert } = useAlert();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -36,7 +36,6 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
 
   const router = useRouter();
 
-  // Configure axios defaults
   useEffect(() => {
     axios.defaults.withCredentials = true;
     axios.defaults.headers.common['Accept'] = 'application/json';
@@ -80,11 +79,7 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
     
     const validationError = validateForm();
     if (validationError) {
-      toast({
-        variant: "destructive",
-        title: "Validation Error",
-        description: validationError
-      });
+      showAlert("Validation Error", "error")
       return;
     }
 
@@ -103,36 +98,28 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
       console.log('Sending registration request:', requestData); // Debug log
       const response = await axios.post('/api/register', requestData);
       
-      console.log('Registration response:', response.data); // Debug log
+      //console.log('Registration response:', response.data); // Debug log
 
-      toast({
-        title: "Success!",
-        description: "Registration successful. Redirecting to login...",
-      });
+      showAlert("Registration successful. Redirecting to login...", "success")
       
       setTimeout(() => {
         router.push("/auth/login");
-      }, 2000);
+      }, 1000);
 
     } catch (error: any) {
-      console.error('Full error object:', error); // Debug log
+      //console.error('Full error object:', error); // Debug log
+      showAlert(`Full error object: ${error}`, 'error')
 
       let errorMessage = "An error occurred during registration";
       
-      // Handle different types of error responses
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.data?.errors) {
-        // If we have validation errors, take the first one
         const firstError = Object.values(error.response.data.errors)[0];
         errorMessage = Array.isArray(firstError) ? firstError[0] : String(firstError);
       }
-      
-      toast({
-        variant: "destructive",
-        title: "Registration Failed",
-        description: errorMessage
-      });
+
+      showAlert(`Registration Failed`, 'error')
     } finally {
       setIsLoading(false);
     }

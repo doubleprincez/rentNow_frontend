@@ -14,7 +14,7 @@ import ForgetPwd from "./ForgetPwd";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { useDispatch } from "react-redux";
 import { login } from "@/redux/userSlice";
-import { useAlert } from '@/contexts/AlertContext';
+import { useAlert } from '@/contexts/AlertContext'; 
 
 const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
     const { showAlert } = useAlert();

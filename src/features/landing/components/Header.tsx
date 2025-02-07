@@ -2,14 +2,16 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { logout } from '@/redux/userSlice';
 
 const Header = () => {
   const pathname = usePathname();
-  const [ isMenu, setIsMenu ] = useState(false);
+  const [isMenu, setIsMenu] = useState(false);
+  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
 
   const links = [
@@ -18,6 +20,10 @@ const Header = () => {
     { title: 'About', link: '/about' },
     { title: 'Contact Us', link: '/contact' },
   ];
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   return (
     <div className="fixed top-0 left-0 w-full bg-black bg-opacity-70 backdrop-blur-md z-[99] px-2 py-2 md:px-4 md:py-4 flex justify-between items-center">
@@ -51,18 +57,25 @@ const Header = () => {
 
       <div className="hidden lg:flex justify-center items-center gap-4">
         {user.isLoggedIn ? (
-          <span className="text-orange-500 font-semibold">
-            WELCOME {user.firstName} {user.lastName} {user.email}
-          </span>
-        ) : (
-          <>
-            <Link
-              href="/auth/login"
-              className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-4 py-2 rounded-md transition-all duration-300"
+          <div className="flex items-center gap-4">
+            <span className="text-orange-500 font-semibold">
+              Welcome, {user.firstName} {user.lastName}
+            </span>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 bg-transparent border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300"
             >
-              Login
-            </Link>
-          </>
+              <LogOut className="w-4 h-4" />
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link
+            href="/auth/login"
+            className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-4 py-2 rounded-md transition-all duration-300"
+          >
+            Login
+          </Link>
         )}
         
         <Link
@@ -80,13 +93,13 @@ const Header = () => {
 
           {isMenu && (
             <motion.div
-            initial={{x:0, opacity:0}}
-            animate={{x:0, opacity:1}}
-            className='w-[200px] flex flex-col gap-10 py-20 px-4 rounded-l-xl fixed top-0 right-0 h-screen z-50 bg-black/70'
+              initial={{x:0, opacity:0}}
+              animate={{x:0, opacity:1}}
+              className='w-[200px] flex flex-col gap-10 py-20 px-4 rounded-l-xl fixed top-0 right-0 h-screen z-50 bg-black/70'
             >
               <div 
-              onClick={()=>setIsMenu(false)} 
-              className='absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 flex justify-center items-center'
+                onClick={()=>setIsMenu(false)} 
+                className='absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 flex justify-center items-center'
               >
                 <X className='w-5 h-5 text-orange-500' />
               </div>
@@ -117,18 +130,25 @@ const Header = () => {
 
               <div className="flex flex-col justify-start items-end gap-2 text-[.8em]">
                 {user.isLoggedIn ? (
-                  <span className="text-orange-500 font-semibold">
-                    WELCOME {user.firstName.toUpperCase()}
-                  </span>
-                ) : (
                   <>
-                    <Link
-                      href="/auth/login"
-                      className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-8 py-2 rounded-md transition-all duration-300"
+                    <span className="text-orange-500 font-semibold">
+                      Welcome, {user.firstName}
+                    </span>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 bg-transparent border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300"
                     >
-                      Login
-                    </Link>
+                      <LogOut className="w-4 h-4" />
+                      Logout
+                    </button>
                   </>
+                ) : (
+                  <Link
+                    href="/auth/login"
+                    className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-8 py-2 rounded-md transition-all duration-300"
+                  >
+                    Login
+                  </Link>
                 )}
                 
                 <Link
