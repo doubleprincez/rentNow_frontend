@@ -37,7 +37,7 @@ const Header = () => {
             <Link
               href={link.link}
               className={`${
-                pathname === link.link ? 'text-orange-500' : ''
+                pathname === link.link || pathname?.startsWith(`${link.link}/`) ? 'text-orange-500' : ''
               } duration-200 ease-in-out transition-all`}
             >
               {link.title}
@@ -45,7 +45,7 @@ const Header = () => {
 
             <div
               className={`${
-                pathname === link.link
+                pathname === link.link || pathname?.startsWith(`${link.link}/`)
                   ? 'w-6 bg-green-500'
                   : 'w-0 group-hover:w-full group-hover:scale-x-50 bg-orange-500'
               } absolute -bottom-1 left-1/2 transform -translate-x-1/2 h-[3px] 
