@@ -15,8 +15,14 @@ export const metadata: Metadata = {
   description: 'View detailed information about this apartment',
 };
 
+// export default function Page({ params, searchParams }: PageProps) {
+//   const apartmentData = searchParams.data ? JSON.parse(decodeURIComponent(searchParams.data)) : null;
+  
+//   return <ApartmentPage params={Promise.resolve(params)} initialData={apartmentData} />;
+// }
+
 export default function Page({ params, searchParams }: PageProps) {
   const apartmentData = searchParams.data ? JSON.parse(decodeURIComponent(searchParams.data)) : null;
-  
+
   return <ApartmentPage params={Promise.resolve(params)} initialData={apartmentData} />;
 }
