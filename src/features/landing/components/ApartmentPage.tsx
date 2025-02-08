@@ -4,15 +4,21 @@ import { Banknote, MapPin, Clock, Home, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Apartment, ApiResponse } from '@/types/apartment';
 
+// interface ApartmentPageProps {
+//   params: Promise<{ slug: string }>;
+//   initialData?: Apartment | null;
+// }
+
 interface ApartmentPageProps {
-  params: Promise<{ slug: string }>;
+  params: {
+    slug: string;
+  };
   initialData?: Apartment | null;
 }
 
 const ApartmentPage: React.FC<ApartmentPageProps> = ({ params, initialData }) => {
   const [apartment, setApartment] = useState<Apartment | null>(initialData || null);
   const [isLoading, setIsLoading] = useState(!initialData);
-  const resolvedParams = React.use(params);
 
   useEffect(() => {
     // Skip API call if we already have the data
@@ -27,7 +33,7 @@ const ApartmentPage: React.FC<ApartmentPageProps> = ({ params, initialData }) =>
         const response = await fetch('/api/apartments');
         const data: ApiResponse = await response.json();
         if (data.success) {
-          const apt = data.data.data.find((a) => a.id.toString() === resolvedParams.slug);
+          const apt = data.data.data.find((a) => a.id.toString() === params.slug);
           setApartment(apt || null);
         }
       } catch (error) {
@@ -38,7 +44,7 @@ const ApartmentPage: React.FC<ApartmentPageProps> = ({ params, initialData }) =>
     };
 
     fetchApartment();
-  }, [resolvedParams.slug, initialData]);
+  }, [params.slug, initialData]);
 
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
