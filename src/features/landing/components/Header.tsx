@@ -7,6 +7,8 @@ import { RootState } from '@/redux/store';
 import { Menu, X, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { logout } from '@/redux/userSlice';
+import Image from 'next/image';
+import Logo from '@/components/assets/logo/logo.png'
 
 const Header = () => {
   const pathname = usePathname();
@@ -27,8 +29,8 @@ const Header = () => {
 
   return (
     <div className="fixed top-0 left-0 w-full bg-black bg-opacity-70 backdrop-blur-md z-[99] px-2 py-2 md:px-4 md:py-4 flex justify-between items-center">
-      <Link href="/" className="text-[1.2em] font-semibold text-orange-500">
-        Rent<span className="text-green-500">Naija</span>
+      <Link href="/" className="">
+        <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
       </Link>
 
       <div className="hidden lg:flex justify-center items-center gap-10 text-white">

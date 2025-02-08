@@ -6,11 +6,13 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { Menu, X } from 'lucide-react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
+import Logo from '@/components/assets/logo/logo.png'
 
 const Header = () => {
   const pathname = usePathname();
   const [ isMenu, setIsMenu ] = useState(false);
-  const user = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.agent);
 
   const links = [
     { title: 'Home', link: '/' },
@@ -21,38 +23,17 @@ const Header = () => {
 
   return (
     <div className="fixed top-0 left-0 w-full bg-black bg-opacity-70 backdrop-blur-md z-[99] px-2 py-2 md:px-4 md:py-4 flex justify-between items-center">
-      <Link href="/" className="text-[1.2em] font-semibold text-orange-500">
-        Rent<span className="text-green-500">Naija</span>
+      <Link href="/">
+        <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
       </Link>
 
-      {/* <div className="hidden lg:flex justify-center items-center gap-10 text-white">
-        {links.map((link, index) => (
-          <div key={index} className="relative group">
-            <Link
-              href={link.link}
-              className={`${
-                pathname === link.link ? 'text-orange-500' : ''
-              } duration-200 ease-in-out transition-all`}
-            >
-              {link.title}
-            </Link>
-
-            <div
-              className={`${
-                pathname === link.link
-                  ? 'w-6 bg-green-500'
-                  : 'w-0 group-hover:w-full group-hover:scale-x-50 bg-orange-500'
-              } absolute -bottom-1 left-1/2 transform -translate-x-1/2 h-[3px] 
-                  transition-all duration-300 origin-center`}
-            ></div>
-          </div>
-        ))}
-      </div> */}
+    
 
       <div className="hidden lg:flex justify-center items-center gap-4">
         {user.isLoggedIn ? (
           <span className="text-orange-500 font-semibold">
-            WELCOME {user.firstName.toUpperCase()}
+            WELCOME 
+            {/* {user.firstName.toUpperCase()} */}
           </span>
         ) : (
           <>
