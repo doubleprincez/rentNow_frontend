@@ -1,40 +1,67 @@
-import React from 'react'
-import { Banknote, MapPin, Clock, Home, User } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import type { Apartment, ApiResponse } from '@/types/apartment'
+'use client'
+import React, { useEffect, useState } from 'react';
+import { use } from 'react';
+import { Banknote, MapPin, Clock, Home, User } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import type { Apartment, ApiResponse } from '@/types/apartment';
 
-async function fetchApartment(slug: string) {
-  try {
-    const response = await fetch('/api/apartments')
-    const data: ApiResponse = await response.json()
-    if (data.success) {
-      return data.data.data.find((a) => a.id.toString() === slug) || null
-    }
-  } catch (error) {
-    console.error('Error fetching apartment:', error)
-    return null
-  }
+interface ApartmentPageProps {
+  params: Promise<{ slug: string }>;
+  initialData?: Apartment | null;
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const apartment = await fetchApartment(params.slug)
+const ApartmentPage: React.FC<ApartmentPageProps> = ({ params, initialData }) => {
+  // Unwrap the params Promise using React.use()
+  const resolvedParams = use(params);
+  const [apartment, setApartment] = useState<Apartment | null>(initialData || null);
+  const [isLoading, setIsLoading] = useState(!initialData);
+
+  useEffect(() => {
+    // Skip API call if we already have the data
+    if (initialData) {
+      setApartment(initialData);
+      return;
+    }
+
+    const fetchApartment = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/apartments');
+        const data: ApiResponse = await response.json();
+        if (data.success) {
+          const apt = data.data.data.find((a) => a.id.toString() === resolvedParams.slug);
+          setApartment(apt || null);
+        }
+      } catch (error) {
+        console.error('Error fetching apartment:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchApartment();
+  }, [resolvedParams.slug, initialData]);
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+  }
 
   if (!apartment) {
-    return <div className="flex justify-center items-center min-h-screen">Apartment not found</div>
+    return <div className="flex justify-center items-center min-h-screen">Apartment not found</div>;
   }
 
   return (
-    <div className="w-full px-4 py-20 md:py-32">
-      <Card className="w-full max-w-4xl mx-auto">
+    <div className="w-full px-4 py-20 md:py-32 ">
+      <Card className="w-full max-w-4xl mx-auto border-none">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Main Image */}
             <div className="w-full h-[300px] md:h-[400px] rounded-lg overflow-hidden">
-              <img 
-                src={apartment.images && Object.values(apartment.images)[0]?.preview_url || '/placeholder.jpg'}
-                alt={apartment.title}
-                className="w-full h-full object-cover"
-              />
+                <img 
+                    src={apartment.images && Object.values(apartment.images)[0]?.preview_url || '/placeholder.jpg'}
+                    alt={apartment.title}
+                    className="w-full h-full object-cover"
+                />
             </div>
 
             {/* Property Details */}
@@ -91,5 +118,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};
+
+export default ApartmentPage;
