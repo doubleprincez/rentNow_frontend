@@ -21,17 +21,14 @@ const PointContact = () => {
 
                 if (data.success && data.data.data) {
                     const apartments = data.data.data;
-                    // Get unique categories
                     const categories = [...new Set(apartments.map(apt => apt.category))];
                     
-                    // Select one apartment from each category, up to 5
                     const selected = categories.slice(0, 5).map(category => {
                         const categoryApartments = apartments.filter(apt => apt.category === category);
                         const randomIndex = Math.floor(Math.random() * categoryApartments.length);
                         return categoryApartments[randomIndex];
                     });
 
-                    // If we have less than 5 categories, fill the rest with random apartments
                     while (selected.length < 5 && apartments.length >= 5) {
                         const randomIndex = Math.floor(Math.random() * apartments.length);
                         const apartment = apartments[randomIndex];

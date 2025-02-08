@@ -10,7 +10,6 @@ import type {
   ApartmentCardProps 
 } from '@/types/apartment';
 
-// Apartment Card Component
 const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment, onClick }) => (
   <div 
     className="flex flex-col gap-4 p-2 md:p-4 bg-white shadow-md rounded-2xl cursor-pointer hover:shadow-lg transition-shadow"
