@@ -16,7 +16,7 @@ export default function RootLayout({
             backgroundImage: `url(${Bg.src})`,
             backgroundSize: 'cover', 
         }}
-        className="w-full h-full py-10 md:py-28 flex justify-center items-center"
+        className="w-full h-full py-10 md:py-20 flex justify-center items-center"
         >
             <div className="md:mt-10 w-full h-full px-4 py-4 max-w-[300px] md:max-w-[500px] bg-white rounded-lg">
                 {children}

@@ -1,234 +1,494 @@
-'use client';
-import React, { useState } from 'react';
+'use client'
+import React, { useState, useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import axios from 'axios';
-import { Image } from 'lucide-react';
-import { useFormContext } from 'react-hook-form';
+import { Image, Video, X } from 'lucide-react';
+import { useAlert } from '@/contexts/AlertContext';
 
-interface PropertyFormData {
-  propertyName: string;
-  propertyType: string;
-  address: string;
-  numberOfRooms: number;
-  amenities: string;
-  monthlyRent: number;
-  securityDeposit?: number;
-  description: string;
-  images: FileList | null;
-  images1: FileList | null;
-  images2: FileList | null;
-  images3: FileList | null;
-  images4: FileList | null;
-  availabilityStatus: string;
+interface Category {
+  id: number;
+  title: string;
+  slug: string;
 }
 
+interface PropertyFormData {
+  category_id: number;
+  title: string;
+  description: string | null;
+  number_of_rooms: number | null;
+  amount: number;
+  currency_code: string;
+  security_deposit: number | null;
+  security_deposit_currency_code: string | null;
+  duration: number;
+  duration_type: 'day' | 'week' | 'month' | 'year';
+  amenities: string[];
+  country_code: string;
+  state_code: string;
+  city_code: string;
+  published: boolean;
+  can_rate: boolean;
+  image1: File | null;
+  image2: File | null;
+  image3: File | null;
+  image4: File | null;
+  image5: File | null;
+  video1: File | null;
+  video2: File | null;
+  video3: File | null;
+  video4: File | null;
+  video5: File | null;
+}
+
+type FileType = 'image' | 'video';
+type PreviewMap = { [key: string]: string };
+
 const AddProperty: React.FC = () => {
-    const {
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm<PropertyFormData>();
+  const { showAlert } = useAlert();
+  const [step, setStep] = useState<number>(1);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [imagePreview, setImagePreview] = useState<PreviewMap>({});
+  const [videoPreview, setVideoPreview] = useState<PreviewMap>({});
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [message, setMessage] = useState<string | null>(null);
-    //const { register } = useFormContext<PropertyFormData>();
-    const imageFields: (keyof PropertyFormData)[] = ['images', 'images1', 'images2', 'images3', 'images4'];
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+    trigger
+  } = useForm<PropertyFormData>();
 
-    const onSubmit: SubmitHandler<PropertyFormData> = async (data: any) => {
-        setIsLoading(true);
-        setMessage(null);
-    
-        const formData = new FormData();
-        formData.append('propertyName', data.propertyName);
-        formData.append('propertyType', data.propertyType);
-        formData.append('address', data.address);
-        formData.append('numberOfRooms', data.numberOfRooms.toString());
-        formData.append('amenities', data.amenities);
-        formData.append('monthlyRent', data.monthlyRent.toString());
-    
-        if (data.securityDeposit) {
-            formData.append('securityDeposit', data.securityDeposit.toString());
-        }
-    
-        formData.append('description', data.description);
-        formData.append('availabilityStatus', data.availabilityStatus);
-    
-        // Append all images
-        const imageFields = ['images', 'images1', 'images2', 'images3', 'images4'];
-        imageFields.forEach((field: any) => {
-            if (data[field]) {
-                Array.from(data[field]).forEach((image: any) => {
-                    formData.append(field, image);
-                });
+  const imageFields: string[] = ['image1', 'image2', 'image3', 'image4', 'image5'];
+  const videoFields: string[] = ['video1', 'video2', 'video3', 'video4', 'video5'];
+  const MAX_IMAGE_SIZE: number = 3 * 1024 * 1024;
+  const MAX_VIDEO_SIZE: number = 10 * 1024 * 1024;
+
+  const getAuthToken = (): string | null => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('token');
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    const fetchCategories = async (): Promise<void> => {
+      try {
+        const response = await axios.get<{ success: boolean; data: Category[] }>(
+          'https://api.rent9ja.com.ng/api/apartment-types',
+          {
+            headers: {
+              'Authorization': `Bearer ${getAuthToken()}`,
+              'Accept': 'application/json',
             }
-        });
-    
-        try {
-            const response = await axios.post('/api/agents/properties', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
-    
-            if (response.status === 201) {
-                setMessage('Property successfully added!');
-            }
-        } catch (error) {
-            setMessage('Failed to add property. Please try again.');
-        } finally {
-            setIsLoading(false);
+          }
+        );
+        if (response.data.success) {
+          setCategories(response.data.data);
         }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          showAlert('Please login to continue', 'error');
+        }
+      }
     };
+
+    fetchCategories();
+  }, []);
+
+  const handleFileChange = (fieldName: string, type: FileType) => async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const maxSize = type === 'image' ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
+    if (file.size > maxSize) {
+      showAlert(`File ${file.name} exceeds maximum size limit of ${maxSize / (1024 * 1024)}MB`, 'error');
+      return;
+    }
+
+    setValue(fieldName as keyof PropertyFormData, file);
     
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (type === 'image') {
+        setImagePreview(prev => ({ ...prev, [fieldName]: reader.result as string }));
+      } else {
+        setVideoPreview(prev => ({ ...prev, [fieldName]: URL.createObjectURL(file) }));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeFile = (fieldName: string, type: FileType): void => {
+    setValue(fieldName as keyof PropertyFormData, null);
+    if (type === 'image') {
+      setImagePreview(prev => {
+        const newPreview = { ...prev };
+        delete newPreview[fieldName];
+        return newPreview;
+      });
+    } else {
+      setVideoPreview(prev => {
+        const newPreview = { ...prev };
+        delete newPreview[fieldName];
+        return newPreview;
+      });
+    }
+  };
+
+  const validateStep = async (): Promise<boolean> => {
+    let fieldsToValidate: Array<keyof PropertyFormData> = [];
+    switch (step) {
+      case 1:
+        fieldsToValidate = ['category_id', 'title', 'number_of_rooms', 'description'];
+        break;
+      case 2:
+        fieldsToValidate = ['amount', 'currency_code', 'security_deposit'];
+        break;
+      case 3:
+        fieldsToValidate = ['duration', 'duration_type', 'amenities'];
+        break;
+      case 4:
+        fieldsToValidate = ['country_code', 'state_code', 'city_code'];
+        break;
+      case 5:
+        return true; // Files are optional
+    }
+    
+    const result = await trigger(fieldsToValidate);
+    return result;
+  };
+
+  const nextStep = async (): Promise<void> => {
+    const isValid = await validateStep();
+    if (isValid) {
+      setStep(current => Math.min(current + 1, 5));
+    }
+  };
+
+  const prevStep = (): void => {
+    setStep(current => Math.max(current - 1, 1));
+  };
+
+  const onSubmit: SubmitHandler<PropertyFormData> = async (data) => {
+    setIsLoading(true);
+
+    const formData = new FormData();
+    
+    Object.entries(data).forEach(([key, value]) => {
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else if (key === 'amenities') {
+        formData.append(key, JSON.stringify(value));
+      } else if (value !== null && value !== undefined) {
+        formData.append(key, value.toString());
+      }
+    });
+
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        showAlert('Please login to add a property', 'error');
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await axios.post<{ success: boolean }>(
+        'https://api.rent9ja.com.ng/api/apartment', 
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+            'Content-Type': 'multipart/form-data'
+          },
+        }
+      );
+
+      if (response.data.success) {
+        showAlert('Property successfully added!', 'success');
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          showAlert('Your session has expired. Please login again.', 'error');
+        } else {
+          showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
+        }
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <div className=" w-full flex flex-col px-2 md:px-6 py-2 md:py-6 gap-2 md:gap-4">
-        <h1 className='text-black/80 text-[1.5rem] font-semibold'>Add New Property</h1>
-        {message && (
-            <p
-            className={`mb-4 text-center ${
-                message.includes('successfully') ? 'text-green-500' : 'text-red-500'
-            }`}
-            >
-            {message}
-            </p>
-        )}
+    <div className="w-full flex flex-col px-2 md:px-6 py-2 md:py-6 gap-2 md:gap-4">
+      <div className="flex justify-between items-center">
+        <h1 className="text-black/80 text-[1.5rem] font-semibold">Add New Property</h1>
+        <span className="text-orange-500 font-medium">Step {step} / 5</span>
+      </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} 
-        className="w-full flex flex-col h-auto bg-black/80 rounded-xl shadow-md shadow-orange-600 items-center p-4 gap-1 space-y-6"
-        >
-            <div className='w-full grid grid-cols-1 sml:grid-cols-2 gap-2 md:gap-4'>
-                <div className='w-full'>
-                    <label className="block text-sm font-semibold mb-2 text-white">Property Name</label>
-                    <input
-                        type="text"
-                        {...register('propertyName', { required: 'Property name is required' })}
-                        className="text-[.8em] w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="Enter property name"
-                    />
-                    {errors.propertyName && <p className="text-red-500 text-sm">{errors.propertyName.message}</p>}
-                </div>
-
-                <div>
-                    <label className="block text-sm font-semibold text-white mb-2">Property Type</label>
-                    <select
-                        {...register('propertyType', { required: 'Property type is required' })}
-                        className="text-[.8em] w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    >
-                        <option value="">Select a type</option>
-                        <option value="House">House</option>
-                        <option value="Apartment">Apartment</option>
-                        <option value="Studio">Studio</option>
-                    </select>
-                    {errors.propertyType && <p className="text-red-500 text-sm">{errors.propertyType.message}</p>}
-                </div>
-            </div>
-
-            <div className='w-full grid grid-cols-1 sml:grid-cols-3 gap-2 md:gap-4'>
-                <div>
-                    <label className="text-white block text-sm font-semibold mb-2">Address</label>
-                    <input
-                        type="text"
-                        {...register('address', { required: 'Address is required' })}
-                        className="text-[.8em] w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="Enter property address"
-                    />
-                    {errors.address && <p className="text-red-500 text-sm">{errors.address.message}</p>}
-                </div>
-
-                <div>
-                    <label className="text-white block text-sm font-semibold mb-2">Number of Rooms</label>
-                    <input
-                        type="number"
-                        {...register('numberOfRooms', { required: 'Number of rooms is required', min: 1 })}
-                        className="text-[.8em] w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="Enter number of rooms"
-                    />
-                    {errors.numberOfRooms && <p className="text-red-500 text-sm">{errors.numberOfRooms.message}</p>}
-                </div>
-
-                <div>
-                    <label className="text-white block text-sm font-semibold mb-2">Amenities</label>
-                    <input
-                        type="text"
-                        {...register('amenities')}
-                        className="text-[.8em] w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="WiFi, Parking, etc."
-                    />
-                </div>
-            </div>
-
-            <div className='w-full grid grid-cols-1 sml:grid-cols-3 gap-2 md:gap-4'>
-                <div>
-                    <label className="text-white block text-sm font-semibold mb-2">Monthly Rent</label>
-                    <input
-                        type="number"
-                        {...register('monthlyRent', { required: 'Monthly rent is required', min: 0 })}
-                        className="text-[.8em] w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="Enter rent price"
-                    />
-                    {errors.monthlyRent && <p className="text-red-500 text-sm">{errors.monthlyRent.message}</p>}
-                </div>
-
-                <div>
-                    <label className="text-white block text-sm font-semibold mb-2">Security Deposit (optional)</label>
-                    <input
-                        type="number"
-                        {...register('securityDeposit')}
-                        className="text-[.8em] w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                        placeholder="Enter security deposit"
-                    />
-                </div>
-
-                <div>
-                    <label className="block text-sm font-semibold mb-2 text-white">Availability Status</label>
-                    <select
-                        {...register('availabilityStatus', { required: 'Availability status is required' })}
-                        className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    >
-                        <option value="Available">Available</option>
-                        <option value="Occupied">Occupied</option>
-                    </select>
-                    {errors.availabilityStatus && <p className="text-red-500 text-sm">{errors.availabilityStatus.message}</p>}
-                </div>
-            </div>
-
-            <div className='w-full'>
-                <label className="text-white block text-sm font-semibold mb-2">Description</label>
-                <textarea
-                    {...register('description', { required: 'Description is required' })}
-                    className="text-[.8em] w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    placeholder="Enter property description"
-                ></textarea>
-                {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full flex flex-col gap-6 bg-black/80 rounded-xl shadow-md shadow-orange-600 p-4">
+        {step === 1 && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Property Category</label>
+              <select
+                {...register('category_id', { required: 'Category is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              >
+                <option value="">Select Category</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.title}
+                  </option>
+                ))}
+              </select>
+              {errors.category_id && <p className="text-red-500 text-sm">{errors.category_id.message}</p>}
             </div>
 
             <div>
-                <label className="block text-sm font-semibold mb-2 text-white">Images</label>
-                <div className="flex space-x-4">
-                    {imageFields.map((field) => (
-                    <div key={field} className="relative group">
-                        <input
-                        type="file"
-                        multiple
-                        {...register(field)}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                        />
-                        <div className="w-24 h-24 border-2 border-gray-300 border-dashed flex items-center justify-center rounded-lg bg-gray-100 group-hover:border-orange-500 transition-all">
-                            <Image className="text-gray-400 w-8 h-8 group-hover:text-orange-500" />
-                        </div>
-                    </div>
-                    ))}
-                </div>
+              <label className="block text-sm font-semibold mb-2 text-white">Title</label>
+              <input
+                {...register('title', { required: 'Title is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
             </div>
 
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Number of Rooms</label>
+              <input
+                type="number"
+                {...register('number_of_rooms')}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Description</label>
+              <textarea
+                {...register('description')}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                rows={4}
+              />
+            </div>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Amount</label>
+              <input
+                type="number"
+                {...register('amount', { required: 'Amount is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Currency Code</label>
+              <input
+                {...register('currency_code', { required: 'Currency code is required' })}
+                defaultValue="NGN"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              {errors.currency_code && <p className="text-red-500 text-sm">{errors.currency_code.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Security Deposit</label>
+              <input
+                type="number"
+                {...register('security_deposit')}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Duration</label>
+              <input
+                type="number"
+                {...register('duration', { required: 'Duration is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              {errors.duration && <p className="text-red-500 text-sm">{errors.duration.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Duration Type</label>
+              <select
+                {...register('duration_type', { required: 'Duration type is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              >
+                <option value="day">Day</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+                <option value="year">Year</option>
+              </select>
+              {errors.duration_type && <p className="text-red-500 text-sm">{errors.duration_type.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Amenities (comma-separated)</label>
+              <input
+                {...register('amenities')}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                placeholder="WiFi, Parking, Air Conditioning"
+              />
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Country Code</label>
+              <input
+                {...register('country_code', { required: 'Country code is required' })}
+                defaultValue="NG"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              {errors.country_code && <p className="text-red-500 text-sm">{errors.country_code.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">State Code</label>
+              <input
+                {...register('state_code', { required: 'State code is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              {errors.state_code && <p className="text-red-500 text-sm">{errors.state_code.message}</p>}
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">City Code</label>
+              <input
+                {...register('city_code', { required: 'City code is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              {errors.city_code && <p className="text-red-500 text-sm">{errors.city_code.message}</p>}
+            </div>
+          </div>
+        )}
+
+        {step === 5 && (
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Images (Max 5, each &lt;3MB)</label>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {imageFields.map((field) => (
+                  <div key={field} className="relative group">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange(field, 'image')}
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="w-full aspect-square border-2 border-gray-300 border-dashed flex items-center justify-center rounded-lg bg-gray-100 group-hover:border-orange-500 transition-all relative">
+                      {imagePreview[field] ? (
+                        <>
+                          <img src={imagePreview[field]} alt="Preview" className="w-full h-full object-cover rounded-lg" />
+                          <button
+                            type="button"
+                            onClick={() => removeFile(field, 'image')}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </>
+                      ) : (
+                        <Image className="text-gray-400 w-8 h-8 group-hover:text-orange-500" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+            <label className="block text-sm font-semibold mb-2 text-white">Videos (Max 5, each &lt;10MB)</label>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {videoFields.map((field) => (
+                  <div key={field} className="relative group">
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={handleFileChange(field, 'video')}
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="w-full aspect-square border-2 border-gray-300 border-dashed flex items-center justify-center rounded-lg bg-gray-100 group-hover:border-orange-500 transition-all relative">
+                      {videoPreview[field] ? (
+                        <>
+                          <video src={videoPreview[field]} className="w-full h-full object-cover rounded-lg" />
+                          <button
+                            type="button"
+                            onClick={() => removeFile(field, 'video')}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </>
+                      ) : (
+                        <Video className="text-gray-400 w-8 h-8 group-hover:text-orange-500" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 text-white">
+                <input type="checkbox" {...register('published')} />
+                Published
+              </label>
+
+              <label className="flex items-center gap-2 text-white">
+                <input type="checkbox" {...register('can_rate')} />
+                Allow Ratings
+              </label>
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-between mt-6">
+          {step > 1 && (
             <button
-            type="submit"
-            className="w-full md:w-[400px] mx-auto bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 disabled:opacity-50"
-            disabled={isLoading}
+              type="button"
+              onClick={prevStep}
+              className="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600"
             >
-                {isLoading ? 'Uploading...' : 'Upload Property'}
+              Previous
             </button>
-        </form>
+          )}
+          
+          {step < 5 ? (
+            <button
+              type="button"
+              onClick={nextStep}
+              className="ml-auto px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600"
+            >
+              Next
+            </button>
+          ) : (
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="ml-auto px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50"
+            >
+              {isLoading ? 'Submitting...' : 'Submit Property'}
+            </button>
+          )}
+        </div>
+      </form>
     </div>
   );
 };

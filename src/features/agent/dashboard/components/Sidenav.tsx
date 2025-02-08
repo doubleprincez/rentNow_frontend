@@ -3,6 +3,8 @@ import React from 'react'
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { BookOpenText, CirclePlus, CircleUser, Home, Mail } from 'lucide-react';
+import Image from 'next/image';
+import Logo from '@/components/assets/logo/logo.png'
 
 const Sidenav = () => {
     const pathname = usePathname();
@@ -37,9 +39,9 @@ const Sidenav = () => {
 
     return (
         <div className='px-4 py-6 w-full h-full bg-black/85 text-white flex flex-col'>
-            <div className='flex flex-col w-full leading-5'>
-                <div className="text-[1.8em] font-semibold text-orange-500">
-                    Rent<span className="text-green-500">Naija</span>
+            <div className='flex flex-col w-full leading-3'>
+                <div>
+                    <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
                 </div>
                 <span className='ml-[120px] text-[.8em] text-white/90'>Agent</span>
             </div>

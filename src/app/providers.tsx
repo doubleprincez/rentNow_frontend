@@ -5,12 +5,12 @@ import { AlertProvider } from '@/contexts/AlertContext';
 import { PersistLogin } from '@/components/custom/PersistLogin';
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <Provider store={store}>
-        <PersistLogin />
-        <AlertProvider>
-            {children}
-        </AlertProvider>
-    </Provider>
-  );
-}
+    return (
+        <Provider store={store}>
+            <PersistLogin />
+            <AlertProvider>
+                {children}
+            </AlertProvider>
+        </Provider>
+    );
+};

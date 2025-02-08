@@ -16,6 +16,24 @@ import { useDispatch } from "react-redux";
 import { login } from "@/redux/userSlice";
 import { useAlert } from '@/contexts/AlertContext';
 
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  token: string;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string | null;
+    account: {
+      name: string;
+      slug: string;
+    };
+    apartments: Array<any>;
+    rented_apartments: Array<any>;
+  };
+}
+
 const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
     const { showAlert } = useAlert();
     const [isLoading, setIsLoading] = useState(false);
@@ -51,18 +69,32 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                 })
             });
 
-            const data = await response.json();
+            const data: LoginResponse = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.error || 'Login failed');
+                throw new Error(data.message || 'Login failed');
             }
 
+            // Store token in localStorage
+            localStorage.setItem('token', data.token);
+
+            // Extract first and last name from full name
+            const nameParts = data.user.name.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+
+            // Dispatch login action with user details
             dispatch(
                 login({
-                    firstName: data.firstName || '',
-                    lastName: data.lastName || '',
-                    email: data.email || '',
-                    phoneNumber: data.phoneNumber || null,
+                    firstName,
+                    lastName,
+                    email: data.user.email,
+                    phoneNumber: data.user.phone ? parseInt(data.user.phone) : null,
+                    // Add additional user details as needed
+                    userId: data.user.id,
+                    accountType: data.user.account.slug,
+                    apartments: data.user.apartments,
+                    rentedApartments: data.user.rented_apartments
                 })
             );
             
@@ -229,3 +261,4 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
 };
 
 export default Login;
+
