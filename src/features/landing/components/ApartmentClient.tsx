@@ -1,5 +1,4 @@
 'use client'
-
 import React, { useEffect, useState } from 'react';
 import { Banknote, MapPin, Clock, Home, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -22,12 +21,10 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
         setApartment(decodedApartment);
         setIsLoading(false);
       } else {
-        // Fallback to API call if no data in URL
         fetchApartment();
       }
     } catch (error) {
       console.error('Error parsing apartment data:', error);
-      // Fallback to API call if parsing fails
       fetchApartment();
     }
   }, [params.slug, searchParams]);
@@ -61,7 +58,7 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
       <Card className="w-full max-w-4xl mx-auto">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Main Image */}
+            
             <div className="w-full h-[300px] md:h-[400px] rounded-lg overflow-hidden">
                 <img 
                     src={apartment.images && Object.values(apartment.images)[0]?.preview_url || '/placeholder.jpg'}
@@ -70,7 +67,6 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
                 />
             </div>
 
-            {/* Property Details */}
             <div className="flex flex-col gap-4">
               <h1 className="text-2xl font-bold text-gray-800">{apartment.title}</h1>
               
@@ -106,7 +102,6 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
             </div>
           </div>
 
-          {/* Additional Images */}
           <div className="mt-8">
             <h2 className="text-xl font-semibold mb-4">Property Images</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
