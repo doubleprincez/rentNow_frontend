@@ -1,52 +1,54 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { use } from 'react';
 import { Banknote, MapPin, Clock, Home, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import type { Apartment, ApiResponse } from '@/types/apartment';
+import { useSearchParams } from 'next/navigation';
+import type { Apartment } from '@/types/apartment';
 
-// Use the correct Next.js page component type
-export interface PageProps {
+interface PageProps {
   params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
 }
 
-interface Props {
-  initialData?: Apartment | null;
-}
-
-// Combine the Next.js page props with our custom props
-const ApartmentPage = (props: PageProps & Props) => {
-  const { params, initialData } = props;
-  const [apartment, setApartment] = useState<Apartment | null>(initialData || null);
-  const [isLoading, setIsLoading] = useState(!initialData);
+export default function ApartmentPage({ params }: PageProps) {
+  const searchParams = useSearchParams();
+  const [apartment, setApartment] = useState<Apartment | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Skip API call if we already have the data
-    if (initialData) {
-      setApartment(initialData);
-      return;
-    }
-
-    const fetchApartment = async () => {
-      try {
-        setIsLoading(true);
-        const response = await fetch('/api/apartments');
-        const data: ApiResponse = await response.json();
-        if (data.success) {
-          const apt = data.data.data.find((a) => a.id.toString() === params.slug);
-          setApartment(apt || null);
-        }
-      } catch (error) {
-        console.error('Error fetching apartment:', error);
-      } finally {
-        setIsLoading(false);
+    try {
+      const encodedData = searchParams?.get('data');
+      if (encodedData) {
+        const decodedApartment = JSON.parse(decodeURIComponent(encodedData));
+        setApartment(decodedApartment);
+      } else {
+        // Fallback to API call if no data in URL
+        fetchApartment();
       }
-    };
+    } catch (error) {
+      console.error('Error parsing apartment data:', error);
+      // Fallback to API call if parsing fails
+      fetchApartment();
+    } finally {
+      setIsLoading(false);
+    }
+  }, [params.slug, searchParams]);
 
-    fetchApartment();
-  }, [params.slug, initialData]);
+  const fetchApartment = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/apartments');
+      const data = await response.json();
+      if (data.success) {
+        const apt = data.data.data.find((a: Apartment) => a.id.toString() === params.slug);
+        setApartment(apt || null);
+      }
+    } catch (error) {
+      console.error('Error fetching apartment:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
@@ -125,6 +127,4 @@ const ApartmentPage = (props: PageProps & Props) => {
       </Card>
     </div>
   );
-};
-
-export default ApartmentPage;
+}
