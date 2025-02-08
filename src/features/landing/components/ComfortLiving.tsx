@@ -22,8 +22,8 @@ const tabs = [
 
 const ApartmentCard = ({ apartment, onClick }: { apartment: Apartment, onClick: (apartment: Apartment) => void }) => (
     <div 
-        className='flex flex-col gap-4 p-2 md:p-4 bg-white shadow-md rounded-2xl cursor-pointer hover:shadow-lg transition-shadow'
-        onClick={() => onClick(apartment)}
+    className='flex flex-col gap-4 p-2 md:p-4 bg-white shadow-md rounded-2xl cursor-pointer hover:shadow-lg transition-shadow'
+    onClick={() => onClick(apartment)}
     >
         <div className='flex flex-col gap-2'>
             <div className='flex w-full h-[150px] mdl:h-[200px] rounded-lg overflow-hidden'>
@@ -87,13 +87,12 @@ const ComfortLiving = ({ initialData }: { initialData?: ApiResponse }) => {
     }, [initialData]);
 
     const processCategories = (uniqueCategories: string[]) => {
-        // Shuffle and limit to 5 categories, assigning images from tabs array
         const shuffledCategories = uniqueCategories
             .sort(() => Math.random() - 0.5)
             .slice(0, 5)
             .map((category, index) => ({
                 value: category,
-                tabImage: tabs[index % tabs.length].image // Cycle through tab images
+                tabImage: tabs[index % tabs.length].image 
             }));
         setCategories(shuffledCategories);
     };
