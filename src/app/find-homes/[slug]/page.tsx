@@ -1,43 +1,23 @@
-'use client'
-
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Banknote, MapPin, Clock, Home, User } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import type { Apartment, ApiResponse } from '@/types/apartment'
 
-interface PageProps {
-  params: {
-    slug: string
+async function fetchApartment(slug: string) {
+  try {
+    const response = await fetch('/api/apartments')
+    const data: ApiResponse = await response.json()
+    if (data.success) {
+      return data.data.data.find((a) => a.id.toString() === slug) || null
+    }
+  } catch (error) {
+    console.error('Error fetching apartment:', error)
+    return null
   }
 }
 
-export default function Page({ params }: PageProps) {
-  const [apartment, setApartment] = useState<Apartment | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchApartment = async () => {
-      try {
-        setIsLoading(true)
-        const response = await fetch('/api/apartments')
-        const data: ApiResponse = await response.json()
-        if (data.success) {
-          const apt = data.data.data.find((a) => a.id.toString() === params.slug)
-          setApartment(apt || null)
-        }
-      } catch (error) {
-        console.error('Error fetching apartment:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchApartment()
-  }, [params.slug])
-
-  if (isLoading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>
-  }
+export default async function Page({ params }: { params: { slug: string } }) {
+  const apartment = await fetchApartment(params.slug)
 
   if (!apartment) {
     return <div className="flex justify-center items-center min-h-screen">Apartment not found</div>
