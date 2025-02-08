@@ -3,15 +3,18 @@ import ApartmentClient from '@/features/landing/components/ApartmentClient';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function Page(props: PageProps) {
-  const params = await props.params;
+  const [params, searchParams] = await Promise.all([
+    props.params,
+    props.searchParams
+  ]);
   
   return (
     <Suspense fallback={<div className="flex justify-center items-center min-h-screen">Loading...</div>}>
-      <ApartmentClient params={params} searchParams={props.searchParams} />
+      <ApartmentClient params={params} searchParams={searchParams} />
     </Suspense>
   );
 }
