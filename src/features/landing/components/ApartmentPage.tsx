@@ -5,14 +5,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import type { Apartment, ApiResponse } from '@/types/apartment';
 
 interface ApartmentPageProps {
-  params: Promise<{ slug: string }>;
+  params: { slug: string };
   initialData?: Apartment | null;
 }
 
 const ApartmentPage: React.FC<ApartmentPageProps> = ({ params, initialData }) => {
   const [apartment, setApartment] = useState<Apartment | null>(initialData || null);
   const [isLoading, setIsLoading] = useState(!initialData);
-  const resolvedParams = React.use(params);
+  const resolvedParams = params;
 
   useEffect(() => {
     // Skip API call if we already have the data

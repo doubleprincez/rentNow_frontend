@@ -60,7 +60,7 @@ const Header = () => {
       <div className="hidden lg:flex justify-center items-center gap-4">
         {user.isLoggedIn ? (
           <div className="flex items-center gap-4">
-            <span className="text-orange-500 font-semibold">
+            {/* <span className="text-orange-500 font-semibold">
               Welcome, {user.firstName} {user.lastName}
             </span>
             <button
@@ -69,23 +69,31 @@ const Header = () => {
             >
               <LogOut className="w-4 h-4" />
               Logout
-            </button>
+            </button> */}
+
+            <Link
+              href="/book"
+              className="bg-orange-500 text-white px-4 py-2 rounded-md"
+            >
+              Book Now!
+            </Link>
           </div>
         ) : (
-          <Link
-            href="/auth/login"
-            className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-4 py-2 rounded-md transition-all duration-300"
+          <div className='flex gap-2'>
+            <Link
+              href="/auth/login"
+              className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-4 py-2 rounded-md transition-all duration-300"
+            >
+              Login
+            </Link>
+            <Link
+            href="/auth/signup"
+            className="bg-orange-500 text-white px-4 py-2 rounded-md transition-all duration-300"
           >
-            Login
+            Register
           </Link>
+        </div>
         )}
-        
-        <Link
-          href="/book"
-          className="bg-orange-500 text-white px-4 py-2 rounded-md"
-        >
-          Book Now!
-        </Link>
       </div>
 
       <div className="lg:hidden flex justify-center items-center gap-4">
