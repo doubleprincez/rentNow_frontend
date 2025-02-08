@@ -1,18 +1,24 @@
 'use client'
+
 import React, { useEffect, useState } from 'react';
 import { use } from 'react';
 import { Banknote, MapPin, Clock, Home, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import type { Apartment, ApiResponse } from '@/types/apartment';
 
-interface ApartmentPageProps {
-  params: Promise<{ slug: string }>;
+// Use the correct Next.js page component type
+export interface PageProps {
+  params: { slug: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
+
+interface Props {
   initialData?: Apartment | null;
 }
 
-const ApartmentPage: React.FC<ApartmentPageProps> = ({ params, initialData }) => {
-  // Unwrap the params Promise using React.use()
-  const resolvedParams = use(params);
+// Combine the Next.js page props with our custom props
+const ApartmentPage = (props: PageProps & Props) => {
+  const { params, initialData } = props;
   const [apartment, setApartment] = useState<Apartment | null>(initialData || null);
   const [isLoading, setIsLoading] = useState(!initialData);
 
@@ -29,7 +35,7 @@ const ApartmentPage: React.FC<ApartmentPageProps> = ({ params, initialData }) =>
         const response = await fetch('/api/apartments');
         const data: ApiResponse = await response.json();
         if (data.success) {
-          const apt = data.data.data.find((a) => a.id.toString() === resolvedParams.slug);
+          const apt = data.data.data.find((a) => a.id.toString() === params.slug);
           setApartment(apt || null);
         }
       } catch (error) {
@@ -40,7 +46,7 @@ const ApartmentPage: React.FC<ApartmentPageProps> = ({ params, initialData }) =>
     };
 
     fetchApartment();
-  }, [resolvedParams.slug, initialData]);
+  }, [params.slug, initialData]);
 
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
@@ -52,7 +58,7 @@ const ApartmentPage: React.FC<ApartmentPageProps> = ({ params, initialData }) =>
 
   return (
     <div className="w-full px-4 py-20 md:py-32 ">
-      <Card className="w-full max-w-4xl mx-auto border-none">
+      <Card className="w-full max-w-4xl mx-auto">
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Main Image */}
