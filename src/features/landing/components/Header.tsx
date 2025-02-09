@@ -186,10 +186,10 @@ const Header = () => {
                 )}
                 
                 <Link
-                  href="/book"
+                  href="/auth/signup"
                   className="bg-orange-500 text-white px-8 py-2 rounded-md"
                 >
-                  Book Now!
+                  Register
                 </Link>
               </div>
             </motion.div>
