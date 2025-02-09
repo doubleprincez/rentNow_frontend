@@ -26,8 +26,6 @@ interface PropertyFormData {
   country_code: string;
   state_code: string;
   city_code: string;
-  published: boolean;
-  can_rate: boolean;
   image1: File | null;
   image2: File | null;
   image3: File | null;
@@ -43,6 +41,25 @@ interface PropertyFormData {
 type FileType = 'image' | 'video';
 type PreviewMap = { [key: string]: string };
 
+// Predefined amenities list
+const AVAILABLE_AMENITIES = [
+  'WiFi',
+  'Parking',
+  'Air Conditioning',
+  'Swimming Pool',
+  'Gym',
+  'Security',
+  'Furnished',
+  'Balcony',
+  'Garden',
+  'Pet Friendly',
+  'Elevator',
+  'CCTV',
+  'Generator',
+  'Water Supply',
+  'Kitchen'
+];
+
 const AddProperty: React.FC = () => {
   const { showAlert } = useAlert();
   const [step, setStep] = useState<number>(1);
@@ -50,6 +67,7 @@ const AddProperty: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imagePreview, setImagePreview] = useState<PreviewMap>({});
   const [videoPreview, setVideoPreview] = useState<PreviewMap>({});
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
 
   const {
     register,
@@ -58,12 +76,29 @@ const AddProperty: React.FC = () => {
     setValue,
     watch,
     trigger
-  } = useForm<PropertyFormData>();
+  } = useForm<PropertyFormData>({
+    defaultValues: {
+      amenities: [],
+      currency_code: 'NGN',
+      country_code: 'NG'
+    }
+  });
 
   const imageFields: string[] = ['image1', 'image2', 'image3', 'image4', 'image5'];
   const videoFields: string[] = ['video1', 'video2', 'video3', 'video4', 'video5'];
   const MAX_IMAGE_SIZE: number = 3 * 1024 * 1024;
   const MAX_VIDEO_SIZE: number = 10 * 1024 * 1024;
+
+  // Handle amenities selection
+  const handleAmenityToggle = (amenity: string) => {
+    setSelectedAmenities(prev => {
+      const newAmenities = prev.includes(amenity)
+        ? prev.filter(a => a !== amenity)
+        : [...prev, amenity];
+      setValue('amenities', newAmenities);
+      return newAmenities;
+    });
+  };
 
   const getAuthToken = (): string | null => {
     if (typeof window !== 'undefined') {
@@ -81,7 +116,8 @@ const AddProperty: React.FC = () => {
             headers: {
               'Authorization': `Bearer ${getAuthToken()}`,
               'Accept': 'application/json',
-            }
+            },
+            withCredentials: true // Add this for CORS
           }
         );
         if (response.data.success) {
@@ -153,7 +189,18 @@ const AddProperty: React.FC = () => {
         fieldsToValidate = ['country_code', 'state_code', 'city_code'];
         break;
       case 5:
-        return true; // Files are optional
+        // Validate that at least one image and one video is selected
+        const hasImage = imageFields.some(field => watch(field as keyof PropertyFormData));
+        const hasVideo = videoFields.some(field => watch(field as keyof PropertyFormData));
+        if (!hasImage) {
+          showAlert('Please upload at least one image', 'info');
+          return false;
+        }
+        if (!hasVideo) {
+          showAlert('Please upload at least one video', 'info');
+          return false;
+        }
+        return true;
     }
     
     const result = await trigger(fieldsToValidate);
@@ -171,20 +218,39 @@ const AddProperty: React.FC = () => {
     setStep(current => Math.max(current - 1, 1));
   };
 
-  const onSubmit: SubmitHandler<PropertyFormData> = async (data) => {
+  const onSubmit = async (data: PropertyFormData) => {
+    // Prevent submission if not on step 5
+    if (step !== 5) {
+      return;
+    }
+
+    // Validate files before submission
+    const hasImage = imageFields.some(field => data[field as keyof PropertyFormData]);
+    const hasVideo = videoFields.some(field => data[field as keyof PropertyFormData]);
+
+    if (!hasImage || !hasVideo) {
+      showAlert('Please upload at least one image and one video', 'error');
+      return;
+    }
+
     setIsLoading(true);
 
     const formData = new FormData();
     
+    // Add all form fields to formData
     Object.entries(data).forEach(([key, value]) => {
       if (value instanceof File) {
         formData.append(key, value);
       } else if (key === 'amenities') {
-        formData.append(key, JSON.stringify(value));
+        formData.append(key, JSON.stringify(selectedAmenities));
       } else if (value !== null && value !== undefined) {
         formData.append(key, value.toString());
       }
     });
+
+    // Set published and can_rate to false
+    formData.append('published', 'false');
+    formData.append('can_rate', 'false');
 
     try {
       const token = getAuthToken();
@@ -194,7 +260,7 @@ const AddProperty: React.FC = () => {
         return;
       }
 
-      const response = await axios.post<{ success: boolean }>(
+      const response = await axios.post(
         'https://api.rent9ja.com.ng/api/apartment', 
         formData,
         {
@@ -203,16 +269,20 @@ const AddProperty: React.FC = () => {
             'Accept': 'application/json',
             'Content-Type': 'multipart/form-data'
           },
+          withCredentials: true // Add this for CORS
         }
       );
 
       if (response.data.success) {
         showAlert('Property successfully added!', 'success');
+        // Reset form or redirect
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           showAlert('Your session has expired. Please login again.', 'error');
+        } else if (error.response?.status === 503) {
+          showAlert('Service temporarily unavailable. Please try again later.', 'error');
         } else {
           showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
         }
@@ -337,12 +407,20 @@ const AddProperty: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-2 text-white">Amenities (comma-separated)</label>
-              <input
-                {...register('amenities')}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
-                placeholder="WiFi, Parking, Air Conditioning"
-              />
+              <label className="block text-sm font-semibold mb-2 text-white">Amenities</label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {AVAILABLE_AMENITIES.map((amenity) => (
+                  <label key={amenity} className="flex items-center space-x-2 text-white cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={selectedAmenities.includes(amenity)}
+                      onChange={() => handleAmenityToggle(amenity)}
+                      className="rounded border-gray-300"
+                    />
+                    <span>{amenity}</span>
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -382,7 +460,7 @@ const AddProperty: React.FC = () => {
         {step === 5 && (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold mb-2 text-white">Images (Max 5, each &lt;3MB)</label>
+              <label className="block text-sm font-semibold mb-2 text-white">Images (At least 1 required, max 5, each &lt;3MB)</label>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {imageFields.map((field) => (
                   <div key={field} className="relative group">
@@ -414,7 +492,7 @@ const AddProperty: React.FC = () => {
             </div>
 
             <div>
-            <label className="block text-sm font-semibold mb-2 text-white">Videos (Max 5, each &lt;10MB)</label>
+              <label className="block text-sm font-semibold mb-2 text-white">Videos (At least 1 required, max 5, each &lt;10MB)</label>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {videoFields.map((field) => (
                   <div key={field} className="relative group">
@@ -443,18 +521,6 @@ const AddProperty: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </div>
-
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 text-white">
-                <input type="checkbox" {...register('published')} />
-                Published
-              </label>
-
-              <label className="flex items-center gap-2 text-white">
-                <input type="checkbox" {...register('can_rate')} />
-                Allow Ratings
-              </label>
             </div>
           </div>
         )}

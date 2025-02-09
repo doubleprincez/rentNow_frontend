@@ -2,25 +2,25 @@
 import React from 'react'
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpenText, CirclePlus, CircleUser, Home, Mail } from 'lucide-react';
+import { BookOpenText, CirclePlus, CircleUser, Home, Mail, User2 } from 'lucide-react';
 
 const Sidenav = () => {
     const pathname = usePathname();
 
     const links = [
         {
-            name: "Dashboard", 
+            name: "Overview", 
             link: "/admin/dashboard",
             icon: Home,
         },
         {
-            name: "Add Property", 
-            link: "/admin/dashboard/add-property",
-            icon: CirclePlus,
+            name: "View Agents", 
+            link: "/admin/dashboard/view-agents",
+            icon: User2,
         },
         {
-            name: "Manage Property", 
-            link: "/admin/dashboard/manage-property",
+            name: "Access Properties", 
+            link: "/admin/dashboard/access-properties",
             icon: BookOpenText,
         },
         {
