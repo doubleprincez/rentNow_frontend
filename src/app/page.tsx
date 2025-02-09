@@ -21,7 +21,7 @@ const page = () => {
       <Howto/>
       <ComfortLiving/>
       <PointContact/>
-      <MeetUs/>
+      {/* <MeetUs/> */}
       <Reviews/>
       <BecomeAgent/>
       <Subscribe/>

@@ -12,7 +12,7 @@ import Logo from '@/components/assets/logo/logo.png'
 const Header = () => {
   const pathname = usePathname();
   const [ isMenu, setIsMenu ] = useState(false);
-  const user = useSelector((state: RootState) => state.agent);
+  const agent = useSelector((state: RootState) => state.agent);
 
   const links = [
     { title: 'Home', link: '/' },
@@ -30,28 +30,36 @@ const Header = () => {
     
 
       <div className="hidden lg:flex justify-center items-center gap-4">
-        {user.isLoggedIn ? (
-          <span className="text-orange-500 font-semibold">
-            WELCOME 
-            {/* {user.firstName.toUpperCase()} */}
-          </span>
+        {agent.isLoggedIn ? (
+          <div className='flex items-center justify-center gap-4'>
+            <span className="text-orange-500 font-semibold">
+              Hello {agent.firstName.toUpperCase()}
+            </span>
+            <Link
+              href="/agents/dashboard"
+              className="hover:bg-transparent border border-orange-500 text-orange-500 bg-white px-4 py-2 rounded-md transition-all duration-300"
+            >
+              Dashboard
+            </Link>
+          </div>
         ) : (
-          <>
+          <div className='flex'>
             <Link
               href="/agents/auth/login"
               className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-4 py-2 rounded-md transition-all duration-300"
             >
               Login
             </Link>
-          </>
+
+            <Link
+              href="/agents/auth/register"
+              className="bg-orange-500 text-white px-4 py-2 rounded-md"
+            >
+              Register!
+            </Link>
+          </div>
         )}
         
-        <Link
-          href="/agents/auth/register"
-          className="bg-orange-500 text-white px-4 py-2 rounded-md"
-        >
-          Register!
-        </Link>
       </div>
 
       <div className="lg:hidden flex justify-center items-center gap-4">
@@ -72,52 +80,38 @@ const Header = () => {
                 <X className='w-5 h-5 text-orange-500' />
               </div>
 
-              {/* <div className="flex flex-col justify-start items-end gap-2 text-white text-[.9em]">
-                {links.map((link, index) => (
-                  <div key={index} className="relative group">
-                    <Link
-                      href={link.link}
-                      className={`${
-                        pathname === link.link ? 'text-orange-500' : ''
-                      } duration-200 ease-in-out transition-all`}
-                    >
-                      {link.title}
-                    </Link>
-
-                    <div
-                      className={`${
-                        pathname === link.link
-                          ? 'w-6 bg-green-500'
-                          : 'w-0 group-hover:w-full group-hover:scale-x-50 bg-orange-500'
-                      } absolute -bottom-1 left-1/2 transform -translate-x-1/2 h-[3px] 
-                          transition-all duration-300 origin-center`}
-                    ></div>
-                  </div>
-                ))}
-              </div> */}
-
               <div className="flex flex-col justify-start items-end gap-2 text-[.8em]">
-                {user.isLoggedIn ? (
-                  <span className="text-orange-500 font-semibold">
-                    WELCOME {user.firstName.toUpperCase()}
-                  </span>
+                {agent.isLoggedIn ? (
+                  <div className='w-full flex flex-col gap-2'>
+                    <span className="text-orange-500 font-semibold">
+                      Hello! {agent.firstName.toUpperCase()}
+                    </span>
+
+                    <Link
+                      href="/agents/dashboard"
+                      className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-4 py-2 rounded-md transition-all duration-300"
+                    >
+                      Dashboard
+                    </Link>
+                  </div>
                 ) : (
-                  <>
+                  <div className='w-full flex flex-col gap-2'>
                     <Link
                       href="/agents/auth/login"
                       className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-8 py-2 rounded-md transition-all duration-300"
                     >
                       Login
                     </Link>
-                  </>
+
+                    <Link
+                      href="/agents/auth/register"
+                      className="bg-orange-500 text-white px-8 py-2 rounded-md"
+                    >
+                      Register
+                    </Link>
+                  </div>
                 )}
                 
-                <Link
-                  href="/agents/auth/register"
-                  className="bg-orange-500 text-white px-8 py-2 rounded-md"
-                >
-                  Book Now!
-                </Link>
               </div>
             </motion.div>
           )}
