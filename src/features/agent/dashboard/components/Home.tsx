@@ -1,70 +1,205 @@
 'use client'
-import { Grid2x2Check, ListCheck, MailQuestion, Quote } from 'lucide-react'
-import React from 'react'
-import { Barchart, LineBar } from './Graphs'
-import Listings from './Listings'
-import { MenuPieChart } from './Charts'
+import { Home as HomeIcon, Users, Star, Eye } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid
+} from 'recharts';
 
-const Home = () => {
-    const data = [
-        {
-            icon: ListCheck,
-            title: 'Total Properties',
-            value: '134',
-        },
-        {
-            icon: Grid2x2Check,
-            title: 'Pending approvals',
-            value: '48',
-        },
-        {
-            icon: Quote,
-            title: 'Total Quotes',
-            value: '124',
-        },
-        {
-            icon: MailQuestion,
-            title: 'Messages',
-            value: '153',
-        },
-    ]
-
-    return (
-        <div className='w-full h-full px-1 md:px-4 py-2 md:py-4 flex flex-col gap-2 sm:gap-4'>
-            <div className='w-full flex flex-col gap-1'>
-                <span className='text-black/80 text-[1.5rem] font-semibold'>Overview</span>
-                <div className='w-full grid grid-cols-2 sml:grid-cols-2 mdl:grid-cols-4 gap-1 sm:gap-4'>
-                    {data.map((item, index) => (
-                        <div className='col-span-1 h-[100px] bg-black/80 rounded-xl shadow-md shadow-orange-600 flex items-center p-4 gap-1' key={index}>
-                            <div>
-                                <item.icon className='w-8 sm:w-10 lg:w-16 h-8 sm:h-10 lg:h-16 text-orange-500'/>
-                            </div>
-                            <div className='flex flex-col leading-6'>
-                                <h1 className='text-white font-semibold text-[.7em] sm:text-[.9em]'>{item.title}</h1>
-                                <span className='text-white text-[1rem] sm:text-[2rem] font-bold syne'>{item.value}</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            
-            <div className='w-full grid grid-cols-1 md:grid-cols-4 gap-2 sm:gap-4'>
-                <div className='col-span-1 md:col-span-3 w-full h-[250px] sm:h-[300px] bg-black/80 rounded-xl shadow-md shadow-orange-600 flex items-center sm:p-4 gap-1'>
-                    <LineBar/>
-                </div>
-
-                <div className='col-span-1 w-full h-[250px] sm:h-[300px] bg-black/80 rounded-xl shadow-md shadow-orange-600 flex justify-center items-center p-4 gap-1'>
-                    <MenuPieChart/>
-                </div>
-            </div>
-
-            <div className='col-span-1 md:col-span-3 w-full min-h-[400px] bg-black/80 rounded-xl shadow-md shadow-orange-600 flex items-center p-4 gap-1 overflow-x-scroll'>
-                <Listings/>
-            </div>
-
-            <div className='w-full py-2'></div>
-        </div>
-    )
+interface Statistics {
+  total_apartments: number;
+  total_rented_apartments: number;
+  total_ratings: number;
+  total_followers: number;
+  total_following: number | null;
+  total_views: number;
 }
 
-export default Home
+interface ChartData {
+  name: string;
+  total_rent: number;
+  total_apartments: number;
+}
+
+// Sample data structure that matches your API response
+const generateMockData = () => {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return months.map(month => ({
+    name: month,
+    total_rent: Math.floor(Math.random() * 1000),
+    total_apartments: Math.floor(Math.random() * 100)
+  }));
+};
+
+const Home = () => {
+  const [statistics, setStatistics] = useState<Statistics | null>(null);
+  const [chartData, setChartData] = useState<ChartData[]>(generateMockData());
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const token = useSelector((state: any) => state.agent.token);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      if (!token) return;
+      
+      try {
+        const headers = { Authorization: `Bearer ${token}` };
+        
+        // Fetch statistics
+        const statsResponse = await axios.get('https://api.rent9ja.com.ng/api/statistics', { 
+          headers,
+          validateStatus: function (status) {
+            return status === 200;
+          }
+        });
+
+        if (isMounted && statsResponse.data?.success && statsResponse.data?.data) {
+          setStatistics(statsResponse.data.data);
+          console.log('Statistics data:', statsResponse.data.data);
+        }
+
+        // Fetch chart data
+        const chartResponse = await axios.get('https://api.rent9ja.com.ng/api/bar-chart', { 
+          headers,
+          validateStatus: function (status) {
+            return status === 200;
+          }
+        });
+
+        if (isMounted && chartResponse.data?.success && chartResponse.data?.data) {
+          // Transform the data if needed
+          const transformedData = Object.entries(chartResponse.data.data).map(([month, values]: [string, any]) => ({
+            name: month,
+            total_rent: values.total_rent || 0,
+            total_apartments: values.total_apartments || 0
+          }));
+          setChartData(transformedData);
+          console.log('Chart data:', transformedData);
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error('Error fetching data:', err);
+          setError('Failed to load dashboard data');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [token]);
+
+  const statsCards = [
+    { 
+      icon: HomeIcon, 
+      title: 'Total Apartments', 
+      value: statistics?.total_apartments || 0 
+    },
+    { 
+      icon: HomeIcon, 
+      title: 'Rented Apartments', 
+      value: statistics?.total_rented_apartments || 0 
+    },
+    { 
+      icon: Star, 
+      title: 'Total Ratings', 
+      value: statistics?.total_ratings || 0 
+    },
+    { 
+      icon: Eye, 
+      title: 'Total Views', 
+      value: statistics?.total_views || 0 
+    },
+  ];
+
+//   if (loading) {
+//     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+//   }
+
+  if (error) {
+    return <div className="text-red-500 p-4">{error}</div>;
+  }
+
+  return (
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold">Overview</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {statsCards.map((item, index) => (
+          <div key={index} className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">{item.title}</p>
+                <p className="text-2xl font-semibold mt-2">{item.value}</p>
+              </div>
+              <item.icon className="h-8 w-8 text-gray-400" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <h2 className="text-lg font-semibold mb-4">Analytics Overview</h2>
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData} margin={{ top: 20, right: 10, left: -30, bottom: -10 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis 
+                dataKey="name" 
+                axisLine={false}
+                tick={{ fontSize: 12, fill: '#64748b' }}
+              />
+              <YAxis 
+                axisLine={false}
+                tick={{ fontSize: 12, fill: '#64748b' }}
+                tickLine={false}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#fff',
+                  border: 'none',
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="total_rent" 
+                stroke="#f97316" 
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6, fill: "#f97316" }}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="total_apartments" 
+                stroke="#22c55e" 
+                strokeWidth={3}
+                dot={false}
+                activeDot={{ r: 6, fill: "#22c55e" }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Home;
