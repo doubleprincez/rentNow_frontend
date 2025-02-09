@@ -177,20 +177,23 @@ const Header = () => {
                     </button>
                   </>
                 ) : (
-                  <Link
-                    href="/auth/login"
-                    className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-8 py-2 rounded-md transition-all duration-300"
-                  >
-                    Login
-                  </Link>
+                  <div className='flex flex-col gap-2 w-full'>
+                    <Link
+                      href="/auth/login"
+                      className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-8 py-2 rounded-md transition-all duration-300"
+                    >
+                      Login
+                    </Link>
+                    
+                    <Link
+                      href="/auth/signup"
+                      className="bg-orange-500 text-white px-8 py-2 rounded-md"
+                    >
+                      Register
+                    </Link>
+                  </div>
                 )}
                 
-                <Link
-                  href="/auth/signup"
-                  className="bg-orange-500 text-white px-8 py-2 rounded-md"
-                >
-                  Register
-                </Link>
               </div>
             </motion.div>
           )}
