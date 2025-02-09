@@ -3,7 +3,7 @@ import ManageProperty from '@/features/agent/dashboard/components/ManageProperty
 
 const page = () => {
   return (
-    <div>
+    <div className='w-full'>
       <ManageProperty/>
     </div>
   )
