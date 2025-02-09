@@ -269,13 +269,46 @@ const AddProperty: React.FC = () => {
             'Accept': 'application/json',
             'Content-Type': 'multipart/form-data'
           },
-          withCredentials: true // Add this for CORS
+          withCredentials: true 
         }
       );
 
+      // if (response.data.success) {
+      //   showAlert('Property successfully added!', 'success');
+      //   // Reset form or redirect
+      // }
+
       if (response.data.success) {
         showAlert('Property successfully added!', 'success');
-        // Reset form or redirect
+        // Reset all form fields
+        setValue('category_id', 0);
+        setValue('title', '');
+        setValue('description', null);
+        setValue('number_of_rooms', null);
+        setValue('amount', 0);
+        setValue('currency_code', 'NGN');
+        setValue('security_deposit', null);
+        setValue('security_deposit_currency_code', null);
+        setValue('duration', 0);
+        setValue('duration_type', 'month');
+        setValue('amenities', []);
+        setValue('country_code', 'NG');
+        setValue('state_code', '');
+        setValue('city_code', '');
+        
+        // Reset file fields
+        imageFields.forEach(field => setValue(field as keyof PropertyFormData, null));
+        videoFields.forEach(field => setValue(field as keyof PropertyFormData, null));
+        
+        // Clear previews
+        setImagePreview({});
+        setVideoPreview({});
+        
+        // Reset amenities
+        setSelectedAmenities([]);
+        
+        // Reset to first step
+        setStep(1);
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
