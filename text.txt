@@ -1,0 +1,62 @@
+DUMMY DATA OF APARTMENT API REPONSE IF SUCCESS IS TRUE
+
+success	true
+message	""
+data	Object { current_page: 1, first_page_url: "https://api.rent9ja.com.ng/api/apartments?page=1", from: 1, … }
+current_page	1
+data	[ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
+0	Object { id: 30, agent_id: 8, agent: "Nona Funk", … }
+id	30
+agent_id	8
+agent	"Nona Funk"
+agent_email	"hirthe.martina@example.net"
+agent_phone	null
+business_name	null
+business_email	null
+business_phone	null
+business_logo	null
+business_address	null
+my_apartment	false
+category_id	"12"
+category	"One Bedroom Apartment"
+title	"Soluta magni et quaerat voluptatem magnam ut."
+description	"Est molestiae sunt accusantium non quia ad et et facilis vel quia."
+number_of_rooms	"1"
+amount	"NGN 2627"
+security_deposit	" "
+duration	"2 Years"
+amenities	[]
+country_code	"NGA"
+state_code	"Abeokuta"
+city_code	"Abeokuta"
+published	true
+can_rate	true
+can_advertise	false
+images	Object { "1d355a18-0c3b-4d82-9750-480ad173ecd1": {…} }
+1d355a18-0c3b-4d82-9750-480ad173ecd1	Object { name: "img4", file_name: "img4.jpg", uuid: "1d355a18-0c3b-4d82-9750-480ad173ecd1", … }
+videos	Object { "201e3876-1a42-4c52-9566-60b5a5d6604f": {…} }
+201e3876-1a42-4c52-9566-60b5a5d6604f	Object { name: "vid5", file_name: "vid5.mp4", uuid: "201e3876-1a42-4c52-9566-60b5a5d6604f", … }
+thumbnail	null
+views_count	0
+1	Object { id: 6, agent_id: 4, agent: "Triston Schulist", … }
+2	Object { id: 32, agent_id: 3, agent: "Mr. Morton Stokes", … }
+3	Object { id: 9, agent_id: 10, agent: "Libby Bednar", … }
+4	Object { id: 21, agent_id: 1, agent: "Prof. Karl Hills", … }
+5	Object { id: 29, agent_id: 4, agent: "Triston Schulist", … }
+6	Object { id: 26, agent_id: 4, agent: "Triston Schulist", … }
+7	Object { id: 7, agent_id: 6, agent: "Prof. Brando Fritsch", … }
+8	Object { id: 17, agent_id: 1, agent: "Prof. Karl Hills", … }
+9	Object { id: 18, agent_id: 5, agent: "Rae Reynolds", … }
+10	Object { id: 34, agent_id: 2, agent: "Prof. Annamarie Bartell", … }
+11	Object { id: 12, agent_id: 9, agent: "Ayden Jakubowski DVM", … }
+first_page_url	"https://api.rent9ja.com.ng/api/apartments?page=1"
+from	1
+last_page	3
+last_page_url	"https://api.rent9ja.com.ng/api/apartments?page=3"
+links	[ {…}, {…}, {…}, {…}, {…} ]
+next_page_url	"https://api.rent9ja.com.ng/api/apartments?page=2"
+path	"https://api.rent9ja.com.ng/api/apartments"
+per_page	12
+prev_page_url	null
+to	12
+total	35

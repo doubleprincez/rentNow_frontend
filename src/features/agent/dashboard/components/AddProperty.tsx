@@ -117,7 +117,7 @@ const AddProperty: React.FC = () => {
               'Authorization': `Bearer ${getAuthToken()}`,
               'Accept': 'application/json',
             },
-            withCredentials: true // Add this for CORS
+            withCredentials: true 
           }
         );
         if (response.data.success) {
@@ -219,7 +219,6 @@ const AddProperty: React.FC = () => {
   };
 
   const onSubmit = async (data: PropertyFormData) => {
-    // Prevent submission if not on step 5
     if (step !== 5) {
       return;
     }
@@ -272,11 +271,6 @@ const AddProperty: React.FC = () => {
           withCredentials: true 
         }
       );
-
-      // if (response.data.success) {
-      //   showAlert('Property successfully added!', 'success');
-      //   // Reset form or redirect
-      // }
 
       if (response.data.success) {
         showAlert('Property successfully added!', 'success');

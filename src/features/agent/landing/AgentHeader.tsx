@@ -43,7 +43,7 @@ const Header = () => {
             </Link>
           </div>
         ) : (
-          <div className='flex'>
+          <div className='flex gap-4'>
             <Link
               href="/agents/auth/login"
               className="bg-transparent border border-orange-500 text-orange-500 hover:bg-white px-4 py-2 rounded-md transition-all duration-300"
