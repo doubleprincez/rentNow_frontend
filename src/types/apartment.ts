@@ -27,6 +27,7 @@ export interface Image {
     id: number;
     agent: string;
     my_apartment: boolean;
+    business_name: string;
     category_id: string;
     category: string;
     title: string;
