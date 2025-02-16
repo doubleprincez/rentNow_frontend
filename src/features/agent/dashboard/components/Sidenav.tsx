@@ -43,7 +43,7 @@ const Sidenav = () => {
 
     const handleLogout = () => {
         dispatch(logout());
-        router.push('/auth/login');
+        router.push('/agents/auth/login');
     };
 
     return (
