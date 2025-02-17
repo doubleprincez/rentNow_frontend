@@ -1,10 +1,10 @@
 import React from 'react'
-import ViewAgents from '@/features/admin/dashboard/components/ViewAgents'
+import ViewUsers from '@/features/admin/dashboard/components/ViewUsers'
 
 const page = () => {
   return (
     <div className='w-full'>
-      <ViewAgents/>
+        <ViewUsers/>
     </div>
   )
 }

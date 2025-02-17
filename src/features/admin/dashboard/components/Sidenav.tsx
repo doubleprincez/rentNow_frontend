@@ -2,7 +2,7 @@
 import React from 'react'
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpenText, CirclePlus, CircleUser, Home, LogOut, Mail, User2, LayoutGrid } from 'lucide-react';
+import { BookOpenText, CirclePlus, CircleUser, Home, LogOut, Mail, ContactRound, LayoutGrid, Users } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { logoutAdmin } from '@/redux/adminSlice';
@@ -33,9 +33,14 @@ const Sidenav = () => {
             icon: Home,
         },
         {
+            name: "View Users", 
+            link: "/admin/dashboard/view-users",
+            icon: ContactRound,
+        },
+        {
             name: "View Agents", 
             link: "/admin/dashboard/view-agents",
-            icon: User2,
+            icon: Users,
         },
         {
             name: "View Apartment",
