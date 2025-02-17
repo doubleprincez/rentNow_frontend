@@ -1,130 +1,254 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 interface AdminState {
-  user: AdminUser | null;
-  token: string | null;
-  isLoading: boolean;
-  error: string | null;
-}
-
-interface AdminUser {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-}
-
-interface LoginCredentials {
-  email: string;
-  password: string;
+    isLoggedIn: boolean;
+    token: string | null;
+    firstName: string;
+    lastName: string;
+    email: string;
+    isLoading: boolean;
+    error: string | null;
+    userId?: number;
+    accountType?: string;
+    role?: string;
 }
 
 interface LoginResponse {
-  success: boolean;
-  data: {
-    user: AdminUser;
+    success: boolean;
+    message: string;
     token: string;
-  };
-  message: string;
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        account: {
+            id: number;
+            name: string;
+            slug: string;
+        };
+    };
 }
 
 const initialState: AdminState = {
-  user: null,
-  token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
-  isLoading: false,
-  error: null,
+    isLoggedIn: false,
+    token: null,
+    firstName: '',
+    lastName: '',
+    email: '',
+    isLoading: false,
+    error: null,
+    userId: undefined,
+    accountType: undefined,
+    role: undefined
+};
+
+// Safe localStorage access
+const isClient = typeof window !== 'undefined';
+
+const getFromStorage = (key: string): string | null => {
+    if (!isClient) return null;
+    try {
+        return localStorage.getItem(key);
+    } catch (error) {
+        console.error('Error accessing localStorage:', error);
+        return null;
+    }
+};
+
+const setToStorage = (key: string, value: string): void => {
+    if (!isClient) return;
+    try {
+        localStorage.setItem(key, value);
+    } catch (error) {
+        console.error('Error setting localStorage:', error);
+    }
+};
+
+const removeFromStorage = (key: string): void => {
+    if (!isClient) return;
+    try {
+        localStorage.removeItem(key);
+    } catch (error) {
+        console.error('Error removing from localStorage:', error);
+    }
+};
+
+// Load initial state from localStorage
+const loadInitialState = (): AdminState => {
+    const token = getFromStorage('adminToken');
+    const savedState = getFromStorage('adminState');
+    
+    if (token && savedState) {
+        try {
+            const parsedState = JSON.parse(savedState);
+            return {
+                ...initialState,
+                ...parsedState,
+                token,
+                isLoading: false,
+                error: null
+            };
+        } catch (error) {
+            console.error('Error parsing stored state:', error);
+        }
+    }
+    return initialState;
 };
 
 export const loginAdmin = createAsyncThunk(
-  'admin/login',
-  async (credentials: LoginCredentials, { rejectWithValue }) => {
-    try {
-      const response = await axios.post<LoginResponse>(
-        'https://api.rent9ja.com.ng/api/admin/login',
-        credentials,
-        {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+    'admin/login',
+    async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
+        try {
+            const response = await axios.post<LoginResponse>("https://api.rent9ja.com.ng/api/login", {
+                email,
+                password
+            });
 
-      if (response.data.success) {
-        const { token, user } = response.data.data;
-        localStorage.setItem('token', token);
-        return { token, user };
-      } else {
-        return rejectWithValue(response.data.message);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return rejectWithValue(error.response?.data?.message || 'Login failed');
-      }
-      return rejectWithValue('An unexpected error occurred');
+            const { data } = response;
+
+            if (data.user.account.id !== 4) {
+                return rejectWithValue('Invalid account type. Please use admin credentials.');
+            }
+
+            const nameParts = data.user.name.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+
+            const persistState = {
+                isLoggedIn: true,
+                userId: data.user.id,
+                accountType: data.user.account.slug,
+                firstName,
+                lastName,
+                email: data.user.email,
+                role: 'admin'
+            };
+
+            setToStorage('adminToken', data.token);
+            setToStorage('adminState', JSON.stringify(persistState));
+
+            return {
+                token: data.token,
+                ...persistState
+            };
+        } catch (error: any) {
+            return rejectWithValue(error.response?.data?.message || 'Login failed');
+        }
     }
-  }
 );
 
 export const logoutAdmin = createAsyncThunk(
-  'admin/logout',
-  async (_, { rejectWithValue }) => {
-    try {
-      const token = localStorage.getItem('token');
-      if (token) {
-        await axios.post(
-          'https://api.rent9ja.com.ng/api/admin/logout',
-          {},
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Accept': 'application/json',
-            },
-          }
-        );
-      }
-      localStorage.removeItem('token');
-      return null;
-    } catch (error) {
-      // Even if the logout API fails, we still want to clear local state
-      localStorage.removeItem('token');
-      return null;
+    'admin/logout',
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = getFromStorage('adminToken');
+            if (token) {
+                await axios.post(
+                    'https://api.rent9ja.com.ng/api/admin/logout',
+                    {},
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json',
+                        },
+                    }
+                );
+            }
+            removeFromStorage('adminToken');
+            removeFromStorage('adminState');
+            return null;
+        } catch (error) {
+            // Even if the logout API fails, we still want to clear local state
+            removeFromStorage('adminToken');
+            removeFromStorage('adminState');
+            return null;
+        }
     }
-  }
 );
 
 const adminSlice = createSlice({
-  name: 'admin',
-  initialState,
-  reducers: {
-    clearError: (state) => {
-      state.error = null;
+    name: 'admin',
+    initialState: loadInitialState(),
+    reducers: {
+        clearError: (state) => {
+            state.error = null;
+        },
+        initializeFromStorage: (state) => {
+            const storedState = loadInitialState();
+            Object.assign(state, storedState);
+        }
     },
-  },
-  extraReducers: (builder) => {
-    builder
-      .addCase(loginAdmin.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(loginAdmin.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.error = null;
-      })
-      .addCase(loginAdmin.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      })
-      .addCase(logoutAdmin.fulfilled, (state) => {
-        state.user = null;
-        state.token = null;
-        state.error = null;
-      });
-  },
+    extraReducers: (builder) => {
+        builder
+            .addCase(loginAdmin.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(loginAdmin.fulfilled, (state, action) => {
+                state.isLoggedIn = true;
+                state.isLoading = false;
+                state.token = action.payload.token;
+                state.firstName = action.payload.firstName;
+                state.lastName = action.payload.lastName;
+                state.email = action.payload.email;
+                state.userId = action.payload.userId;
+                state.accountType = action.payload.accountType;
+                state.role = action.payload.role;
+            })
+            .addCase(loginAdmin.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload as string;
+                state.isLoggedIn = false;
+            })
+            .addCase(logoutAdmin.fulfilled, (state) => {
+                Object.assign(state, initialState);
+            });
+    }
 });
 
-export const { clearError } = adminSlice.actions;
+export const { clearError, initializeFromStorage } = adminSlice.actions;
 export default adminSlice.reducer;
+
+
+
+//SAMPLE DATA RESPONSE
+// {
+//   "success": true,
+//   "message": "Login Successful",
+//   "token": "64|gPGHf8O4RHysx1wJaymzHaG3qS1MZ6FkcoLzQ11C11fb64f2",
+//   "user": {
+//     "id": 16,
+//     "account_id": "4",
+//     "name": "akinlade mathew",
+//     "email": "rentnaija25@gmail.com",
+//     "phone": null,
+//     "long": null,
+//     "lat": null,
+//     "email_verified_at": null,
+//     "deleted_at": null,
+//     "current_team_id": null,
+//     "profile_photo_path": null,
+//     "created_at": "2025-02-16T21:42:34.000000Z",
+//     "updated_at": "2025-02-16T21:42:34.000000Z",
+//     "business_name": null,
+//     "country": null,
+//     "state": null,
+//     "city": null,
+//     "business_email": null,
+//     "business_phone": null,
+//     "business_address": null,
+//     "account": {
+//       "id": 4,
+//       "name": "Admins",
+//       "slug": "admins",
+//       "description": "Administrator in charge of accounts",
+//       "deleted_at": null,
+//       "created_at": "2025-02-05T04:37:08.000000Z",
+//       "updated_at": "2025-02-05T04:37:08.000000Z"
+//     },
+//     "apartments": [],
+//     "rented_apartments": [],
+//     "user_settings": []
+//   }
+// }

@@ -1,11 +1,10 @@
-'use client'
-import Home from '@/features/admin/dashboard/components/Home'
 import React from 'react'
+import Messages from '@/features/admin/dashboard/components/Messages'
 
 const page = () => {
   return (
     <div className='w-full'>
-      <Home/>
+        <Messages/>
     </div>
   )
 }

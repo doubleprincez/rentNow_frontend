@@ -1,11 +1,30 @@
 "use client"
 import React from 'react'
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpenText, CirclePlus, CircleUser, Home, Mail, User2 } from 'lucide-react';
+import { BookOpenText, CirclePlus, CircleUser, Home, LogOut, Mail, User2, LayoutGrid } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
+import { logoutAdmin } from '@/redux/adminSlice';
+import { useAlert } from '@/contexts/AlertContext';
+import Logo from '@/components/assets/logo/logo.png';
+import Image from 'next/image';
 
 const Sidenav = () => {
     const pathname = usePathname();
+    const dispatch = useDispatch<AppDispatch>();
+    const router = useRouter();
+    const { showAlert } = useAlert();
+
+    const handleLogout = async () => {
+        try {
+            await dispatch(logoutAdmin()).unwrap();
+            showAlert('Logged out successfully', 'success');
+            router.push('/admin/login');
+        } catch (error) {
+            showAlert('Error logging out', 'error');
+        }
+    };
 
     const links = [
         {
@@ -19,8 +38,13 @@ const Sidenav = () => {
             icon: User2,
         },
         {
-            name: "Access Properties", 
-            link: "/admin/dashboard/access-properties",
+            name: "View Apartment",
+            link: "/admin/dashboard/view-apartments",
+            icon: LayoutGrid,
+        },
+        {
+            name: "Access Rents", 
+            link: "/admin/dashboard/access-rents",
             icon: BookOpenText,
         },
         {
@@ -37,9 +61,9 @@ const Sidenav = () => {
 
     return (
         <div className='px-4 py-6 w-full h-full bg-black/85 text-white flex flex-col'>
-            <div className='flex flex-col w-full leading-5'>
+            <div className='flex flex-col w-full leading-[4px]'>
                 <div className="text-[1.8em] font-semibold text-orange-500">
-                    Rent<span className="text-green-500">Naija</span>
+                    <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
                 </div>
                 <span className='ml-[120px] text-[.8em] text-white/90'>Admin</span>
             </div>
@@ -53,6 +77,16 @@ const Sidenav = () => {
                         </div>
                     </Link>
                 ))}
+            </div>
+
+            <div className='mt-auto flex w-full'>
+                <button 
+                    onClick={handleLogout}
+                    className='w-full flex items-center gap-2 p-2 mt-2 rounded-lg hover:bg-red-500 bg-red-500/50 transition-colors'
+                >
+                    <LogOut className='w-6 h-6 text-white' />
+                    <span className='text-white text-[.9em]'>Logout</span>
+                </button>
             </div>
         </div>
     )
