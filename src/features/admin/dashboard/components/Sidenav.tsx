@@ -57,11 +57,11 @@ const Sidenav = () => {
             link: "/admin/dashboard/messages",
             icon: Mail,
         },
-        {
-            name: "Profile", 
-            link: "/admin/dashboard/profile",
-            icon: CircleUser,
-        },
+        // {
+        //     name: "Profile", 
+        //     link: "/admin/dashboard/profile",
+        //     icon: CircleUser,
+        // },
     ]
 
     return (

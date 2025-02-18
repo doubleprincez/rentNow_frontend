@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scrollArea";
 import { Search } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { conversationApi, Conversation } from '../api/conversationApi';
+import { conversationApi, Conversation } from '@/features/admin/dashboard/api/conversationApi';
 import { getUsers, User } from '../api/userApi';
 import axios from 'axios';
 import { RootState } from '@/redux/store';
@@ -426,3 +426,336 @@ const Messages = () => {
 };
 
 export default Messages;
+
+
+// 'use client'
+// import React, { useState, useEffect, useRef, useCallback } from 'react';
+// import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { Card, CardContent } from "@/components/ui/card";
+// import { Input } from "@/components/ui/input";
+// import { Button } from "@/components/ui/button";
+// import { ScrollArea } from "@/components/ui/scrollArea";
+// import { Search, AlertTriangle } from 'lucide-react';
+// import { useToast } from '@/components/ui/use-toast';
+// import { Alert, AlertDescription } from '@/components/ui/alert';
+// import { agentConversationApi, Message } from '../api/agentConversationApi';
+// import { getUsers, User } from '../api/userApi';
+// import { useSelector } from 'react-redux';
+
+// const AgentMessages = () => {
+//     const [activeTab, setActiveTab] = useState('users');
+//     const [users, setUsers] = useState<User[]>([]);
+//     const [selectedUser, setSelectedUser] = useState<User | null>(null);
+//     const [messages, setMessages] = useState<Message[]>([]);
+//     const [newMessage, setNewMessage] = useState('');
+//     const [isLoading, setIsLoading] = useState(false);
+//     const [currentPage, setCurrentPage] = useState(1);
+//     const [totalPages, setTotalPages] = useState(1);
+//     const [searchTerm, setSearchTerm] = useState('');
+//     const [hasNewMessage, setHasNewMessage] = useState(false);
+//     const [retryCount, setRetryCount] = useState(0);
+//     const [apiError, setApiError] = useState<string | null>(null);
+//     const { toast } = useToast();
+//     const messagesEndRef = useRef<HTMLDivElement>(null);
+//     const searchTimeoutRef = useRef<NodeJS.Timeout>();
+//     const messagePollingRef = useRef<NodeJS.Timeout>();
+
+//     const { userId, isLoggedIn } = useSelector((state: any) => state.agent);
+
+//     const scrollToBottom = useCallback(() => {
+//         if (hasNewMessage) {
+//             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+//             setHasNewMessage(false);
+//         }
+//     }, [hasNewMessage]);
+
+//     useEffect(() => {
+//         scrollToBottom();
+//     }, [messages, scrollToBottom]);
+
+//     const fetchMessages = useCallback(async () => {
+//         if (!selectedUser?.id || !userId) return;
+
+//         try {
+//             const messages = await agentConversationApi.getConversation(selectedUser.id);
+//             const sortedMessages = messages.sort((a, b) => 
+//                 new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+//             );
+            
+//             if (sortedMessages.length > messages.length) {
+//                 setHasNewMessage(true);
+//             }
+            
+//             setMessages(sortedMessages);
+//             setApiError(null);
+//         } catch (error) {
+//             console.error('Error fetching messages:', error);
+//             // Don't show error toast for message fetching - silent retry
+//         }
+//     }, [selectedUser?.id, userId]);
+
+//     useEffect(() => {
+//         if (selectedUser?.id) {
+//             fetchMessages();
+//             messagePollingRef.current = setInterval(fetchMessages, 3000);
+
+//             return () => {
+//                 if (messagePollingRef.current) {
+//                     clearInterval(messagePollingRef.current);
+//                 }
+//             };
+//         }
+//     }, [selectedUser?.id, fetchMessages]);
+
+//     const loadUsers = async () => {
+//         try {
+//             setIsLoading(true);
+//             const response = await getUsers(
+//                 currentPage, 
+//                 searchTerm, 
+//                 activeTab === 'agents' ? 'agents' : 'users'
+//             );
+
+//             const filteredUsers = response.data.filter(user => 
+//                 activeTab === 'agents' 
+//                     ? user.account.slug === 'agents'
+//                     : user.account.slug === 'users'
+//             );
+            
+//             setUsers(filteredUsers);
+//             setTotalPages(Math.ceil(response.total / response.per_page));
+//         } catch (error) {
+//             toast({
+//                 title: "Error",
+//                 description: "Failed to load users",
+//                 variant: "destructive",
+//             });
+//         } finally {
+//             setIsLoading(false);
+//         }
+//     };
+
+//     useEffect(() => {
+//         if (searchTimeoutRef.current) {
+//             clearTimeout(searchTimeoutRef.current);
+//         }
+        
+//         searchTimeoutRef.current = setTimeout(() => {
+//             loadUsers();
+//         }, 500);
+
+//         return () => {
+//             if (searchTimeoutRef.current) {
+//                 clearTimeout(searchTimeoutRef.current);
+//             }
+//         };
+//     }, [loadUsers]);
+
+//     const handleUserSelect = (user: User) => {
+//         setSelectedUser(user);
+//         setMessages([]);
+//         setApiError(null);
+//     };
+
+//     const handleSendMessage = async (e: React.FormEvent) => {
+//         e.preventDefault();
+//         if (!selectedUser || !userId || !newMessage.trim()) return;
+
+//         try {
+//             setIsLoading(true);
+            
+//             const messageParams = {
+//                 from_id: userId,
+//                 to_id: selectedUser.id,
+//                 message: newMessage.trim()
+//             };
+
+//             const conversations = await agentConversationApi.getAllConversations();
+//             const existingConversation = conversations.find(conv => 
+//                 conv.participants?.some(p => p.id === selectedUser.id)
+//             );
+
+//             if (existingConversation) {
+//                 await agentConversationApi.updateConversation(existingConversation.id, messageParams);
+//             } else {
+//                 await agentConversationApi.createConversation(messageParams);
+//             }
+
+//             setHasNewMessage(true);
+//             await fetchMessages();
+//             setNewMessage('');
+//             setApiError(null);
+//         } catch (error) {
+//             toast({
+//                 title: "Error",
+//                 description: "Failed to send message. Please try again.",
+//                 variant: "destructive",
+//             });
+//         } finally {
+//             setIsLoading(false);
+//         }
+//     };
+
+//     if (!isLoggedIn || !userId) {
+//         return (
+//             <div className="container mx-auto p-4">
+//                 <Alert variant="destructive">
+//                     <AlertTriangle className="h-4 w-4" />
+//                     <AlertDescription>
+//                         You must be logged in to use the messaging system
+//                     </AlertDescription>
+//                 </Alert>
+//             </div>
+//         );
+//     }
+
+//     return (
+//         <div className="container mx-auto p-4">
+//             <Tabs defaultValue="users" onValueChange={(value) => {
+//                 setActiveTab(value);
+//                 setSelectedUser(null);
+//                 setMessages([]);
+//                 setCurrentPage(1);
+//                 setSearchTerm('');
+//                 setApiError(null);
+//             }}>
+//                 <TabsList className="grid w-[300px] grid-cols-2 mb-4">
+//                     <TabsTrigger value="users">Users</TabsTrigger>
+//                     <TabsTrigger value="admins">Admins</TabsTrigger>
+//                 </TabsList>
+
+//                 {apiError && (
+//                     <Alert variant="destructive" className="mb-4">
+//                         <AlertTriangle className="h-4 w-4" />
+//                         <AlertDescription>{apiError}</AlertDescription>
+//                     </Alert>
+//                 )}
+
+//                 <div className="grid grid-cols-3 gap-4 h-[calc(100vh-170px)]">
+//                     <Card className="col-span-1 h-full border-2">
+//                         <div className="p-4">
+//                             <div className="relative w-full mb-4">
+//                                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+//                                 <Input
+//                                     placeholder={`Search ${activeTab}...`}
+//                                     value={searchTerm}
+//                                     onChange={(e) => setSearchTerm(e.target.value)}
+//                                     className="pl-8"
+//                                 />
+//                             </div>
+//                         </div>
+
+//                         <ScrollArea className="h-[calc(100vh-300px)]">
+//                             <div className="px-4">
+//                                 {isLoading && !users.length ? (
+//                                     <div className="text-center py-4">Loading...</div>
+//                                 ) : users.length === 0 ? (
+//                                     <div className="text-center py-4">No users found</div>
+//                                 ) : (
+//                                     users.map((user) => (
+//                                         <div
+//                                             key={user.id}
+//                                             onClick={() => handleUserSelect(user)}
+//                                             className={`p-3 cursor-pointer rounded-lg mb-2 ${
+//                                                 selectedUser?.id === user.id
+//                                                     ? 'bg-primary text-primary-foreground'
+//                                                     : 'hover:bg-secondary'
+//                                             }`}
+//                                         >
+//                                             <h3 className="font-medium">{user.name}</h3>
+//                                             <p className="text-sm opacity-70">{user.email}</p>
+//                                             {user.phone && (
+//                                                 <p className="text-sm opacity-70">{user.phone}</p>
+//                                             )}
+//                                         </div>
+//                                     ))
+//                                 )}
+//                             </div>
+//                         </ScrollArea>
+
+//                         <div className="flex justify-between p-4 border-t">
+//                             <Button
+//                                 variant="outline"
+//                                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+//                                 disabled={currentPage === 1 || isLoading}
+//                             >
+//                                 Previous
+//                             </Button>
+//                             <Button
+//                                 variant="outline"
+//                                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+//                                 disabled={currentPage === totalPages || isLoading}
+//                             >
+//                                 Next
+//                             </Button>
+//                         </div>
+//                     </Card>
+
+//                     <Card className="col-span-2">
+//                         <CardContent className="p-4 h-[calc(100vh-170px)] flex flex-col">
+//                             {selectedUser ? (
+//                                 <>
+//                                     <div className="bg-gray-100 p-4 mb-4 rounded-lg">
+//                                         <h3 className="font-medium">Chat with {selectedUser.name}</h3>
+//                                         <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
+//                                     </div>
+                                    
+//                                     {isLoading && messages.length === 0 ? (
+//                                         <div className="flex-1 flex items-center justify-center">
+//                                             Loading conversation...
+//                                         </div>
+//                                     ) : (
+//                                         <>
+//                                             <ScrollArea className="flex-1 mb-4">
+//                                                 <div className="space-y-4 p-4">
+//                                                     {messages.map((message) => (
+//                                                         <div
+//                                                             key={message.id}
+//                                                             className={`max-w-[80%] ${
+//                                                                 message.from_id === userId
+//                                                                     ? 'ml-auto bg-blue-100'
+//                                                                     : 'mr-auto bg-gray-100'
+//                                                             } rounded-lg p-3 shadow-sm`}
+//                                                         >
+//                                                             <p>{message.message}</p>
+//                                                             <small className="text-xs opacity-70">
+//                                                                 {new Date(message.created_at).toLocaleString()}
+//                                                             </small>
+//                                                         </div>
+//                                                     ))}
+//                                                     <div ref={messagesEndRef} />
+//                                                 </div>
+//                                             </ScrollArea>
+//                                             <form onSubmit={handleSendMessage} className="flex gap-2">
+//                                                 <Input
+//                                                     value={newMessage}
+//                                                     onChange={(e) => setNewMessage(e.target.value)}
+//                                                     placeholder="Type your message..."
+//                                                     className="flex-1"
+//                                                     disabled={isLoading}
+//                                                 />
+//                                                 <Button 
+//                                                     type="submit" 
+//                                                     disabled={isLoading || !newMessage.trim()}
+//                                                     className="bg-primary hover:bg-primary/90"
+//                                                 >
+//                                                     Send
+//                                                 </Button>
+//                                             </form>
+//                                         </>
+//                                     )}
+//                                 </>
+//                             ) : (
+//                                 <div className="h-full flex items-center justify-center text-muted-foreground">
+//                                     Select a {activeTab === 'admins' ? 'admin' : 'user'} to start messaging
+//                                 </div>
+//                             )}
+//                         </CardContent>
+//                     </Card>
+//                 </div>
+//             </Tabs>
+//         </div>
+//     );
+// };
+
+// export default AgentMessages;

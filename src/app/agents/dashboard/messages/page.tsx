@@ -1,9 +1,9 @@
-import React from 'react'
-import MailPage from '@/features/agent/dashboard/components/MailPage'
+import React from 'react';
+import AgentMessages from '@/features/agent/dashboard/components/AgentMessages';
 
 const page = () => {
   return (
-    <div><MailPage/></div>
+    <div><AgentMessages/></div>
   )
 }
 
