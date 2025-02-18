@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -26,8 +26,89 @@ const Messages = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [adminId, setAdminId] = useState<number | null>(null);
     const { toast } = useToast();
-
     const { userId, isLoggedIn } = useSelector((state: RootState) => state.admin);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [messages, setMessages] = useState<any[]>([]);
+    const [messagePollingInterval, setMessagePollingInterval] = useState<NodeJS.Timeout | null>(null);
+    const [hasNewMessage, setHasNewMessage] = useState(false);
+
+    // Scroll to bottom function
+    const scrollToBottom = () => {
+        if (hasNewMessage) {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            setHasNewMessage(false);
+        }
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages, hasNewMessage]);
+
+    const getAuthHeader = () => ({
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization, X-Request-With'
+        },
+        withCredentials: true
+    });
+
+    // Function to fetch messages
+    const fetchMessages = async () => {
+        if (!selectedUser?.id || !userId) return;
+
+        try {
+            const response = await axios.get(
+                `${BASE_URL}/conversation/${selectedUser.id}`,
+                {
+                    ...getAuthHeader(),
+                    withCredentials: true
+                }
+            );
+
+            if (response.data.success && response.data.data) {
+                const newMessages = response.data.data;
+                setMessages(response.data.data);
+                scrollToBottom();
+                
+                // Check if there are new messages
+                if (messages.length < newMessages.length) {
+                    setHasNewMessage(true);
+                }
+                
+                // Sort messages by creation date in ascending order
+                const sortedMessages = newMessages.sort((a: any, b: any) => 
+                    new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                );
+                
+                setMessages(sortedMessages);
+            }
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+        }
+    };
+
+    // Set up message polling when a user is selected
+    useEffect(() => {
+        if (selectedUser?.id) {
+            // Initial fetch
+            fetchMessages();
+
+            // Set up polling every 3 seconds
+            const interval = setInterval(fetchMessages, 3000);
+            setMessagePollingInterval(interval);
+
+            // Cleanup
+            return () => {
+                if (messagePollingInterval) {
+                    clearInterval(messagePollingInterval);
+                }
+            };
+        }
+    }, [selectedUser]);
 
     useEffect(() => {
         if (!isLoggedIn || !userId) {
@@ -42,15 +123,6 @@ const Messages = () => {
 
     const BASE_URL = 'https://api.rent9ja.com.ng/api';
 
-    const getAuthHeader = () => {
-        const token = localStorage.getItem('adminToken');
-        return {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Accept': 'application/json',
-            }
-        };
-    };
 
     // Fetch users when tab, page, or search changes
     useEffect(() => {
@@ -169,41 +241,41 @@ const Messages = () => {
     };
 
     const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedUser || !userId || !newMessage.trim()) {
-        toast({
-            title: "Error",
-            description: "Missing required information to send message",
-            variant: "destructive",
-        });
-        return;
-    }
+        e.preventDefault();
+        if (!selectedUser || !userId || !newMessage.trim()) {
+            toast({
+                title: "Error",
+                description: "Missing required information to send message",
+                variant: "destructive",
+            });
+            return;
+        }
 
-    try {
-        setIsLoading(true);
-        
-        const messageParams = {
-            from_id: userId,
-            to_id: selectedUser.id,
-            message: newMessage.trim()
-        };
+        try {
+            setIsLoading(true);
+            
+            const messageParams = {
+                from_id: userId,
+                to_id: selectedUser.id,
+                message: newMessage.trim()
+            };
 
-        // If we have a current conversation, update it, otherwise create a new one
-        const conversationId = currentConversation?.id || null;
-        const updatedConversation = await conversationApi.sendMessage(conversationId, messageParams);
-        
-        setCurrentConversation(updatedConversation);
-        setNewMessage('');
-    } catch (error) {
-        toast({
-            title: "Error",
-            description: "Failed to send message: " + (error as any)?.message,
-            variant: "destructive",
-        });
-    } finally {
-        setIsLoading(false);
-    }
-};
+            await conversationApi.sendMessage(selectedUser.id, messageParams);
+            
+            // Set hasNewMessage to true before fetching updated messages
+            setHasNewMessage(true);
+            await fetchMessages();
+            setNewMessage('');
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to send message: " + (error as any)?.message,
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleTabChange = (value: string) => {
         setActiveTab(value);
@@ -217,17 +289,40 @@ const Messages = () => {
         return new Date(dateString).toLocaleString();
     };
 
+    const renderChatArea = () => (
+        <ScrollArea className="flex-1 mb-4 h-[calc(100vh-300px)] border rounded-md border-gray-500">
+            <div className="space-y-2 p-4">
+                {messages.map((message) => (
+                    <div
+                        key={message.id}
+                        className={`max-w-[80%] ${
+                            message.from_id === userId
+                                ? 'ml-0 bg-gray-300'
+                                : 'ml-0 bg-white'
+                        } rounded-lg p-3 border shadow-sm`}
+                    >
+                        <p>{message.message}</p>
+                        <small className="text-xs opacity-70">
+                            {formatDate(message.created_at)}
+                        </small>
+                    </div>
+                ))}
+                <div ref={messagesEndRef} />
+            </div>
+        </ScrollArea>
+    );
+
     return (
-        <div className="container mx-auto p-8">
+        <div className="container mx-auto p-4">
             <Tabs defaultValue="agents" onValueChange={handleTabChange}>
-                <TabsList className="grid w-[300px] grid-cols-2 mb-6 py-1 h-[40px] border-2 rounded-md border-black">
+                <TabsList className="grid w-[300px] grid-cols-2 mb-4 py-1 h-[40px] border-2 rounded-md border-black">
                     <TabsTrigger value="agents">Agents</TabsTrigger>
                     <TabsTrigger value="users">Users</TabsTrigger>
                 </TabsList>
 
-                <div className="grid grid-cols-3 gap-4 h-[600px]">
+                <div className="grid grid-cols-3 gap-4 h-[calc(100vh-170px)] overflow-hidden">
                     {/* Users List */}
-                    <Card className="col-span-1">
+                    <Card className="col-span-1 h-full border-none">
                         <div className="p-4">
                             <div className="relative w-full mb-4">
                                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
@@ -239,7 +334,8 @@ const Messages = () => {
                                 />
                             </div>
                         </div>
-                        <ScrollArea className="h-[450px]">
+
+                        <ScrollArea className="h-[calc(100vh-300px)]">
                             <div className="px-4">
                                 {isLoading && !currentConversation ? (
                                     <div className="text-center py-4">Loading...</div>
@@ -250,7 +346,7 @@ const Messages = () => {
                                         <div
                                             key={user.id}
                                             onClick={() => handleUserSelect(user)}
-                                            className={`p-3 cursor-pointer rounded-lg mb-2 ${
+                                            className={`p-2 cursor-pointer rounded-lg mb-2 ${
                                                 selectedUser?.id === user.id
                                                     ? 'bg-primary text-primary-foreground'
                                                     : 'hover:bg-secondary'
@@ -266,6 +362,7 @@ const Messages = () => {
                                 )}
                             </div>
                         </ScrollArea>
+
                         <div className="flex justify-between p-4 border-t">
                             <Button
                                 variant="outline"
@@ -285,41 +382,22 @@ const Messages = () => {
                     </Card>
 
                     {/* Chat Area */}
-                    <Card className="col-span-2">
-                        <CardContent className="p-4 h-[600px] flex flex-col">
+                    <Card className="col-span-2 border-none">
+                        <CardContent className="p-4 h-[500px] flex flex-col">
                             {selectedUser ? (
                                 <>
-                                    <div className="border-b pb-4 mb-4">
+                                    <div className="border-2 bg-gray-200 border-black rounded-md p-4 mb-4">
                                         <h3 className="font-medium">Chat with {selectedUser.name}</h3>
                                         <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
                                     </div>
                                     
-                                    {isLoading && !currentConversation ? (
+                                    {isLoading && messages.length === 0 ? (
                                         <div className="flex-1 flex items-center justify-center">
                                             Loading conversation...
                                         </div>
                                     ) : (
                                         <>
-                                            <ScrollArea className="flex-1 mb-4">
-                                                <div className="space-y-4">
-                                                    {currentConversation?.messages?.map((message) => (
-                                                        <div
-                                                            key={message.id}
-                                                            className={`max-w-[80%] ${
-                                                                message.senderId === selectedUser.id
-                                                                    ? 'mr-auto bg-secondary'
-                                                                    : 'ml-auto bg-primary text-primary-foreground'
-                                                            } rounded-lg p-3`}
-                                                        >
-                                                            <p>{message.content}</p>
-                                                            <small className="text-xs opacity-70">
-                                                                {formatDate(message.createdAt)}
-                                                            </small>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </ScrollArea>
-
+                                            {renderChatArea()}
                                             <form onSubmit={handleSendMessage} className="flex gap-2">
                                                 <Input
                                                     value={newMessage}
@@ -328,7 +406,7 @@ const Messages = () => {
                                                     className="flex-1"
                                                     disabled={isLoading || !userId}
                                                 />
-                                                <Button type="submit" disabled={isLoading || !userId}>
+                                                <Button type="submit" disabled={isLoading || !userId} className='bg-orange-500 text-white hover:bg-orange-600'>
                                                     Send
                                                 </Button>
                                             </form>
