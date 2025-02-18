@@ -61,12 +61,6 @@ const Header = () => {
       <div className="hidden lg:flex justify-center items-center gap-4">
         {user.isLoggedIn ? (
           <div className="flex items-center gap-4">
-            {/* <Link
-              href="/book"
-              className="bg-orange-500 text-white px-4 py-2 rounded-md"
-            >
-              Book Now!
-            </Link> */}
             
             <div className='relative'>
               <div onClick={()=>setIsUserMenu(true)} className='cursor-pointer'>

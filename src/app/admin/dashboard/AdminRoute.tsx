@@ -6,15 +6,15 @@ import { RootState } from '@/redux/store';
 
 const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const router = useRouter();
-  const { token } = useSelector((state: RootState) => state.admin);
+  const { isLoggedIn, token } = useSelector((state: RootState) => state.admin);
 
   useEffect(() => {
-    if (!token) {
-      router.push('/admin/auth/login');
+    if (!isLoggedIn || !token) {
+        router.push('/admin/login');
     }
-  }, [token, router]);
+  }, [isLoggedIn, token, router]);
 
-  if (!token) {
+  if (!isLoggedIn || !token) {
     return null;
   }
 

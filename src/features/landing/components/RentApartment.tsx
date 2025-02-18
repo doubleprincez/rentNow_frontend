@@ -35,7 +35,7 @@ export default function RentedApartments() {
 
   useEffect(() => {
     if (!isLoggedIn || !token) {
-      router.push('/login');
+      router.push('/auth/login');
       return;
     }
 

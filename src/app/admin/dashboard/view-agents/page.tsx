@@ -1,8 +1,11 @@
 import React from 'react'
+import ViewAgents from '@/features/admin/dashboard/components/ViewAgents'
 
 const page = () => {
   return (
-    <div>page</div>
+    <div className='w-full'>
+      <ViewAgents/>
+    </div>
   )
 }
 

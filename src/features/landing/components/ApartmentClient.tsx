@@ -154,11 +154,11 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="w-full h-[300px] md:h-[400px] rounded-lg overflow-hidden">
-              <Image 
+              <img 
                 src={apartment.images && Object.values(apartment.images)[0]?.preview_url || '/placeholder.jpg'}
                 alt={apartment.title}
-                width={500}
-                height={500}
+                // width={500}
+                // height={500}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -303,7 +303,7 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
                       <video 
                         controls 
                         className="w-full"
-                        src={video.preview_url}
+                        src={video.original_url}
                       >
                         Your browser does not support the video tag.
                       </video>
