@@ -102,7 +102,7 @@ const AddProperty: React.FC = () => {
 
   const getAuthToken = (): string | null => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
+      return localStorage.getItem('agentToken');
     }
     return null;
   };

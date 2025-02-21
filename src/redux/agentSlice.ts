@@ -111,7 +111,7 @@ const removeFromStorage = (key: string): void => {
 
 // Load initial state from localStorage
 const loadInitialState = (): AgentState => {
-    const token = getFromStorage('token');
+    const token = getFromStorage('agentToken');
     const savedState = getFromStorage('agentState');
     
     if (token && savedState) {
@@ -170,7 +170,7 @@ export const loginAgent = createAsyncThunk(
                 }
             };
 
-            setToStorage('token', data.token);
+            setToStorage('agentToken', data.token);
             setToStorage('agentState', JSON.stringify(persistState));
 
             return {
@@ -189,7 +189,7 @@ const agentSlice = createSlice({
     reducers: {
         logout: (state) => {
             Object.assign(state, initialState);
-            removeFromStorage('token');
+            removeFromStorage('agentToken');
             removeFromStorage('agentState');
         },
         initializeFromStorage: (state) => {

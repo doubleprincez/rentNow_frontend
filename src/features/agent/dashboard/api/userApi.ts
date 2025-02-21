@@ -32,7 +32,7 @@ export interface PaginatedResponse {
 
 // API functions
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token'); 
   return {
     Authorization: `Bearer ${token}`,
     Accept: 'application/json',
@@ -40,6 +40,11 @@ const getAuthHeaders = () => {
 };
 
 export const getUsers = async (page = 1, search = '', accountType: 'users' | 'agents' = 'users') => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    throw new Error('No authentication token found');
+  }
+  
   const response = await axios.get<{ data: PaginatedResponse }>(
     `${BASE_URL}/users`,
     {
