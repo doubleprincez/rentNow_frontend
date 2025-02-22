@@ -87,11 +87,19 @@ const AgentLand: React.FC = () => {
                         commissions, connect with renters, and grow your portfolio with our
                         advanced tools and support.
                     </p>
-                    <Link href='/agents/auth/register'>
-                        <button className="mt-6 bg-white text-orange-500 font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-gray-100">
-                            Become an Agent
-                        </button>
-                    </Link>
+                    <div className="w-full flex flex-col md:flex-row gap-2 justify-center items-center">
+                        <Link href='/'>
+                            <button className="mt-6 text-white bg-orange-500 font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-gray-500">
+                                Back to Home
+                            </button>
+                        </Link>
+
+                        <Link href='/agents/auth/register'>
+                            <button className="mt-6 bg-white text-orange-500 font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-gray-100">
+                                Become an Agent
+                            </button>
+                        </Link>
+                    </div>
                 </motion.div>
             </div>
         </section>

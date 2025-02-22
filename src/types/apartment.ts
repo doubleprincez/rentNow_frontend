@@ -24,6 +24,7 @@ export interface Image {
   }
   
   export interface Apartment {
+    agent_id: number;
     id: number;
     agent: string;
     my_apartment: boolean;
