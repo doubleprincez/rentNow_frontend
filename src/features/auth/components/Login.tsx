@@ -17,22 +17,37 @@ import { login } from "@/redux/userSlice";
 import { useAlert } from '@/contexts/AlertContext';
 
 interface LoginResponse {
-  success: boolean;
-  message: string;
-  token: string;
-  user: {
-    id: number;
-    name: string;
-    email: string;
-    phone: string | null;
-    account: {
+    success: boolean;
+    message: string;
+    token: string;
+    user: {
+      id: number;
       name: string;
-      slug: string;
+      email: string;
+      phone: string | null;
+      account: {
+        name: string;
+        slug: string;
+      };
+      apartments: Array<any>;
+      rented_apartments: Array<any>;
     };
-    apartments: Array<any>;
-    rented_apartments: Array<any>;
-  };
-}
+  }
+  
+  interface MeResponse {
+    success: boolean;
+    message: string;
+    data: {
+      id: number;
+      name: string;
+      email: string;
+      phone: string | null;
+      account: {
+        name: string;
+        slug: string;
+      };
+    };
+  }
 
 const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
     const { showAlert } = useAlert();
@@ -53,11 +68,51 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
         });
     };
 
+    const handleLoginResponse = (data: LoginResponse) => {
+        const nameParts = data.user.name.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+    
+        return {
+            firstName,
+            lastName,
+            email: data.user.email,
+            phoneNumber: data.user.phone ? parseInt(data.user.phone) : null,
+            userId: data.user.id, 
+            accountType: data.user.account.slug,
+            apartments: data.user.apartments || [],
+            rentedApartments: data.user.rented_apartments || []
+        };
+    };
+    
+    const handleMeResponse = (data: MeResponse) => {
+        const nameParts = data.data.name.split(' ');
+        const firstName = nameParts[0] || '';
+        const lastName = nameParts.slice(1).join(' ') || '';
+    
+        return {
+            firstName,
+            lastName,
+            email: data.data.email,
+            phoneNumber: data.data.phone ? parseInt(data.data.phone) : null,
+            userId: data.data.id, 
+            accountType: data.data.account.slug,
+            apartments: [], 
+            rentedApartments: [] 
+        };
+    };
+    
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
+            // Log the request
+            console.log('Sending login request with:', {
+                email: formData.email,
+                password: '***'
+            });
+
             const response = await fetch('https://api.rent9ja.com.ng/api/login', {
                 method: 'POST',
                 headers: {
@@ -69,45 +124,79 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                 })
             });
 
-            const data: LoginResponse = await response.json();
+            const data = await response.json();
 
             if (!response.ok) {
                 throw new Error(data.message || 'Login failed');
             }
 
-            // Store token in localStorage
             localStorage.setItem('token', data.token);
 
-            // Extract first and last name from full name
             const nameParts = data.user.name.split(' ');
             const firstName = nameParts[0] || '';
             const lastName = nameParts.slice(1).join(' ') || '';
 
+            // Create the user data object
+            const userData = {
+                firstName,
+                lastName,
+                email: data.user.email,
+                phoneNumber: data.user.phone ? parseInt(data.user.phone) : null,
+                userId: data.user.id, // Make sure this is being set
+                accountType: data.user.account.slug,
+                apartments: data.user.apartments || [],
+                rentedApartments: data.user.rented_apartments || []
+            };
+
             // Dispatch login action with user details
-            dispatch(
-                login({
-                    firstName,
-                    lastName,
-                    email: data.user.email,
-                    phoneNumber: data.user.phone ? parseInt(data.user.phone) : null,
-                    // Add additional user details as needed
-                    userId: data.user.id,
-                    accountType: data.user.account.slug,
-                    apartments: data.user.apartments,
-                    rentedApartments: data.user.rented_apartments
-                })
-            );
+            dispatch(login(userData));
             
             showAlert("Login Successful", "success");
             router.push("/");
+
+            // Verify the data was stored properly
+            setTimeout(() => {
+                const storedState = localStorage.getItem('userState');
+            }, 100);
+
         } catch (error: any) {
-            console.error('Login error:', error);
             showAlert(
                 error.message || "Login failed. Please try again.",
                 "error"
             );
         } finally {
             setIsLoading(false);
+        }
+    };
+    
+    // Example function to fetch user data using the token
+    const fetchUserData = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) throw new Error('No token found');
+    
+            const response = await fetch('https://api.rent9ja.com.ng/api/auth/me', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+    
+            const data: MeResponse = await response.json();
+    
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to fetch user data');
+            }
+    
+            // Process the ME response
+            const userData = handleMeResponse(data);
+            
+            // Dispatch login action with processed user details
+            dispatch(login(userData));
+    
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+            // Handle error appropriately
         }
     };
 

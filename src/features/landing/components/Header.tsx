@@ -28,6 +28,15 @@ const Header = () => {
     dispatch(logout());
   };
 
+  const getUserIdDisplay = () => {
+    const storedState = localStorage.getItem('userState');
+    const parsedState = storedState ? JSON.parse(storedState) : null;
+    const storedUserId = parsedState?.userId;
+    
+    const effectiveUserId = user.userId || storedUserId;
+    return effectiveUserId ? ` (ID: ${effectiveUserId})` : '';
+};
+
   return (
     <div className="fixed top-0 left-0 w-full bg-black bg-opacity-70 backdrop-blur-md z-[99] px-2 py-2 md:px-4 md:py-4 flex justify-between items-center">
       <Link href="/" className="">
@@ -83,9 +92,9 @@ const Header = () => {
                       Welcome, {user.firstName} {user.lastName}
                     </span>
 
-                    <Link href='/my-apartments' className="mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                    {/* <Link href='/my-apartments' className="mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
                       My Apartments
-                    </Link>
+                    </Link> */}
 
                     <button
                       onClick={handleLogout}
@@ -166,9 +175,9 @@ const Header = () => {
                     <span className="text-orange-500 font-semibold">
                       Welcome, {user.firstName}
                     </span>
-                    <Link href='' className="flex items-center gap-2 bg-white border border-red-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                    {/* <Link href='' className="flex items-center gap-2 bg-white border border-red-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
                       My Apartments
-                    </Link>
+                    </Link> */}
                     <button
                       onClick={handleLogout}
                       className="flex items-center gap-2 bg-transparent border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300"

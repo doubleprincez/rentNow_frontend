@@ -9,6 +9,7 @@ import type { Apartment } from '@/types/apartment';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
+import ChatDialog from '@/features/landing/components/ChatDialog';
 
 interface ClientProps {
   params: { slug: string };
@@ -211,60 +212,67 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
                 <span className="text-gray-600">Amenities: {apartment.amenities?.length ? apartment.amenities.join(', ') : 'None listed'}</span>
               </div>
 
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                    Book Apartment
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>Book Apartment</DialogTitle>
-                  </DialogHeader>
-                  {!isLoggedIn ? (
-                    <div className="text-center py-4">
-                      <p className="text-gray-600 mb-4">
-                        Please log in to book a viewing session.
-                      </p>
-                      <Button 
-                        onClick={() => router.push('/login')}
-                        className="bg-orange-500 hover:bg-orange-600 text-white"
-                      >
-                        Go to Login
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="grid gap-4 py-4">
-                      <div className="grid gap-2">
-                        <label htmlFor="start-date" className="text-sm font-medium">
-                          Start Date
-                        </label>
-                        <Input
-                          id="start-date"
-                          type="date"
-                          value={bookingData.start}
-                          onChange={(e) => setBookingData(prev => ({ ...prev, start: e.target.value }))}
-                          className="col-span-3"
-                        />
-                      </div>
-                      
-                      <div className="bg-orange-50 p-3 rounded-md mt-2">
-                        <p className="text-sm text-orange-800">
-                          The booking duration will be {apartment.duration} from the selected start date.
+              <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-2'>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+                      Book Apartment
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Book Apartment</DialogTitle>
+                    </DialogHeader>
+                    {!isLoggedIn ? (
+                      <div className="text-center py-4">
+                        <p className="text-gray-600 mb-4">
+                          Please log in to book a viewing session.
                         </p>
+                        <Button 
+                          onClick={() => router.push('/login')}
+                          className="bg-orange-500 hover:bg-orange-600 text-white"
+                        >
+                          Go to Login
+                        </Button>
                       </div>
+                    ) : (
+                      <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                          <label htmlFor="start-date" className="text-sm font-medium">
+                            Start Date
+                          </label>
+                          <Input
+                            id="start-date"
+                            type="date"
+                            value={bookingData.start}
+                            onChange={(e) => setBookingData(prev => ({ ...prev, start: e.target.value }))}
+                            className="col-span-3"
+                          />
+                        </div>
+                        
+                        <div className="bg-orange-50 p-3 rounded-md mt-2">
+                          <p className="text-sm text-orange-800">
+                            The booking duration will be {apartment.duration} from the selected start date.
+                          </p>
+                        </div>
 
-                      <Button 
-                        onClick={handleBooking} 
-                        disabled={isBooking || !bookingData.start}
-                        className="bg-orange-500 hover:bg-orange-600 text-white w-full mt-2"
-                      >
-                        {isBooking ? 'Booking...' : 'Confirm Booking'}
-                      </Button>
-                    </div>
-                  )}
-                </DialogContent>
-              </Dialog>
+                        <Button 
+                          onClick={handleBooking} 
+                          disabled={isBooking || !bookingData.start}
+                          className="bg-orange-500 hover:bg-orange-600 text-white w-full mt-2"
+                        >
+                          {isBooking ? 'Booking...' : 'Confirm Booking'}
+                        </Button>
+                      </div>
+                    )}
+                  </DialogContent>
+                </Dialog>
+
+                <ChatDialog 
+                  agentId={apartment.agent_id} 
+                  agentName={apartment.agent}
+                />
+              </div>
 
               <div className="mt-4">
                 <h2 className="text-xl font-semibold mb-2">Description</h2>

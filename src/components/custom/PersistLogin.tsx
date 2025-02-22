@@ -16,6 +16,7 @@ export const PersistLogin = () => {
                     lastName: userData.lastName,
                     email: userData.email,
                     phoneNumber: userData.phoneNumber,
+                    userId: userData.userId
                 }));
             }
         }
