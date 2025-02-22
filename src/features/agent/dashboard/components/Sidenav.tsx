@@ -34,11 +34,11 @@ const Sidenav = () => {
             link: "/agents/dashboard/messages",
             icon: Mail,
         },
-        {
-            name: "Profile", 
-            link: "/agents/dashboard/profile",
-            icon: CircleUser,
-        },
+        // {
+        //     name: "Profile", 
+        //     link: "/agents/dashboard/profile",
+        //     icon: CircleUser,
+        // },
         {
             name: "Go to Rent9ja", 
             link: "/",
