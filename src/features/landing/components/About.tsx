@@ -11,13 +11,13 @@ import Subscribe from './Subscribe';
 const About = () => {
   return (
     <div>
-        <div className="py-20 flex justify-center items-center bg-gray-100">
+        <div className="pt-28 pb-10 lg:py-20 flex justify-center items-center bg-gray-100">
             <motion.h1
             variants={fadeIn('up', 0.1)}
             initial='hidden'
             whileInView={'show'}
             viewport={{ once: false, amount: 0.1 }}
-            className="text-[10rem] font-extrabold bg-clip-text text-transparent"
+            className="text-[2.3rem] lg:text-[10rem] font-extrabold bg-clip-text text-transparent"
             style={{
             backgroundImage: `url(${House.src})`,
             backgroundSize: 'cover',
@@ -46,7 +46,7 @@ const About = () => {
                     Who We Are
                 </h2>
                 <p className='text-gray-700 text-[.9em]'>
-                    Welcome to <span className="font-bold text-orange-500">RentNaija</span>, 
+                    Welcome to <span className="font-bold text-orange-800">RentNaija</span>, 
                     your trusted platform for finding the perfect home. Whether you&apos;re 
                     looking for a cozy apartment, a spacious family house, or a luxury 
                     rental, we are here to connect you with the best options tailored to 
