@@ -19,7 +19,7 @@ export async function GET() {
             }
         });
     } catch (error: any) {
-        console.error('Error fetching apartments:', error);
+        //console.error('Error fetching apartments:', error);
         return NextResponse.json(
             { error: error.response?.data?.message || 'Failed to fetch apartments' },
             { status: error.response?.status || 500 }

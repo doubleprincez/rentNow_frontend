@@ -50,7 +50,7 @@ const ProfilePage: React.FC = () => {
       if (!token || !userId) {
         setError('Please log in to view your profile.');
         setIsLoading(false);
-        console.log(`USER-ID: ${userId}`)
+        //console.log(`USER-ID: ${userId}`)
         return;
       }
 

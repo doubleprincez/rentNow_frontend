@@ -80,7 +80,7 @@ const Header = () => {
                   <motion.div
                   initial={{x:0, opacity:0}}
                   animate={{x:0, opacity:1}}
-                  className='w-[200px] flex flex-col gap-4 py-6 px-4 rounded-l-xl fixed top-0 right-0 h-screen z-50 bg-black/90'
+                  className='w-[250px] flex flex-col gap-4 py-6 px-4 rounded-l-xl fixed top-0 right-0 h-screen z-50 bg-black/90'
                   >
                     <div className='w-full justify-end flex'>
                       <div onClick={()=>setIsUserMenu(false)} className='cursor-pointer border-2 rounded-full w-10 h-10 flex items-center justify-center'>
@@ -92,9 +92,19 @@ const Header = () => {
                       Welcome, {user.firstName} {user.lastName}
                     </span>
 
-                    {/* <Link href='/my-apartments' className="mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
-                      My Apartments
-                    </Link> */}
+                    {String(user.accountType) === 'agents' && (
+                        <Link href='/agents/dashboard' className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                          Go to Agent Dashboard
+                        </Link>
+                      )
+                    }
+
+                    {String(user.accountType) === 'admins' && (
+                        <Link href='/admin/dashboard' className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                          Go to Admin Dashboard
+                        </Link>
+                      )
+                    }
 
                     <button
                       onClick={handleLogout}

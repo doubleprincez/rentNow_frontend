@@ -46,7 +46,7 @@ export const rentApi = {
       const response = await axios.get(`${BASE_URL}/rented-apartments`, authHeader());
       return response.data.data;
     } catch (error) {
-      console.error('API Error:', error);
+      //console.error('API Error:', error);
       throw new Error('Failed to fetch rent details');
     }
   },
@@ -57,7 +57,7 @@ export const rentApi = {
       const response = await axios.get(`${BASE_URL}/rented-apartment/${rentId}`, authHeader());
       return response.data.data;
     } catch (error) {
-      console.error('API Error:', error);
+      //console.error('API Error:', error);
       throw new Error('Failed to fetch rent details');
     }
   },
@@ -67,7 +67,7 @@ export const rentApi = {
     try {
       await axios.delete(`${BASE_URL}/rented-apartment/${rentId}`, authHeader());
     } catch (error) {
-      console.error('API Error:', error);
+      //console.error('API Error:', error);
       throw new Error('Failed to archive rent');
     }
   },
@@ -77,7 +77,7 @@ export const rentApi = {
     try {
       await axios.post(`${BASE_URL}/rented-apartment/${rentId}/activate`, {}, authHeader());
     } catch (error) {
-      console.error('API Error:', error);
+      //console.error('API Error:', error);
       throw new Error('Failed to activate rent');
     }
   },

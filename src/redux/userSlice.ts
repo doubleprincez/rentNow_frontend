@@ -36,9 +36,6 @@ const loadState = (): UserState => {
             if (savedState) {
                 const parsedState = JSON.parse(savedState);
                 
-                // Log the parsed state for debugging
-                console.log('Parsed state from localStorage:', parsedState);
-                
                 // Ensure userId is properly preserved
                 const userId = parsedState.userId !== undefined ? Number(parsedState.userId) : null;
                 
@@ -54,9 +51,8 @@ const loadState = (): UserState => {
                 };
             }
         } catch (error) {
-            console.error('Error loading state:', error);
-            // Add more detailed error logging
-            console.error('LocalStorage content:', localStorage.getItem('userState'));
+            //console.error('Error loading state:', error);
+            //console.error('LocalStorage content:', localStorage.getItem('userState'));
         }
     }
     return initialState;

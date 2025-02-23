@@ -22,10 +22,10 @@ const ForgetPwd = () => {
     setIsLoading(true);
     try {
       const response = await axios.post("https://api.rent9ja.com.ng/api/forgot-password", { email });
-      console.log("Response:", response.data);
+      //console.log("Response:", response.data);
       setStep(2);
     } catch (error) {
-      console.error("Error sending email:", error);
+      //console.error("Error sending email:", error);
       alert("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);

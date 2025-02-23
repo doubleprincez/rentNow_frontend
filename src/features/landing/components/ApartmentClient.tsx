@@ -39,7 +39,7 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
         fetchApartment();
       }
     } catch (error) {
-      console.error('Error parsing apartment data:', error);
+      //console.error('Error parsing apartment data:', error);
       fetchApartment();
     }
   }, [params.slug, searchParams]);
@@ -54,7 +54,7 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
         setApartment(apt || null);
       }
     } catch (error) {
-      console.error('Error fetching apartment:', error);
+      //console.error('Error fetching apartment:', error);
     } finally {
       setIsLoading(false);
     }
@@ -115,7 +115,7 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
         approved: true
       };
   
-      console.log('Sending booking payload:', bookingPayload); 
+      //console.log('Sending booking payload:', bookingPayload); 
   
       const response = await fetch('https://api.rent9ja.com.ng/api/rented-apartment', {
         method: 'POST',
@@ -134,7 +134,7 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
         alert(errorData.message || 'Failed to book viewing session. Please try again.');
       }
     } catch (error) {
-      console.error('Error booking viewing session:', error);
+      //console.error('Error booking viewing session:', error);
       alert('Failed to book viewing session. Please try again.');
     } finally {
       setIsBooking(false);
@@ -169,7 +169,7 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
               
               <div className="flex items-center gap-2">
                 <User className="text-orange-500" />
-                <span className="text-gray-600">Agent: {apartment.agent}</span>
+                <span className="text-gray-600">{apartment.agent_type}: {apartment.agent}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -307,10 +307,10 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
                         <div className="text-orange-500">Click to play video</div>
                       </div>
                     </DialogTrigger>
-                    <DialogContent className="max-w-4xl">
+                    <DialogContent className="max-w-4xl flex items-center justify-center p-0 bg-black border-none">
                       <video 
                         controls 
-                        className="w-full"
+                        className="w-auto h-auto object-cover"
                         src={video.original_url}
                       >
                         Your browser does not support the video tag.

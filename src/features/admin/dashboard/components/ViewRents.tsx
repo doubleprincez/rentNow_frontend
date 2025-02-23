@@ -39,7 +39,7 @@ const ViewRents = () => {
       const data = await rentApi.getAllRents();
       setRentData(data);
     } catch (error) {
-      console.error('Fetch Error:', error);
+      //console.error('Fetch Error:', error);
       toast({
         variant: "destructive",
         title: "Error",

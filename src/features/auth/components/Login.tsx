@@ -107,11 +107,10 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
         setIsLoading(true);
 
         try {
-            // Log the request
-            console.log('Sending login request with:', {
-                email: formData.email,
-                password: '***'
-            });
+            // console.log('Sending login request with:', {
+            //     email: formData.email,
+            //     password: '***'
+            // });
 
             const response = await fetch('https://api.rent9ja.com.ng/api/login', {
                 method: 'POST',
@@ -150,7 +149,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
 
             // Dispatch login action with user details
             dispatch(login(userData));
-            
+            //console.log(userData)
             showAlert("Login Successful", "success");
             router.push("/");
 
@@ -195,7 +194,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
             dispatch(login(userData));
     
         } catch (error) {
-            console.error('Error fetching user data:', error);
+            //console.error('Error fetching user data:', error);
             // Handle error appropriately
         }
     };
@@ -313,13 +312,22 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                     </div>
                 </form>
 
+                <div className="w-full flex flex-col md:flex-row gap-2 px-2">
+                    <Link 
+                    href='/agents/auth/login'
+                    className="w-full bg-green-600 hover:bg-green-600/80 text-sm text-white font-semibold text-center px-4 py-2 rounded-md"
+                    >
+                        Sign in as Agent
+                    </Link>
+                </div>
+
                 <div className="flex justify-center items-center gap-2 w-full">
                     <div className="h-[1px] w-full bg-gray-400 mt-1"></div>
                     <span className="text-gray-500 font-semibold text-[.9em]">or</span>
                     <div className="h-[1px] w-full bg-gray-400 mt-1"></div>
                 </div>
 
-                <div className="flex flex-col md:flex-row gap-2 px-2">
+                {/* <div className="flex flex-col md:flex-row gap-2 px-2">
                     <Button className="w-full flex justify-start items-center gap-2 px-4 border-[1px] border-gray-300 hover:border-main duration-150 ease-in-out">
                     <GoogleIcon />
                     <span className="text-black font-semibold text-[.9em]">
@@ -330,10 +338,10 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                     <Button className="w-full flex justify-start items-center gap-2 px-4 border-[1px] border-gray-300 hover:border-main duration-150 ease-in-out">
                     <AppleIcon />
                     <span className="text-black font-semibold text-[.9em]">
-                        Sign in with Apple
+                        
                     </span>
                     </Button>
-                </div>
+                </div> */}
 
                 <div className="text-center text-[.8em] font-bold">
                     <p>
@@ -343,6 +351,9 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                     </button>
                     </p>
                 </div>
+
+                
+
                 </motion.div>
             </div>
         </Dialog>

@@ -66,7 +66,7 @@ export default function RentedApartments() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
-      console.error('Error fetching rented apartments:', err);
+      //console.error('Error fetching rented apartments:', err);
     } finally {
       setIsLoading(false);
     }

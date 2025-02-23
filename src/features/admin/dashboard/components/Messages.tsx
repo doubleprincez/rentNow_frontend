@@ -86,7 +86,7 @@ const Messages = () => {
                 setMessages(sortedMessages);
             }
         } catch (error) {
-            console.error('Error fetching messages:', error);
+            //console.error('Error fetching messages:', error);
         }
     };
 

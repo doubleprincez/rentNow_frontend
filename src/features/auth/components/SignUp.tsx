@@ -95,7 +95,7 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
     };
 
     try {
-      console.log('Sending registration request:', requestData); // Debug log
+      //console.log('Sending registration request:', requestData); // Debug log
       const response = await axios.post('/api/register', requestData);
       
       //console.log('Registration response:', response.data); // Debug log
@@ -257,18 +257,6 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
           <div className="h-[1px] w-full bg-gray-400 mt-1"></div>
           <span className="text-gray-500 font-semibold text-[.9em]">or</span>
           <div className="h-[1px] w-full bg-gray-400 mt-1"></div>
-        </div>
-
-        <div className="flex flex-col md:flex-row gap-2 px-2">
-          <Button className="w-full flex justify-start items-center gap-2 px-4 border-[1px] border-gray-300 hover:border-main duration-150 ease-in-out">
-            <GoogleIcon />
-            <span className="text-black font-semibold text-[.9em]">Sign in with Google</span>
-          </Button>
-
-          <Button className="w-full flex justify-start items-center gap-2 px-4 border-[1px] border-gray-300 hover:border-main duration-150 ease-in-out">
-            <AppleIcon />
-            <span className="text-black font-semibold text-[.9em]">Sign in with Apple</span>
-          </Button>
         </div>
 
         <div className="text-center text-[.8em] font-bold">
