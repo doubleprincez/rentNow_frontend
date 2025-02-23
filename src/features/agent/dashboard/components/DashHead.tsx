@@ -23,7 +23,7 @@ const DashHead = () => {
 
   return (
     <div className='relative w-full h-full px-4 flex justify-between items-center bg-gradient-to-l from-green-500 to-black/85'>
-      <div className='lg:hidden flex flex-col w-full leading-5'>
+      <div className='lg:hidden flex flex-col w-full leading-[3px]'>
         <div>
           <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
         </div>
@@ -34,7 +34,7 @@ const DashHead = () => {
         <span className='text-white'>{user.firstName}</span>
         <UserCircle2 className='text-black/80 w-12 h-12'/>
       </div>
-      <div onClick={() => setIsMenu(!isMenu)} className='block lg:hidden'>
+      {/* <div onClick={() => setIsMenu(!isMenu)} className='block lg:hidden'>
         <Menu className='text-black w-10 h-10'/>
       </div>
 
@@ -53,7 +53,7 @@ const DashHead = () => {
           </div>
           <Sidenav/>
         </motion.div>
-      )}
+      )} */}
     </div>
   );
 };

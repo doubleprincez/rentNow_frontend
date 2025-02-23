@@ -43,7 +43,7 @@ const PointContact = () => {
                 }
             } catch (error) {
                 setError('Failed to fetch apartments');
-                console.error('Error fetching apartments:', error);
+                //console.error('Error fetching apartments:', error);
             } finally {
                 setIsLoading(false);
             }
@@ -104,7 +104,7 @@ const PointContact = () => {
                                     className='w-full h-full object-cover'
                                 />
                             </div>
-                            <div className='flex flex-col gap-2'>
+                            <div className='w-[70%] h-full flex flex-col gap-2'>
                                 <p className='text-[.8em] md:text-[1em] font-semibold'>{apartment.title}</p>
                                 <div className='flex items-center gap-4'>
                                     <div className='flex items-center gap-1'>

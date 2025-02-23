@@ -71,7 +71,7 @@ const FindHomes: React.FC<FindHomesProps> = ({ initialData }) => {
         }
       } catch (error) {
         setError('Failed to fetch apartments');
-        console.error('Error fetching apartments:', error);
+        //console.error('Error fetching apartments:', error);
       } finally {
         setIsLoading(false);
       }

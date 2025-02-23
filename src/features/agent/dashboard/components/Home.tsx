@@ -28,13 +28,12 @@ interface ChartData {
   total_apartments: number;
 }
 
-// Sample data structure that matches your API response
 const generateMockData = () => {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return months.map(month => ({
     name: month,
-    total_rent: Math.floor(Math.random() * 1000),
-    total_apartments: Math.floor(Math.random() * 100)
+    total_rent: 0,
+    total_apartments: 0
   }));
 };
 
@@ -65,7 +64,7 @@ const Home = () => {
 
         if (isMounted && statsResponse.data?.success && statsResponse.data?.data) {
           setStatistics(statsResponse.data.data);
-          console.log('Statistics data:', statsResponse.data.data);
+          //console.log('Statistics data:', statsResponse.data.data);
         }
 
         // Fetch chart data
@@ -84,11 +83,11 @@ const Home = () => {
             total_apartments: values.total_apartments || 0
           }));
           setChartData(transformedData);
-          console.log('Chart data:', transformedData);
+          //console.log('Chart data:', transformedData);
         }
       } catch (err) {
         if (isMounted) {
-          console.error('Error fetching data:', err);
+          //console.error('Error fetching data:', err);
           setError('Failed to load dashboard data');
         }
       } finally {
@@ -127,10 +126,6 @@ const Home = () => {
       value: statistics?.total_views || 0 
     },
   ];
-
-//   if (loading) {
-//     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
-//   }
 
   if (error) {
     return <div className="text-red-500 p-4">{error}</div>;

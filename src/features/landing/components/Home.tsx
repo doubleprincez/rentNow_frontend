@@ -21,7 +21,7 @@ const Home: React.FC = () => {
     const [searchParams, setSearchParams] = useState({
         category: '',
         state: '',
-        country: 'NGA' // Set default country to Nigeria
+        country: 'NGA' 
     });
     const [searchResults, setSearchResults] = useState<Apartment[]>([]);
     const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
@@ -29,7 +29,6 @@ const Home: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Options for select inputs - removed countries
     const [categories, setCategories] = useState<string[]>([]);
     const [states, setStates] = useState<string[]>([]);
 
@@ -52,7 +51,7 @@ const Home: React.FC = () => {
                     setStates(uniqueStates);
                 }
             } catch (error) {
-                console.error('Error fetching options:', error);
+                //console.error('Error fetching options:', error);
             }
         };
 
@@ -222,8 +221,8 @@ const Home: React.FC = () => {
                         </p>
                     </motion.div>
                     
-                    <div className="relative z-10 flex items-center w-full h-full bg-black bg-opacity-40">
-                        <div className="w-full flex flex-col gap-6 px-2 md:px-6">
+                    <div className="relative z-10 flex items-center w-full h-full">
+                        <div className="w-full flex flex-col gap-6">
                             <motion.form
                                 onSubmit={handleSearch}
                                 variants={fadeIn('up', 0.1)}
@@ -269,7 +268,7 @@ const Home: React.FC = () => {
                                 <button 
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full px-2 py-2 h-9 md:h-12 text-[.9em] text-white rounded-md md:rounded-xl border border-gray-200 outline-none bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 transition-colors"
+                                    className="col-span-2 sm:col-span-1 w-full px-2 py-2 h-9 md:h-12 text-[.9em] text-white rounded-md md:rounded-xl border border-gray-200 outline-none bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 transition-colors"
                                 >
                                     {isLoading ? 'Searching...' : 'Search'}
                                 </button>

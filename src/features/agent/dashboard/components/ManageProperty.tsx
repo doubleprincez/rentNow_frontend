@@ -90,11 +90,11 @@ const ManageProperty: React.FC = () => {
           setCurrentPage(response.data.data.current_page);
         } else {
           setError('Invalid data format received from server');
-          console.error('Invalid response format:', response.data);
+          //console.error('Invalid response format:', response.data);
         }
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching properties:', err);
+        //console.error('Error fetching properties:', err);
         setError('Failed to load properties');
         setLoading(false);
       }
@@ -139,7 +139,7 @@ const ManageProperty: React.FC = () => {
         setProperties((prev) => prev.filter((property) => property.id !== propertyId));
         alert('Property deleted successfully!');
       } catch (err) {
-        console.error('Error deleting property:', err);
+        //console.error('Error deleting property:', err);
         alert('Failed to delete property. Please try again.');
       }
     }

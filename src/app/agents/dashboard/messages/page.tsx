@@ -6,7 +6,6 @@ const page = () => {
   return (
     <div className='w-full'>
       <Messages/>
-      {/* <AgentMessages/> */}
     </div>
   )
 }

@@ -88,7 +88,7 @@ const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
       setConversationId(data.id);
       return data.id;
     } catch (error) {
-      console.error('Error starting conversation:', error);
+      //console.error('Error starting conversation:', error);
       return null;
     }
   };
@@ -120,7 +120,7 @@ const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
         }
       }
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      //console.error('Error fetching messages:', error);
     } finally {
       if (isInitialFetch) {
         setInitialFetchDone(true);
@@ -243,7 +243,7 @@ const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
                       className={`flex ${message.from_id === userId?.toString() ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
-                        className={`max-w-[80%] p-3 rounded-lg ${
+                        className={`max-w-[80%] p-3 rounded-lg text-base ${
                           message.from_id === userId?.toString()
                             ? 'bg-orange-500 text-white'
                             : 'bg-gray-100 text-gray-800'

@@ -24,6 +24,7 @@ export interface Image {
   }
   
   export interface Apartment {
+    agent_type: string;
     agent_id: number;
     id: number;
     agent: string;
