@@ -23,16 +23,16 @@ const DashHead = () => {
 
   return (
     <div className='relative w-full h-full px-4 flex justify-between items-center bg-gradient-to-l from-green-500 to-black/85'>
-      <div className='lg:hidden flex flex-col w-full leading-[3px]'>
+      <div className='lg:hidden flex flex-col w-full leading-[1px] md:leading-[3px]'>
         <div>
-          <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
+          <Image src={Logo} alt='logo' width={500} height={500} className='w-[90px] md:w-[120px] h-[50px] object-contain'/>
         </div>
-        <span className='ml-[120px] text-[.8em] text-white/90'>Agent</span>
+        <span className='ml-[90px] md:ml-[120px] text-[.7em] md:text-[.8em] text-white/90'>Agent</span>
       </div>
 
       <div className='w-full flex items-center justify-end gap-3'>
         <span className='text-white'>{user.firstName}</span>
-        <UserCircle2 className='text-black/80 w-12 h-12'/>
+        <UserCircle2 className='text-black/80 w-9 md:w-12 h-9 md:h-12'/>
       </div>
       {/* <div onClick={() => setIsMenu(!isMenu)} className='block lg:hidden'>
         <Menu className='text-black w-10 h-10'/>

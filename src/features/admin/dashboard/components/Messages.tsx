@@ -12,6 +12,7 @@ import { getUsers, User } from '../api/userApi';
 import axios from 'axios';
 import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 const Messages = () => {
     const [activeTab, setActiveTab] = useState('agents');
@@ -93,14 +94,11 @@ const Messages = () => {
     // Set up message polling when a user is selected
     useEffect(() => {
         if (selectedUser?.id) {
-            // Initial fetch
             fetchMessages();
 
-            // Set up polling every 3 seconds
             const interval = setInterval(fetchMessages, 3000);
             setMessagePollingInterval(interval);
 
-            // Cleanup
             return () => {
                 if (messagePollingInterval) {
                     clearInterval(messagePollingInterval);
@@ -318,8 +316,9 @@ const Messages = () => {
                     <TabsTrigger value="agents">Agents</TabsTrigger>
                     <TabsTrigger value="users">Users</TabsTrigger>
                 </TabsList>
-
-                <div className="grid grid-cols-3 gap-4 h-[calc(100vh-170px)] overflow-hidden">
+                
+                {/* -----WEB CHAT---- */}
+                <div className="hidden md:grid grid-cols-3 gap-4 h-[calc(100vh-170px)] overflow-hidden">
                     {/* Users List */}
                     <Card className="col-span-1 h-full border-none">
                         <div className="p-4">
@@ -380,8 +379,8 @@ const Messages = () => {
                         </div>
                     </Card>
 
-                    {/* Chat Area */}
-                    <Card className="col-span-2 border-none">
+                    {/* WEB----- Chat Area */}
+                    <Card className="hidden md:grid md:col-span-2 border-none">
                         <CardContent className="p-4 h-[500px] flex flex-col">
                             {selectedUser ? (
                                 <>
@@ -420,6 +419,112 @@ const Messages = () => {
                         </CardContent>
                     </Card>
                 </div>
+
+
+                {/* ----MOBILE CHAT----- */}
+                <Dialog>
+                    <div className="md:hidden grid grid-cols-3 gap-4 h-[calc(100vh-170px)] overflow-hidden">
+                        {/* Users List */}
+                        <Card className="col-span-3 h-full border-none">
+                            <div className="p-4">
+                                <div className="relative w-full mb-4">
+                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <Input
+                                        placeholder="Search by name or email..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="pl-8"
+                                    />
+                                </div>
+                            </div>
+
+                            <ScrollArea className="h-[calc(100vh-300px)]">
+                                <div className="px-4">
+                                    {isLoading && !currentConversation ? (
+                                        <div className="text-center py-4">Loading...</div>
+                                    ) : users.length === 0 ? (
+                                        <div className="text-center py-4">No users found</div>
+                                    ) : (
+                                        users.map((user) => (
+                                            <DialogTrigger>
+                                                <div
+                                                    key={user.id}
+                                                    onClick={() => handleUserSelect(user)}
+                                                    className={`p-2 cursor-pointer rounded-lg mb-2 ${
+                                                        selectedUser?.id === user.id
+                                                            ? 'bg-primary text-primary-foreground'
+                                                            : 'hover:bg-secondary'
+                                                    }`}
+                                                >
+                                                    <h3 className="font-medium">{user.name}</h3>
+                                                    <p className="text-sm opacity-70">{user.email}</p>
+                                                    {user.phone && (
+                                                        <p className="text-sm opacity-70">{user.phone}</p>
+                                                    )}
+                                                </div>
+                                            </DialogTrigger>
+                                        ))
+                                    )}
+                                </div>
+                            </ScrollArea>
+
+                            <div className="flex justify-between p-4 border-t">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                                    disabled={currentPage === 1}
+                                >
+                                    Previous
+                                </Button>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    Next
+                                </Button>
+                            </div>
+                        </Card>
+
+                        {/* WEB----- Chat Area */}
+                        <DialogContent className='p-0'>
+                            <Card className="p-1 border-none">
+                                <CardContent className="p-4 h-[500px] flex flex-col">
+                                    {selectedUser && (
+                                        <>
+                                            <div className="border-2 bg-gray-200 border-black rounded-md p-4 mb-4">
+                                                <h3 className="font-medium">Chat with {selectedUser.name}</h3>
+                                                <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
+                                            </div>
+                                            
+                                            {isLoading && messages.length === 0 ? (
+                                                <div className="flex-1 flex items-center justify-center">
+                                                    Loading conversation...
+                                                </div>
+                                            ) : (
+                                                <>
+                                                    {renderChatArea()}
+                                                    <form onSubmit={handleSendMessage} className="flex gap-2">
+                                                        <Input
+                                                            value={newMessage}
+                                                            onChange={(e) => setNewMessage(e.target.value)}
+                                                            placeholder="Type your message..."
+                                                            className="flex-1 border-2 border-black py-2 h-full"
+                                                            disabled={isLoading || !userId}
+                                                        />
+                                                        <Button type="submit" disabled={isLoading || !userId} className='bg-orange-500 text-white hover:bg-orange-600'>
+                                                            Send
+                                                        </Button>
+                                                    </form>
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        </DialogContent>
+                    </div>
+                </Dialog>
             </Tabs>
         </div>
     );

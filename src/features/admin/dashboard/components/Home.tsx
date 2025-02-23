@@ -49,9 +49,9 @@ const AdminHome = () => {
       }))
     : [];
 
-  if (error) {
-    return <div className="text-red-500 p-4">{error}</div>;
-  }
+  // if (error) {
+  //   return <div className="text-red-500 p-4">{error}</div>;
+  // }
 
   return (
     <div className='w-full h-full px-1 md:px-4 py-2 md:py-4 flex flex-col gap-2 sm:gap-4'>
@@ -66,7 +66,7 @@ const AdminHome = () => {
               <div className='flex flex-col leading-6'>
                 <h1 className='text-white font-semibold text-[.7em] sm:text-[.9em]'>{item.title}</h1>
                 <span className='text-white text-[1rem] sm:text-[2rem] font-bold syne'>{item.value}</span>
-              </div>
+              </div> 
             </div>
           ))}
         </div>
@@ -75,21 +75,21 @@ const AdminHome = () => {
       <div className='w-full grid grid-cols-1 md:grid-cols-4 gap-2 sm:gap-4'>
         <div className='col-span-1 md:col-span-4 w-full h-[250px] sm:h-[400px] bg-black/80 rounded-xl shadow-md shadow-orange-600 flex items-center sm:p-4 gap-1'>
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={transformedChartData}>
+            <LineChart data={transformedChartData} margin={{ top: 20, right: 10, left: -20, bottom: -10 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
+              <XAxis dataKey="name" className='text-[.8em] md:text-[.9em]'/>
+              <YAxis className='text-[.8em] md:text-[.9em]'/>
               <Tooltip />
-              <Line 
-                type="monotone" 
-                dataKey="total_rent" 
-                stroke="#f97316" 
+              <Line
+                type="monotone"
+                dataKey="total_rent"
+                stroke="#f97316"
                 strokeWidth={2}
               />
-              <Line 
-                type="monotone" 
-                dataKey="total_apartments" 
-                stroke="#22c55e" 
+              <Line
+                type="monotone"
+                dataKey="total_apartments"
+                stroke="#22c55e"
                 strokeWidth={2}
               />
             </LineChart>
