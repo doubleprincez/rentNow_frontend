@@ -415,6 +415,16 @@ const AddProperty: React.FC = () => {
             </div>
 
             <div>
+              <label className="block text-sm font-semibold mb-2 text-white">Duration</label>
+              <input
+                type="number"
+                {...register('duration', { required: 'Duration is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+              />
+              {errors.duration && <p className="text-red-500 text-sm">{errors.duration.message}</p>}
+            </div>
+
+            <div>
               <label className="block text-sm font-semibold mb-2 text-white">Amenities</label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {AVAILABLE_AMENITIES.map((amenity) => (
