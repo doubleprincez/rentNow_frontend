@@ -17,8 +17,8 @@ const page = () => {
     <div>
       <Header/>
       <Home/>
-      <PropReq/>
-      <Howto/>
+      {/* <PropReq/> */}
+      {/* <Howto/> */}
       <ComfortLiving/>
       <PointContact/>
       {/* <MeetUs/> */}

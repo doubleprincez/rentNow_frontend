@@ -115,13 +115,13 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="py-20 flex justify-center items-center bg-gray-100">
+      <div className="pt-28 pb-10 lg:py-20 flex justify-center items-center bg-gray-100">
         <motion.h1
           variants={fadeIn('up', 0.1)}
           initial='hidden'
           whileInView={'show'}
           viewport={{ once: false, amount: 0.1 }}
-          className="text-[10rem] font-extrabold bg-clip-text text-transparent"
+          className="text-[2.3rem] lg:text-[10rem] font-extrabold bg-clip-text text-transparent"
           style={{
             backgroundImage: `url(${House.src})`,
             backgroundSize: 'cover',
@@ -132,14 +132,14 @@ const Contact = () => {
         </motion.h1>
       </div>
 
-      <div className="bg-white rounded-lg max-w-2xl mx-auto px-4 py-12">
+      <div className="bg-white rounded-lg max-w-[300px] md:max-w-2xl mx-auto px-4 md:px-4 py-6 md:py-12">
         <motion.form
           variants={fadeIn('up', 0.2)}
           initial='hidden'
           whileInView={'show'}
           viewport={{ once: false, amount: 0.1 }}
           onSubmit={handleSubmit}
-          className="space-y-6"
+          className="space-y-3 md:space-y-6"
         >
           {submitStatus.type && (
             <div className={`p-4 rounded-lg ${
