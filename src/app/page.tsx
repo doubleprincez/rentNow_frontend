@@ -11,10 +11,11 @@ import MeetUs from '@/features/landing/components/MeetUs';
 import Reviews from '@/features/landing/components/Reviews';
 import Subscribe from '@/features/landing/components/Subscribe';
 import BecomeAgent from '@/features/landing/components/BecomeAgent';
+import WhatsAppFloater from './WhatsappFloater';
 
 const page = () => {
   return (
-    <div>
+    <WhatsAppFloater>
       <Header/>
       <Home/>
       {/* <PropReq/> */}
@@ -26,7 +27,7 @@ const page = () => {
       <BecomeAgent/>
       <Subscribe/>
       <Footer/>
-    </div>
+    </WhatsAppFloater>
   )
 }
 
