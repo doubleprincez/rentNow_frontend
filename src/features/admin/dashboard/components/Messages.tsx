@@ -328,7 +328,7 @@ const Messages = () => {
                                     placeholder="Search by name or email..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="pl-8"
+                                    className="pl-8 bg-white text-black"
                                 />
                             </div>
                         </div>
@@ -401,7 +401,7 @@ const Messages = () => {
                                                     value={newMessage}
                                                     onChange={(e) => setNewMessage(e.target.value)}
                                                     placeholder="Type your message..."
-                                                    className="flex-1 border-2 border-black py-2 h-full"
+                                                    className="flex-1 border-2 border-black py-2 h-full bg-white text-black"
                                                     disabled={isLoading || !userId}
                                                 />
                                                 <Button type="submit" disabled={isLoading || !userId} className='bg-orange-500 text-white hover:bg-orange-600'>
@@ -433,7 +433,7 @@ const Messages = () => {
                                         placeholder="Search by name or email..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-8"
+                                        className="pl-8 bg-white text-black"
                                     />
                                 </div>
                             </div>
@@ -509,7 +509,7 @@ const Messages = () => {
                                                             value={newMessage}
                                                             onChange={(e) => setNewMessage(e.target.value)}
                                                             placeholder="Type your message..."
-                                                            className="flex-1 border-2 border-black py-2 h-full"
+                                                            className="flex-1 border-2 border-black py-2 h-full bg-white text-black"
                                                             disabled={isLoading || !userId}
                                                         />
                                                         <Button type="submit" disabled={isLoading || !userId} className='bg-orange-500 text-white hover:bg-orange-600'>

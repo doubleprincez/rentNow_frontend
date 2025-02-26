@@ -267,7 +267,7 @@ const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
                 onChange={(e) => setNewMessage(e.target.value)}
                 placeholder="Type your message..."
                 onKeyPress={handleKeyPress}
-                className="flex-1"
+                className="flex-1 bg-white text-black"
                 disabled={!initialFetchDone}
               />
               <Button

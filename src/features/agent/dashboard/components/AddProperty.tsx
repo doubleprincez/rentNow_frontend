@@ -213,7 +213,7 @@ const AddProperty: React.FC = () => {
     const hasVideo = data.videos.some(file => file !== null);
 
     if (!hasImage || !hasVideo) {
-      showAlert('Please upload at least one image and one video', 'error');
+      showAlert('Please upload at least one image and one video', 'info');
       return;
     }
 
@@ -340,7 +340,7 @@ const AddProperty: React.FC = () => {
               <label className="block text-sm font-semibold mb-2 text-white">Title</label>
               <input
                 {...register('title', { required: 'Title is required' })}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
               />
               {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
             </div>
@@ -350,7 +350,7 @@ const AddProperty: React.FC = () => {
               <input
                 type="number"
                 {...register('number_of_rooms')}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
               />
             </div>
 
@@ -372,7 +372,7 @@ const AddProperty: React.FC = () => {
               <input
                 type="number"
                 {...register('amount', { required: 'Amount is required' })}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
               />
               {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
             </div>
@@ -382,7 +382,7 @@ const AddProperty: React.FC = () => {
               <input
                 {...register('currency_code', { required: 'Currency code is required' })}
                 defaultValue="NGN"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
               />
               {errors.currency_code && <p className="text-red-500 text-sm">{errors.currency_code.message}</p>}
             </div>
@@ -392,7 +392,7 @@ const AddProperty: React.FC = () => {
               <input
                 type="number"
                 {...register('security_deposit')}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
               />
             </div>
           </div>
@@ -451,7 +451,7 @@ const AddProperty: React.FC = () => {
               <input
                 {...register('country_code', { required: 'Country code is required' })}
                 defaultValue="NG"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
               />
               {errors.country_code && <p className="text-red-500 text-sm">{errors.country_code.message}</p>}
             </div>
@@ -459,8 +459,8 @@ const AddProperty: React.FC = () => {
             <div>
               <label className="block text-sm font-semibold mb-2 text-white">State</label>
               <input
-                {...register('state_code', { required: 'State code is required' })}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                {...register('state_code', { required: 'State is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
               />
               {errors.state_code && <p className="text-red-500 text-sm">{errors.state_code.message}</p>}
             </div>
@@ -468,8 +468,8 @@ const AddProperty: React.FC = () => {
             <div>
               <label className="block text-sm font-semibold mb-2 text-white">City</label>
               <input
-                {...register('city_code', { required: 'City code is required' })}
-                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                {...register('city_code', { required: 'City is required' })}
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
               />
               {errors.city_code && <p className="text-red-500 text-sm">{errors.city_code.message}</p>}
             </div>
@@ -479,7 +479,7 @@ const AddProperty: React.FC = () => {
         {step === 5 && (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold mb-2 text-white">Images (At least 1 required, max 5, each &lt;3MB)</label>
+              <label className="block text-sm font-semibold mb-2 text-white">Images (At least 1 required, max 5, each &lt;30MB)</label>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {Array(MAX_FILES).fill(null).map((_, index) => (
                   <div key={`image-${index}`} className="relative group">
@@ -487,7 +487,7 @@ const AddProperty: React.FC = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleFileChange(index, 'image')}
-                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10 bg-white text-black"
                     />
                     <div className="w-full aspect-square border-2 border-gray-300 border-dashed flex items-center justify-center rounded-lg bg-gray-100 group-hover:border-orange-500 transition-all relative">
                       {imagePreview[index] ? (
@@ -511,7 +511,7 @@ const AddProperty: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-2 text-white">Videos (At least 1 required, max 5, each &lt;10MB)</label>
+              <label className="block text-sm font-semibold mb-2 text-white">Videos (At least 1 required, max 5, each &lt;80MB)</label>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {Array(MAX_FILES).fill(null).map((_, index) => (
                   <div key={`video-${index}`} className="relative group">
@@ -519,7 +519,7 @@ const AddProperty: React.FC = () => {
                       type="file"
                       accept="video/*"
                       onChange={handleFileChange(index, 'video')}
-                      className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                      className="absolute inset-0 opacity-0 cursor-pointer z-10 bg-white text-black"
                     />
                     <div className="w-full aspect-square border-2 border-gray-300 border-dashed flex items-center justify-center rounded-lg bg-gray-100 group-hover:border-orange-500 transition-all relative">
                       {videoPreview[index] ? (

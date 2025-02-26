@@ -165,7 +165,7 @@ const Messages: React.FC = () => {
                                         type="text"
                                         value={newMessage}
                                         onChange={(e) => setNewMessage(e.target.value)}
-                                        className="flex-1 p-2 border rounded"
+                                        className="flex-1 p-2 border rounded bg-white text-black"
                                         placeholder="Type your message..."
                                     />
                                     <button
@@ -257,7 +257,7 @@ const Messages: React.FC = () => {
                                             type="text"
                                             value={newMessage}
                                             onChange={(e) => setNewMessage(e.target.value)}
-                                            className="flex-1 p-2 border rounded text-sm"
+                                            className="flex-1 p-2 border rounded text-sm bg-white text-black"
                                             placeholder="Type your message..."
                                         />
                                         <button
