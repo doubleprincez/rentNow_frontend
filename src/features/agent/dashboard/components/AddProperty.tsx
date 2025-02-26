@@ -40,8 +40,8 @@ const AVAILABLE_AMENITIES = [
 ];
 
 const MAX_FILES = 5;
-const MAX_IMAGE_SIZE = 300 * 1024 * 1024;
-const MAX_VIDEO_SIZE = 1000 * 1024 * 1024;
+const MAX_IMAGE_SIZE = 30 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 80 * 1024 * 1024;
 
 const AddProperty: React.FC = () => {
   const { showAlert } = useAlert();
@@ -445,8 +445,9 @@ const AddProperty: React.FC = () => {
 
         {step === 4 && (
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold mb-2 text-white">Country Code</label>
+            {/* THIS DIV BELOW IS HIDDEN - NOT USELESS/REMOVED */}
+            <div className='hidden'> 
+              <label className="block text-sm font-semibold mb-2 text-white">Country</label>
               <input
                 {...register('country_code', { required: 'Country code is required' })}
                 defaultValue="NG"
@@ -456,7 +457,7 @@ const AddProperty: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-2 text-white">State Code</label>
+              <label className="block text-sm font-semibold mb-2 text-white">State</label>
               <input
                 {...register('state_code', { required: 'State code is required' })}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
@@ -465,7 +466,7 @@ const AddProperty: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold mb-2 text-white">City Code</label>
+              <label className="block text-sm font-semibold mb-2 text-white">City</label>
               <input
                 {...register('city_code', { required: 'City code is required' })}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
