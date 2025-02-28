@@ -12,6 +12,7 @@ import { getUsers, User } from '../api/userApi';
 import axios from 'axios';
 import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
+import {baseURL} from "@/../next.config";
 
 const Messages = () => {
     const [activeTab, setActiveTab] = useState('agents');
@@ -61,7 +62,7 @@ const Messages = () => {
 
         try {
             const response = await axios.get(
-                `${BASE_URL}/conversation/${selectedUser.id}`,
+                `${baseURL}/conversation/${selectedUser.id}`,
                 {
                     ...getAuthHeader(),
                     withCredentials: true
@@ -120,8 +121,6 @@ const Messages = () => {
         }
     }, [isLoggedIn, userId]);
 
-    const BASE_URL = 'https://api.rent9ja.com.ng/api';
-
 
     // Fetch users when tab, page, or search changes
     useEffect(() => {
@@ -153,7 +152,7 @@ const Messages = () => {
 
                 // Get admin profile to get the correct ID
                 const response = await axios.get(
-                    `${BASE_URL}/admin/profile`,
+                    `${baseURL}/admin/profile`,
                     getAuthHeader()
                 );
                 

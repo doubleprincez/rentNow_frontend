@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Send, MessageSquare, Loader2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import {baseURL} from "@/../next.config";
 
 interface ChatDialogProps {
   agentId: number;
@@ -70,7 +71,7 @@ const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
         message: newMessage.trim() || "Hello, I'm interested in this property",
       };
 
-      const response = await fetch('https://api.rent9ja.com.ng/api/conversation', {
+      const response = await fetch(baseURL+'/conversation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -102,8 +103,8 @@ const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
       }
 
       const url = conversationId 
-        ? `https://api.rent9ja.com.ng/api/conversation/${conversationId}`
-        : `https://api.rent9ja.com.ng/api/conversation/${agentId}`;
+        ? baseURL+`/conversation/${conversationId}`
+        : baseURL+`/conversation/${agentId}`;
 
       const response = await fetch(url, {
         headers: {
@@ -150,7 +151,7 @@ const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
         message: newMessage.trim(),
       };
 
-      const response = await fetch(`https://api.rent9ja.com.ng/api/conversation/${currentConversationId}`, {
+      const response = await fetch(baseURL+`/conversation/${currentConversationId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

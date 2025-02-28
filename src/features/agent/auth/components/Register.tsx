@@ -5,6 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import { useAlert } from '@/contexts/AlertContext';
 import { z } from 'zod';
+import {baseURL} from "@/../next.config";
 
 const registerSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255),
@@ -80,7 +81,7 @@ const Register: React.FC = () => {
         account_id: 2 
       };
 
-      const response = await axios.post('https://api.rent9ja.com.ng/api/register-agent', payload);
+      const response = await axios.post(baseURL+'/register-agent', payload);
 
       if (response.data.success) {
         showAlert("Registration successful! Redirecting to login...", "success");

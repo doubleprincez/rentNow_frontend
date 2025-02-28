@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASE_URL = 'https://api.rent9ja.com.ng/api';
+import {baseURL} from "@/../next.config";
 
 // Helper to get auth token
 const getAuthHeader = () => ({
@@ -74,7 +74,7 @@ export const conversationApi = {
     // Fetch all conversations
     getAllConversations: async () => {
         const response = await axios.get<ApiResponse<Conversation[]>>(
-            `${BASE_URL}/conversations`,
+            `${baseURL}/conversations`,
             getAuthHeader()
         );
         return response.data.data || [];
@@ -83,7 +83,7 @@ export const conversationApi = {
     // Fetch single conversation
     getConversation: async (id: number) => {
         const response = await axios.get<ApiResponse<Conversation>>(
-            `${BASE_URL}/conversation/${id}`,
+            `${baseURL}/conversation/${id}`,
             getAuthHeader()
         );
         return response.data.data;
@@ -92,7 +92,7 @@ export const conversationApi = {
     // Create new conversation with initial message
     createConversation: async (params: CreateMessageParams) => {
         const response = await axios.post<ApiResponse<Conversation>>(
-            `${BASE_URL}/conversation`,
+            `${baseURL}/conversation`,
             params,
             getAuthHeader()
         );
@@ -102,7 +102,7 @@ export const conversationApi = {
     // Send a message by creating a new conversation or updating existing one
     sendMessage: async (conversationId: number | null, params: CreateMessageParams) => {
         const response = await axios.put<ApiResponse<Conversation>>(
-            `${BASE_URL}/conversation${conversationId ? `/${conversationId}` : ''}`,
+            `${baseURL}/conversation${conversationId ? `/${conversationId}` : ''}`,
             params,
             getAuthHeader()
         );
@@ -112,14 +112,14 @@ export const conversationApi = {
     // Other methods remain the same...
     deleteConversation: async (id: number) => {
         await axios.delete(
-            `${BASE_URL}/conversation/${id}`,
+            `${baseURL}/conversation/${id}`,
             getAuthHeader()
         );
     },
 
     getConversationRatings: async (id: number) => {
         const response = await axios.get<ApiResponse<Rating[]>>(
-            `${BASE_URL}/conversation/${id}/ratings`,
+            `${baseURL}/conversation/${id}/ratings`,
             getAuthHeader()
         );
         return response.data.data || [];
@@ -127,7 +127,7 @@ export const conversationApi = {
 
     rateConversation: async (id: number, rating: number, comment?: string) => {
         const response = await axios.post<ApiResponse<Rating>>(
-            `${BASE_URL}/conversation/${id}/rate`,
+            `${baseURL}/conversation/${id}/rate`,
             { rating, comment },
             getAuthHeader()
         );

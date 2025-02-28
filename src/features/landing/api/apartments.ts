@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
+import {baseURL} from "@/../next.config";
 
 export async function GET() {
     try {
         const response = await axios({
             method: 'GET',
-            url: 'https://api.rent9ja.com.ng/api/apartments',
+            url: baseURL+'/apartments',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'

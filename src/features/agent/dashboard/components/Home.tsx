@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
   CartesianGrid
 } from 'recharts';
+import {baseURL} from "@/../next.config";
 
 interface Statistics {
   total_apartments: number;
@@ -55,7 +56,7 @@ const Home = () => {
         const headers = { Authorization: `Bearer ${token}` };
         
         // Fetch statistics
-        const statsResponse = await axios.get('https://api.rent9ja.com.ng/api/statistics', { 
+        const statsResponse = await axios.get(baseURL+'/statistics', {
           headers,
           validateStatus: function (status) {
             return status === 200;
@@ -68,7 +69,7 @@ const Home = () => {
         }
 
         // Fetch chart data
-        const chartResponse = await axios.get('https://api.rent9ja.com.ng/api/bar-chart', { 
+        const chartResponse = await axios.get(baseURL+'/bar-chart', {
           headers,
           validateStatus: function (status) {
             return status === 200;

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import {baseURL} from "@/../next.config";
 
 interface AgentState {
     isLoggedIn: boolean;
@@ -135,7 +136,7 @@ export const loginAgent = createAsyncThunk(
     'agent/login',
     async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
         try {
-            const response = await axios.post<LoginResponse>("https://api.rent9ja.com.ng/api/login", {
+            const response = await axios.post<LoginResponse>(baseURL+"/login", {
                 email,
                 password
             });

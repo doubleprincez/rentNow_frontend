@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const BASE_URL = 'https://api.rent9ja.com.ng/api';
+import {baseURL} from "@/../next.config";
 
 // Types
 export interface User {
@@ -41,7 +40,7 @@ const getAuthHeaders = () => {
 
 export const getUsers = async (page = 1, search = '', accountType: 'users' | 'agents' = 'users') => {
   const response = await axios.get<{ data: PaginatedResponse }>(
-    `${BASE_URL}/users`,
+    `${baseURL}/users`,
     {
       headers: getAuthHeaders(),
       params: {
@@ -57,7 +56,7 @@ export const getUsers = async (page = 1, search = '', accountType: 'users' | 'ag
 
 export const getUser = async (id: number) => {
   const response = await axios.get<{ data: User }>(
-    `${BASE_URL}/user/${id}`,
+    `${baseURL}/user/${id}`,
     {
       headers: getAuthHeaders(),
     }
@@ -67,7 +66,7 @@ export const getUser = async (id: number) => {
 
 export const createUser = async (userData: Partial<User>) => {
   const response = await axios.post(
-    `${BASE_URL}/user`,
+    `${baseURL}/user`,
     userData,
     {
       headers: getAuthHeaders(),
@@ -78,7 +77,7 @@ export const createUser = async (userData: Partial<User>) => {
 
 export const updateUser = async (id: number, userData: Partial<User>) => {
   const response = await axios.put(
-    `${BASE_URL}/user/${id}`,
+    `${baseURL}/user/${id}`,
     userData,
     {
       headers: getAuthHeaders(),
@@ -89,7 +88,7 @@ export const updateUser = async (id: number, userData: Partial<User>) => {
 
 export const deleteUser = async (id: number) => {
   const response = await axios.delete(
-    `${BASE_URL}/user/${id}`,
+    `${baseURL}/user/${id}`,
     {
       headers: getAuthHeaders(),
     }

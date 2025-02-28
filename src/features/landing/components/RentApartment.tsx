@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, MapPin, Banknote, Clock } from 'lucide-react';
 import Image from 'next/image';
+import {baseURL} from "@/../next.config";
 
 interface RentedApartment {
   id: number;
@@ -47,7 +48,7 @@ export default function RentedApartments() {
       setIsLoading(true);
       setError(null);
       
-      const response = await fetch('https://api.rent9ja.com.ng/api/rented-apartments', {
+      const response = await fetch(baseURL+'/rented-apartments', {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
