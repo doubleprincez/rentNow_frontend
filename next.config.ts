@@ -24,16 +24,16 @@ const nextConfig: NextConfig = {
         return [
             {
                 source: '/api/:path*',
-                destination: 'http://localhost:8000/api/:path*',
-                // destination: 'https://api.rent9ja.com.ng/api/:path*',
+                // destination: 'http://localhost:8000/api/:path*',
+                destination: 'https://api.rent9ja.com.ng/api/:path*',
             },
         ];
     },
 };
 
 
-// export const baseURL = 'https://api.rent9ja.com.ng/api';
-export const baseURL = 'http://localhost:8000/api';
+export const baseURL = 'https://api.rent9ja.com.ng/api';
+// export const baseURL = 'http://localhost:8000/api';
 
 
 
