@@ -117,73 +117,40 @@ const AddProperty: React.FC = () => {
         fetchCategories();
     }, []);
 
-    // const handleFileChange = (index: number, type: FileType) => async (event: React.ChangeEvent<HTMLInputElement>) => {
-    //     const file = event.target.files?.[0];
-    //     if (!file) return;
-    //
-    //     const maxSize = type === 'image' ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
-    //     if (file.size > maxSize) {
-    //         showAlert(`File ${file.name} exceeds maximum size limit of ${maxSize / (1024 * 1024)}MB`, 'error');
-    //         return;
-    //     }
-    //
-    //     const filesArray = watch(type === 'image' ? 'images' : 'videos');
-    //     const newFiles = [...filesArray];
-    //     newFiles[index] = file;
-    //     setValue(type === 'image' ? 'images' : 'videos', newFiles);
-    //
-    //     const reader = new FileReader();
-    //     reader.onloadend = () => {
-    //         if (type === 'image') {
-    //             setImagePreview(prev => ({...prev, [index]: reader.result as string}));
-    //         } else {
-    //             setVideoPreview(prev => ({...prev, [index]: URL.createObjectURL(file)}));
-    //         }
-    //     };
-    //     reader.readAsDataURL(file);
-    // };
-
-    // const removeFile = (index: number, type: FileType): void => {
-    //     const filesArray = watch(type === 'image' ? 'images' : 'videos');
-    //     const newFiles = [...filesArray];
-    //     newFiles[index] = null;
-    //     setValue(type === 'image' ? 'images' : 'videos', newFiles);
-
-    //     if (type === 'image') {
-    //         setImagePreview(prev => {
-    //             const newPreview = {...prev};
-    //             delete newPreview[index];
-    //             return newPreview;
-    //         });
-    //     } else {
-    //         setVideoPreview(prev => {
-    //             const newPreview = {...prev};
-    //             delete newPreview[index];
-    //             return newPreview;
-    //         });
-    //     }
-    // };
-    const removeFile = (type: 'images' | 'videos', index: number) => {
-        const updatedFiles = watch(type).filter((_, i) => i !== index);
-        setValue(type, updatedFiles);
-    };
-
 
     const onDropImages = useCallback(
         (acceptedFiles: File[]) => {
-            setUploadedImages((prev) => [...prev, ...acceptedFiles]);
-            setValue("images", [...uploadedImages, ...acceptedFiles]);
+            if (uploadedImages.length >= MAX_FILES) return; // Prevent exceeding limit
+            const newFiles = [...uploadedImages, ...acceptedFiles].slice(0, MAX_FILES);
+            setUploadedImages(newFiles);
+            setValue("images", newFiles);
         },
-        [setValue, uploadedImages]
+        [uploadedImages, setValue]
     );
-
     const onDropVideos = useCallback(
         (acceptedFiles: File[]) => {
-            setUploadedVideos((prev) => [...prev, ...acceptedFiles]);
-            setValue("videos", [...uploadedVideos, ...acceptedFiles]);
+            if (uploadedVideos.length >= MAX_FILES) return; // Prevent exceeding limit
+            const newFiles = [...uploadedVideos, ...acceptedFiles].slice(0, MAX_FILES);
+            setUploadedVideos(newFiles);
+            setValue("videos", newFiles);
         },
-        [setValue, uploadedVideos]
+        [uploadedVideos, setValue]
     );
+
+
+    const removeImage = (index: number) => {
+        const updatedFiles = uploadedImages.filter((_, i) => i !== index);
+        setUploadedImages(updatedFiles);
+        setValue("images", updatedFiles);
+    };
+
+    const removeVideo = (index: number) => {
+        const updatedFiles = uploadedVideos.filter((_, i) => i !== index);
+        setUploadedVideos(updatedFiles);
+        setValue("videos", updatedFiles);
+    };
+
+
     const {getRootProps: getImageRootProps, getInputProps: getImageInputProps} =
         useDropzone({
             accept: {"image/*": []},
@@ -268,7 +235,6 @@ const AddProperty: React.FC = () => {
                 }
             }
         });
-
         // Add files to formData
         data.images.forEach((file, index) => {
             if (file) {
@@ -330,6 +296,17 @@ const AddProperty: React.FC = () => {
                 setVideoPreview({});
                 setSelectedAmenities([]);
                 setStep(1);
+                try {
+
+                    data.images?.forEach((file, index) => {
+                        removeImage(index - 1)
+                    });
+                    data.videos?.forEach((file, index) => {
+                        removeVideo(index - 1)
+                    });s
+                } catch (e) {
+
+                }
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -521,33 +498,53 @@ const AddProperty: React.FC = () => {
                 {step === 5 && (
                     <div className="space-y-6">
                         <div>
-                            <label className="block text-sm font-semibold mb-2 text-white">Images (At least 1 required,
+                            <label className="block  text-sm font-semibold mb-2 text-white  ">Images (At least 1
+                                required,
                                 max 5, each &lt;30MB)</label>
                             {/* <div className="grid grid-cols-2 md:grid-cols-5 gap-4"> */}
-                            <div>
+                            <div className={"text-white"}>
                                 <div {...getImageRootProps()}
-                                     style={{border: "2px dashed #ccc", padding: "20px", cursor: "pointer"}}>
+                                     style={{
+                                         border: "2px dashed #ccc",
+                                         padding: "20px",
+                                         cursor: "pointer",
+                                         borderRadius: "10px"
+                                     }}>
                                     <input {...getImageInputProps()} />
-                                    <p>Drag & drop images here, or click to select</p>
+                                    <p className={"text-white"}>Drag & drop images here, or click to select</p>
                                 </div>
-                                {uploadedImages && uploadedImages.map((file, index) => (
-                                    <li key={index}>{file.name}</li>
-                                ))}
-                                {/*<div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-2">*/}
-                                {/*    {(watch("images") ?? []).map((file, index) => (*/}
-                                {/*        <div key={index} className="relative">*/}
-                                {/*            <img src={URL.createObjectURL(file)} alt="Preview"*/}
-                                {/*                 className="w-full h-24 object-cover"/>*/}
-                                {/*            <button*/}
-                                {/*                type="button"*/}
-                                {/*                className="absolute top-0 right-0 bg-red-500 text-white p-1"*/}
-                                {/*                onClick={() => removeFile('images', index)}*/}
-                                {/*            >*/}
-                                {/*                X*/}
-                                {/*            </button>*/}
-                                {/*        </div>*/}
-                                {/*    ))}*/}
-                                {/*</div>*/}
+                                {/*{uploadedImages && uploadedImages.map((file, index) => (*/}
+                                {/*    <li key={index}>{file.name}</li>*/}
+                                {/*))}*/}
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-5 min-h-[200px]">
+                                    {uploadedImages && uploadedImages.map((file, index) => (
+                                        <div key={index} style={{position: "relative"}}>
+                                            <img
+                                                src={URL.createObjectURL(file)}
+                                                alt="preview"
+                                                width={100}
+                                                height={100}
+                                                style={{borderRadius: "5px", objectFit: "cover"}}
+                                            />
+                                            <button
+                                                onClick={() => removeImage(index)}
+                                                style={{
+                                                    position: "absolute",
+                                                    top: 0,
+                                                    right: 0,
+                                                    background: "red",
+                                                    color: "white",
+                                                    border: "none",
+                                                    cursor: "pointer",
+                                                    padding: "2px 6px",
+                                                    borderRadius: "50%",
+                                                }}
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
 
                             </div>
                         </div>
@@ -555,39 +552,54 @@ const AddProperty: React.FC = () => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Videos (At least 1 required,
                                 max 5, each &lt;80MB)</label>
-                            <div>
+                            <div className={"text-white"}>
                                 <div {...getVideoRootProps()}
-                                     style={{border: "2px dashed #ccc", padding: "20px", cursor: "pointer"}}>
+                                     style={{
+                                         border: "2px dashed #ccc",
+                                         padding: "20px",
+                                         cursor: "pointer",
+                                         borderRadius: "10px"
+                                     }}>
                                     <input {...getVideoInputProps()} />
                                     <p>Drag & drop videos here, or click to select</p>
                                 </div>
-                                <ul>
-                                    {uploadedVideos && uploadedVideos.map((file, index) => (
-                                        <li key={index}>{file.name}</li>
-                                    ))}
-                                </ul>
-                                {/*<Dropzone*/}
-                                {/*    onChangeStatus={handleVideoUpload}*/}
-                                {/*    accept="video/*"*/}
-                                {/*    maxFiles={MAX_FILES}*/}
-                                {/*    inputContent="Drag & Drop videos or Click to Upload"*/}
-                                {/*    styles={{ dropzone: { minHeight: 150, border: '2px dashed #ccc' } }}*/}
-                                {/*/>*/}
-                                {/* <div className="grid grid-cols-2 md:grid-cols-5 gap-4">*/}
+                                {/*<ul>*/}
+                                {/*    {uploadedVideos && uploadedVideos.map((file, index) => (*/}
+                                {/*        <li key={index}>{file.name}</li>*/}
+                                {/*    ))}*/}
+                                {/*</ul>*/}
 
-                                {/* {(watch("videos") ?? []).map((file, index) => (*/}
-                                {/*     <div key={index} className="relative">*/}
-                                {/*         <video src={URL.createObjectURL(file)} className="w-full h-24 object-cover" controls />*/}
-                                {/*         <button*/}
-                                {/*             type="button"*/}
-                                {/*             className="absolute top-0 right-0 bg-red-500 text-white p-1"*/}
-                                {/*             onClick={() => removeFile('videos', index)}*/}
-                                {/*         >*/}
-                                {/*             X*/}
-                                {/*         </button>*/}
-                                {/*     </div>*/}
-                                {/* ))}*/}
-                                {/*</div>*/}
+                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-5 min-h-[200px]">
+
+
+                                    {uploadedVideos.map((file, index) => (
+                                        <div key={index} style={{position: "relative"}}>
+                                            <video
+                                                src={URL.createObjectURL(file)}
+                                                width={120}
+                                                height={80}
+                                                controls
+                                                style={{borderRadius: "5px", objectFit: "cover"}}
+                                            />
+                                            <button
+                                                onClick={() => removeVideo(index)}
+                                                style={{
+                                                    position: "absolute",
+                                                    top: 0,
+                                                    right: 0,
+                                                    background: "red",
+                                                    color: "white",
+                                                    border: "none",
+                                                    cursor: "pointer",
+                                                    padding: "2px 6px",
+                                                    borderRadius: "50%",
+                                                }}
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
 
                             </div>
                         </div>
