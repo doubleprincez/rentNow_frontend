@@ -193,7 +193,7 @@ const AddProperty: React.FC = () => {
                 //     showAlert('Please upload at least one video', 'info');
                 //     return false;
                 // }
-                if(!uploadedImages || !uploadedVideos){
+                if (!uploadedImages || !uploadedVideos) {
                     return false;
                 }
                 return true;
@@ -216,8 +216,8 @@ const AddProperty: React.FC = () => {
     const onSubmit = async (data: PropertyFormData) => {
         if (step !== 5) return;
 
-        const hasImage = data.images.some(file => file !== null);
-        const hasVideo = data.videos.some(file => file !== null);
+        const hasImage = uploadedImages.some(file => file !== null);
+        const hasVideo = uploadedVideos.some(file => file !== null);
 
         if (!hasImage || !hasVideo) {
             showAlert('Please upload at least one image and one video', 'info');
