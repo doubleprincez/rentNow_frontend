@@ -132,7 +132,7 @@ const ManageProperty: React.FC = () => {
     }
     if (confirm('Are you sure you want to delete this property?')) {
       try {
-        await axios.delete(baseURL+`/apartments/${propertyId}`, {
+        await axios.delete(baseURL+`/apartment/${propertyId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

@@ -33,7 +33,7 @@ export const fetchDashboardData = async (token: string): Promise<DashboardData> 
 
     const [statsResponse, chartResponse] = await Promise.all([
       axios.get<{ success: boolean; data: Statistics }>(
-          baseURL+'/api/statistics',
+          baseURL+'/statistics',
         { headers }
       ),
       axios.get<{ success: boolean; data: ChartData }>(
