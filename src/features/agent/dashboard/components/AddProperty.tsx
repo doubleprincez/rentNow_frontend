@@ -239,17 +239,17 @@ const AddProperty: React.FC = () => {
             }
         });
         // Add files to formData
-        data.images.forEach((file, index) => {
-            if (file) {
-                formData.append('images[]', file);
-            }
-        });
-
-        data.videos.forEach((file, index) => {
-            if (file) {
-                formData.append('videos[]', file);
-            }
-        });
+        // data.images.forEach((file, index) => {
+        //     if (file) {
+        //         formData.append('images[]', file);
+        //     }
+        // });
+        //
+        // data.videos.forEach((file, index) => {
+        //     if (file) {
+        //         formData.append('videos[]', file);
+        //     }
+        // });
 
         formData.append('published', 'false');
         formData.append('can_rate', 'false');
