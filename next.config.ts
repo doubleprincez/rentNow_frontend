@@ -1,5 +1,10 @@
 import type {NextConfig} from "next";
 
+
+
+
+export const baseURL = 'https://api.rent9ja.com.ng/api';
+
 const nextConfig: NextConfig = {
     images: {
         domains: ['images.unsplash.com', 'www.lummi.ai', 'www.rent9ja.com.ng', "api.rent9ja.com.ng"],
@@ -24,16 +29,11 @@ const nextConfig: NextConfig = {
         return [
             {
                 source: '/api/:path*',
-                // destination: 'http://localhost:8000/api/:path*',
-                destination: 'https://api.rent9ja.com.ng/api/:path*',
+                 destination: 'https://api.rent9ja.com.ng/api/:path*',
             },
         ];
     },
 };
-
-
-export const baseURL = 'https://api.rent9ja.com.ng/api';
-// export const baseURL = 'http://localhost:8000/api';
 
 
 
