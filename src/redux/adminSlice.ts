@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
+import {baseURL} from "@/../next.config";
 
 interface AdminState {
     isLoggedIn: boolean;
@@ -100,7 +101,7 @@ export const loginAdmin = createAsyncThunk(
     'admin/login',
     async ({ email, password }: { email: string; password: string }, { rejectWithValue }) => {
         try {
-            const response = await axios.post<LoginResponse>("https://api.rent9ja.com.ng/api/login", {
+            const response = await axios.post<LoginResponse>(baseURL+"/login", {
                 email,
                 password
             });
@@ -145,7 +146,7 @@ export const logoutAdmin = createAsyncThunk(
             const token = getFromStorage('adminToken');
             if (token) {
                 await axios.post(
-                    'https://api.rent9ja.com.ng/api/admin/logout',
+                    baseURL+'/admin/logout',
                     {},
                     {
                         headers: {

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
+import {baseURL} from "@/../next.config";
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,7 +12,7 @@ export default async function handler(
 
   try {
     const response = await axios.post(
-      'https://api.rent9ja.com.ng/api/register',
+        baseURL+'/register',
       req.body,
       {
         headers: {

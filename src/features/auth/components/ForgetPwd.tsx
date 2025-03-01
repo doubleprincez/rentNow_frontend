@@ -5,6 +5,7 @@ import axios from "axios";
 import { CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {baseURL} from "@/../next.config";
 
 const ForgetPwd = () => {
   const [step, setStep] = useState(1);
@@ -21,7 +22,7 @@ const ForgetPwd = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post("https://api.rent9ja.com.ng/api/forgot-password", { email });
+      const response = await axios.post(baseURL+"/forgot-password", { email });
       //console.log("Response:", response.data);
       setStep(2);
     } catch (error) {

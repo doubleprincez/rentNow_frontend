@@ -18,6 +18,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { useAlert } from '@/contexts/AlertContext';
 import { Loader2 } from 'lucide-react';
+import {baseURL} from "@/../next.config";
 
 interface Apartment {
   id: number;
@@ -74,7 +75,7 @@ const AdminApartments: React.FC = () => {
       }
 
       const response = await axios.get<ApiResponse>(
-        'https://api.rent9ja.com.ng/api/apartments',
+        baseURL+'/apartments',
         {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -120,7 +121,7 @@ const AdminApartments: React.FC = () => {
       }
 
       const response = await axios.put<ApiResponse>(
-        `https://api.rent9ja.com.ng/api/apartment/${id}`,
+        baseURL+`/apartment/${id}`,
         {
           published,
           can_rate: canRate

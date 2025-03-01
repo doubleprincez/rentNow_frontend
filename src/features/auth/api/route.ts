@@ -1,6 +1,7 @@
 // app/api/register/route.ts
 import { NextResponse } from 'next/server';
 import axios from 'axios';
+import {baseURL} from "@/../next.config";
 
 export async function POST(request: Request) {
   try {
@@ -9,7 +10,7 @@ export async function POST(request: Request) {
     console.log('Registration request body:', body); // Debug log
 
     const response = await axios.post(
-      'https://api.rent9ja.com.ng/api/register',
+        baseURL+'/register',
       body,
       {
         headers: {

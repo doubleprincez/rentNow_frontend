@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const BASE_URL = 'https://api.rent9ja.com.ng/api';
+import {baseURL} from "@/../next.config";
 
 // Add authentication header to all requests
 const authHeader = () => {
@@ -43,7 +42,7 @@ export const rentApi = {
   // Get all rented apartments
   getAllRents: async (): Promise<PaginatedResponse> => {
     try {
-      const response = await axios.get(`${BASE_URL}/rented-apartments`, authHeader());
+      const response = await axios.get(`${baseURL}/rented-apartments`, authHeader());
       return response.data.data;
     } catch (error) {
       //console.error('API Error:', error);
@@ -54,7 +53,7 @@ export const rentApi = {
   // Get specific rent details
   getRentById: async (rentId: number): Promise<RentDetails> => {
     try {
-      const response = await axios.get(`${BASE_URL}/rented-apartment/${rentId}`, authHeader());
+      const response = await axios.get(`${baseURL}/rented-apartment/${rentId}`, authHeader());
       return response.data.data;
     } catch (error) {
       //console.error('API Error:', error);
@@ -65,7 +64,7 @@ export const rentApi = {
   // Archive/Delete rent
   archiveRent: async (rentId: number): Promise<void> => {
     try {
-      await axios.delete(`${BASE_URL}/rented-apartment/${rentId}`, authHeader());
+      await axios.delete(`${baseURL}/rented-apartment/${rentId}`, authHeader());
     } catch (error) {
       //console.error('API Error:', error);
       throw new Error('Failed to archive rent');
@@ -75,7 +74,7 @@ export const rentApi = {
   // Activate/Confirm rent
   activateRent: async (rentId: number): Promise<void> => {
     try {
-      await axios.post(`${BASE_URL}/rented-apartment/${rentId}/activate`, {}, authHeader());
+      await axios.post(`${baseURL}/rented-apartment/${rentId}/activate`, {}, authHeader());
     } catch (error) {
       //console.error('API Error:', error);
       throw new Error('Failed to activate rent');

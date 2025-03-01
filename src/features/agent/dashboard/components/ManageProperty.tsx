@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {baseURL} from "@/../next.config";
 
 interface Image {
   name: string;
@@ -77,7 +78,7 @@ const ManageProperty: React.FC = () => {
       }
       try {
         const response = await axios.get<{ success: boolean; message: string; data: PaginatedResponse }>(
-          'https://api.rent9ja.com.ng/api/my-apartments',
+            baseURL+'/my-apartments',
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -131,7 +132,7 @@ const ManageProperty: React.FC = () => {
     }
     if (confirm('Are you sure you want to delete this property?')) {
       try {
-        await axios.delete(`https://api.rent9ja.com.ng/api/apartments/${propertyId}`, {
+        await axios.delete(baseURL+`/apartments/${propertyId}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

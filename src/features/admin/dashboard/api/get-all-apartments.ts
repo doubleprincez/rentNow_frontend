@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {baseURL} from "@/../next.config";
 
 export interface Apartment {
   id: number;
@@ -43,7 +44,7 @@ export const getAllApartments = async (page: number = 1, search: string = '') =>
     }
 
     const response = await axios.get<ApiResponse>(
-      `https://api.rent9ja.com.ng/api/apartments?page=${page}&search=${search}`,
+      baseURL+`/apartments?page=${page}&search=${search}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -66,7 +67,7 @@ export const deleteApartment = async (id: number) => {
     }
 
     const response = await axios.delete(
-      `https://api.rent9ja.com.ng/api/apartment/${id}`,
+      baseURL+`/apartment/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

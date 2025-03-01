@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
+import {baseURL} from "@/../next.config";
 
 interface Conversation {
     id: number;
@@ -43,7 +44,7 @@ const Messages: React.FC = () => {
 
     // Configure axios with authentication
     const api = axios.create({
-        baseURL: 'https://api.rent9ja.com.ng/api',
+        baseURL: baseURL,
         headers: { Authorization: `Bearer ${token}` }
     });
 

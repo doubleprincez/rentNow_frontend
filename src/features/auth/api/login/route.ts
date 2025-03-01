@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
+import {baseURL} from "@/../next.config";
 
 export async function POST(request: Request) {
     try {
@@ -9,7 +10,7 @@ export async function POST(request: Request) {
         // Make request to the external API
         const response = await axios({
             method: 'POST',
-            url: 'https://api.rent9ja.com.ng/api/login',
+            url: baseURL+'/login',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'

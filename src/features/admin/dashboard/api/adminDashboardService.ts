@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {baseURL} from "@/../next.config";
 
 interface Statistics {
   total_apartments: number;
@@ -32,11 +33,11 @@ export const fetchDashboardData = async (token: string): Promise<DashboardData> 
 
     const [statsResponse, chartResponse] = await Promise.all([
       axios.get<{ success: boolean; data: Statistics }>(
-        'https://api.rent9ja.com.ng/api/statistics',
+          baseURL+'/api/statistics',
         { headers }
       ),
       axios.get<{ success: boolean; data: ChartData }>(
-        'https://api.rent9ja.com.ng/api/bar-chart',
+          baseURL+'/bar-chart',
         { headers }
       )
     ]);

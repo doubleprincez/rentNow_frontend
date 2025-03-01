@@ -15,6 +15,7 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { useDispatch } from "react-redux";
 import { login } from "@/redux/userSlice";
 import { useAlert } from '@/contexts/AlertContext';
+import {baseURL} from "@/../next.config";
 
 interface LoginResponse {
     success: boolean;
@@ -112,7 +113,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
             //     password: '***'
             // });
 
-            const response = await fetch('https://api.rent9ja.com.ng/api/login', {
+            const response = await fetch(baseURL+'/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -174,7 +175,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
             const token = localStorage.getItem('token');
             if (!token) throw new Error('No token found');
     
-            const response = await fetch('https://api.rent9ja.com.ng/api/auth/me', {
+            const response = await fetch(baseURL+'/auth/me', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',

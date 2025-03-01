@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/lib/variants';
 import House from '@/components/assets/house3.jpeg';
+import {baseURL} from "@/../next.config";
 
 interface ContactFormData {
   name: string;
@@ -78,7 +79,7 @@ const Contact = () => {
     setSubmitStatus({ type: null, message: '' });
 
     try {
-      const response = await fetch('https://api.rent9ja.com.ng/api/contact', {
+      const response = await fetch(baseURL+'/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

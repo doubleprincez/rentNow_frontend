@@ -84,7 +84,7 @@ const Header = () => {
                 {agent.isLoggedIn ? (
                   <div className='w-full flex flex-col gap-2'>
                     <span className="text-orange-500 font-semibold">
-                      Hello! {agent.firstName.toUpperCase()}
+                      Hello! {agent?.firstName.toUpperCase()}
                     </span>
 
                     <Link

@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import ChatDialog from '@/features/landing/components/ChatDialog';
+import {baseURL} from "@/../next.config";
 
 interface ClientProps {
   params: { slug: string };
@@ -117,7 +118,7 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
   
       //console.log('Sending booking payload:', bookingPayload); 
   
-      const response = await fetch('https://api.rent9ja.com.ng/api/rented-apartment', {
+      const response = await fetch(baseURL+'/rented-apartment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
