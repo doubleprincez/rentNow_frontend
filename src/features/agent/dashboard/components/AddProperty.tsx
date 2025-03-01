@@ -180,17 +180,20 @@ const AddProperty: React.FC = () => {
                 fieldsToValidate = ['country_code', 'state_code', 'city_code'];
                 break;
             case 5:
-                const images = watch('images');
-                const videos = watch('videos');
-                const hasImage = images.some(file => file !== null);
-                const hasVideo = videos.some(file => file !== null);
-
-                if (!hasImage) {
-                    showAlert('Please upload at least one image', 'info');
-                    return false;
-                }
-                if (!hasVideo) {
-                    showAlert('Please upload at least one video', 'info');
+                // const images = watch('images');
+                // const videos = watch('videos');
+                // const hasImage = images.some(file => file !== null);
+                // const hasVideo = videos.some(file => file !== null);
+                //
+                // if (!hasImage) {
+                //     showAlert('Please upload at least one image', 'info');
+                //     return false;
+                // }
+                // if (!hasVideo) {
+                //     showAlert('Please upload at least one video', 'info');
+                //     return false;
+                // }
+                if(!uploadedImages || !uploadedVideos){
                     return false;
                 }
                 return true;
@@ -304,7 +307,7 @@ const AddProperty: React.FC = () => {
                     data.videos?.forEach((file, index) => {
                         removeVideo(index - 1)
                     });
-                    s
+
                 } catch (e) {
 
                 }
