@@ -43,21 +43,23 @@ const MAX_FILES = 5;
 
 ///////////////////////////////////////////////////////////////////////////////
 const AddProperty: React.FC = () => {
-    const {showAlert} = useAlert();
-    const [step, setStep] = useState<number>(1);
+    const { showAlert } = useAlert();
+    const [step, setStep] = useState(1);
     const [categories, setCategories] = useState<Category[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
+    const progressRef = useRef<number>(0);
     const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+
     const {
         register,
         handleSubmit,
-        formState: {errors},
+        formState: { errors },
         setValue,
-        watch, reset,
+        watch,
+        reset,
         trigger
     } = useForm<PropertyFormData>({
         defaultValues: {
@@ -87,7 +89,7 @@ const AddProperty: React.FC = () => {
     };
 
     useEffect(() => {
-        const fetchCategories = async (): Promise<void> => {
+        const fetchCategories = async () => {
             try {
                 const response = await axios.get<{ success: boolean; data: Category[] }>(
                     baseURL + '/apartment-types',
@@ -112,7 +114,6 @@ const AddProperty: React.FC = () => {
         fetchCategories();
     }, []);
 
-
     const onDropImages = useCallback(
         (acceptedFiles: File[]) => {
             setUploadedImages(prevImages => {
@@ -121,7 +122,7 @@ const AddProperty: React.FC = () => {
                 return newFiles;
             });
         },
-        [setValue] // Remove `uploadedImages` from dependencies
+        [setValue]
     );
 
     const onDropVideos = useCallback(
@@ -132,9 +133,8 @@ const AddProperty: React.FC = () => {
                 return newFiles;
             });
         },
-        [setValue] // Remove `uploadedVideos` from dependencies
+        [setValue]
     );
-
 
     const removeImage = (index: number) => {
         const updatedFiles = uploadedImages.filter((_, i) => i !== index);
@@ -148,19 +148,15 @@ const AddProperty: React.FC = () => {
         setValue("videos", updatedFiles);
     };
 
+    const { getRootProps: getImageRootProps, getInputProps: getImageInputProps } = useDropzone({
+        accept: { "image/*": [] },
+        onDrop: onDropImages,
+    });
 
-    const {getRootProps: getImageRootProps, getInputProps: getImageInputProps} =
-        useDropzone({
-            accept: {"image/*": []},
-            onDrop: onDropImages,
-        });
-
-    const {getRootProps: getVideoRootProps, getInputProps: getVideoInputProps} =
-        useDropzone({
-            accept: {"video/*": []},
-            onDrop: onDropVideos,
-        });
-
+    const { getRootProps: getVideoRootProps, getInputProps: getVideoInputProps } = useDropzone({
+        accept: { "video/*": [] },
+        onDrop: onDropVideos,
+    });
 
     const validateStep = async (): Promise<boolean> => {
         let fieldsToValidate: Array<keyof PropertyFormData> = [];
@@ -178,11 +174,8 @@ const AddProperty: React.FC = () => {
                 fieldsToValidate = ['country_code', 'state_code', 'city_code'];
                 break;
             case 5:
-
-                return !(!uploadedImages || !uploadedVideos);
-
+                return uploadedImages.length > 0 && uploadedVideos.length > 0;
         }
-
         return await trigger(fieldsToValidate);
     };
 
@@ -199,24 +192,18 @@ const AddProperty: React.FC = () => {
 
     const onSubmit = async (data: PropertyFormData) => {
         if (step !== 5) return;
-        setUploadProgress(0);
 
-
-        const hasImage = uploadedImages.some(file => file !== null);
-        const hasVideo = uploadedVideos.some(file => file !== null);
-
-        if (!hasImage || !hasVideo) {
+        if (!uploadedImages.length || !uploadedVideos.length) {
             showAlert('Please upload at least one image and one video', 'info');
+            setIsLoading(false);
             return;
         }
-
 
         if (isLoading) return;
         setIsLoading(true);
 
         const formData = new FormData();
 
-        // Add all non-file form fields
         Object.entries(data).forEach(([key, value]) => {
             if (key !== 'images' && key !== 'videos') {
                 if (key === 'amenities') {
@@ -226,7 +213,7 @@ const AddProperty: React.FC = () => {
                 }
             }
         });
-        // Add files to formData
+
         uploadedImages.forEach(file => formData.append("images[]", file));
         uploadedVideos.forEach(file => formData.append("videos[]", file));
 
@@ -248,13 +235,13 @@ const AddProperty: React.FC = () => {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json',
-                        // 'Content-Type': 'multipart/form-data',
                     },
                     withCredentials: true,
-                    onUploadProgress: (progressEvent) => {
-                        const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
-                        setUploadProgress(percentCompleted);
-                    },
+                    // onUploadProgress: (progressEvent) => {
+                    //     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    //     progressRef.current = percentCompleted;
+                    //     setUploadProgress(percentCompleted);
+                    // },
                 }
             );
 
@@ -262,40 +249,21 @@ const AddProperty: React.FC = () => {
                 showAlert('Property successfully added!', 'success');
                 reset();
                 setSelectedAmenities([]);
-                setValue('images', []);
-                setValue('videos', []);
+                setUploadedImages([]);
+                setUploadedVideos([]);
                 setStep(1);
-                try {
-
-                    data.images?.forEach((file, index) => {
-                        removeImage(index - 1)
-                    });
-                    data.videos?.forEach((file, index) => {
-                        removeVideo(index - 1)
-                    });
-
-                } catch (e) {
-
-                }
             }
 
             setUploadProgress(100);
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                if (error.response?.status === 401) {
-                    showAlert('Your session has expired. Please login again.', 'error');
-                } else if (error.response?.status === 503) {
-                    showAlert('Service temporarily unavailable. Please try again later.', 'error');
-                } else {
-                    showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
-                }
+                showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
             }
         } finally {
             setTimeout(() => setUploadProgress(null), 1500);
             setIsLoading(false);
         }
     };
-
     return (
         <div className="w-full flex flex-col px-2 md:px-6 py-2 md:py-6 gap-2 md:gap-4">
             <div className="flex justify-between items-center">
@@ -603,12 +571,12 @@ const AddProperty: React.FC = () => {
                 </div>
             </form>
 
-            {uploadProgress !== null && (
-                <div style={{marginTop: "10px"}}>
-                    <progress value={uploadProgress} max={100} style={{width: "100%"}}/>
-                    <p>{uploadProgress}%</p>
-                </div>
-            )}
+            {/*{uploadProgress !== null && (*/}
+            {/*    <div style={{marginTop: "10px"}}>*/}
+            {/*        <progress value={uploadProgress} max={100} style={{width: "100%"}}/>*/}
+            {/*        <p>{uploadProgress}%</p>*/}
+            {/*    </div>*/}
+            {/*)}*/}
         </div>
     );
 };
