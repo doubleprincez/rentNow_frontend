@@ -26,7 +26,7 @@ const UserRent = () => {
         >
             <div className="bg-opacity-60 pt-5">
                 <div className="w-full px-4 py-8 flex flex-col items-center gap-4 ">
-                    <h1 className="text-black/80 text-[1.5rem] font-semibold">Manage Properties</h1>
+                    <h1 className="text-black/80 text-[1.5rem] font-semibold">Manage Rents</h1>
                 </div>
 
 
