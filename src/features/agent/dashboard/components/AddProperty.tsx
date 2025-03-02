@@ -56,6 +56,9 @@ const AddProperty: React.FC = () => {
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
+    const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState<boolean>(false);
 
     const {
         register,
@@ -180,23 +183,9 @@ const AddProperty: React.FC = () => {
                 fieldsToValidate = ['country_code', 'state_code', 'city_code'];
                 break;
             case 5:
-                // const images = watch('images');
-                // const videos = watch('videos');
-                // const hasImage = images.some(file => file !== null);
-                // const hasVideo = videos.some(file => file !== null);
-                //
-                // if (!hasImage) {
-                //     showAlert('Please upload at least one image', 'info');
-                //     return false;
-                // }
-                // if (!hasVideo) {
-                //     showAlert('Please upload at least one video', 'info');
-                //     return false;
-                // }
-                if (!uploadedImages || !uploadedVideos) {
-                    return false;
-                }
-                return true;
+
+                return !(!uploadedImages || !uploadedVideos);
+
         }
 
         return await trigger(fieldsToValidate);
@@ -215,6 +204,10 @@ const AddProperty: React.FC = () => {
 
     const onSubmit = async (data: PropertyFormData) => {
         if (step !== 5) return;
+        setIsUploading(true);
+        setUploadError(null);
+        setUploadProgress(0);
+
 
         const hasImage = uploadedImages.some(file => file !== null);
         const hasVideo = uploadedVideos.some(file => file !== null);
@@ -239,17 +232,25 @@ const AddProperty: React.FC = () => {
             }
         });
         // Add files to formData
-        // data.images.forEach((file, index) => {
-        //     if (file) {
-        //         formData.append('images[]', file);
-        //     }
-        // });
-        //
-        // data.videos.forEach((file, index) => {
-        //     if (file) {
-        //         formData.append('videos[]', file);
-        //     }
-        // });
+        if (data.images) {
+            data.images.forEach((file, index) => {
+                if (file) {
+                    formData.append('images[]', file);
+                }
+            });
+        }
+
+        if (data.videos) {
+            data.videos.forEach((file, index) => {
+                if (file) {
+                    formData.append('videos[]', file);
+                }
+            });
+        }
+
+        // OR Use This
+        // uploadedImages.forEach((file) => formData.append("images", file));
+        // uploadedVideos.forEach((file) => formData.append("videos", file));
 
         formData.append('published', 'false');
         formData.append('can_rate', 'false');
@@ -271,11 +272,38 @@ const AddProperty: React.FC = () => {
                         'Accept': 'application/json',
                         'Content-Type': 'multipart/form-data'
                     },
-                    withCredentials: true
+                    withCredentials: true,
+                    onUploadProgress: (progressEvent) => {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 1));
+                        setUploadProgress(percentCompleted);
+                    },
                 }
             );
+            // const response = await fetch(baseURL + "/apartment", {
+            //     method: "POST",
+            //     body: formData,
+            //     headers: {
+            //         'Authorization': `Bearer ${token}`,
+            //         'Accept': 'application/json',
+            //     },
+            //     withCredentials: true
+            // });
+            // if (!response.ok) throw new Error("Upload failed");
+
+            // let progress = 0;
+            // const interval = setInterval(() => {
+            //     progress += 10;
+            //     setUploadProgress(progress);
+            //     if (progress >= 100) clearInterval(interval);
+            // }, 200);
+            //
+            // await response.json();
+            // setUploadProgress(100);
 
             if (response.data.success) {
+            // if (response.ok) {
+
+
                 showAlert('Property successfully added!', 'success');
                 // Reset form
                 setValue('category_id', 0);
@@ -312,17 +340,20 @@ const AddProperty: React.FC = () => {
 
                 }
             }
+
+            setUploadProgress(100);
         } catch (error) {
-            if (axios.isAxiosError(error)) {
-                if (error.response?.status === 401) {
-                    showAlert('Your session has expired. Please login again.', 'error');
-                } else if (error.response?.status === 503) {
-                    showAlert('Service temporarily unavailable. Please try again later.', 'error');
-                } else {
-                    showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
-                }
-            }
+            // if (axios.isAxiosError(error)) {
+            //     if (error.response?.status === 401) {
+            //         showAlert('Your session has expired. Please login again.', 'error');
+            //     } else if (error.response?.status === 503) {
+            //         showAlert('Service temporarily unavailable. Please try again later.', 'error');
+            //     } else {
+            //         showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
+            //     }
+            // }
         } finally {
+            setTimeout(() => setUploadProgress(null), 1500);
             setIsLoading(false);
         }
     };
@@ -507,20 +538,22 @@ const AddProperty: React.FC = () => {
                                 max 5, each &lt;30MB)</label>
                             {/* <div className="grid grid-cols-2 md:grid-cols-5 gap-4"> */}
                             <div className={"text-white"}>
-                                <div {...getImageRootProps()}
-                                     style={{
-                                         border: "2px dashed #ccc",
-                                         padding: "20px",
-                                         cursor: "pointer",
-                                         borderRadius: "10px"
-                                     }}>
+                                <div  {...getImageRootProps()}
+                                      style={{
+                                          border: "2px dashed #ccc",
+                                          padding: "20px",
+                                          cursor: uploadedImages.length >= MAX_FILES ? "not-allowed" : "pointer",
+                                          opacity: uploadedImages.length >= MAX_FILES ? 0.5 : 1,
+                                          marginBottom: "10px",
+                                      }}>
                                     <input {...getImageInputProps()} />
-                                    <p className={"text-white"}>Drag & drop images here, or click to select</p>
+                                    <p>{uploadedImages.length >= MAX_FILES ? "Max limit reached" : "Drag & drop images here, or click to select"}</p>
+
                                 </div>
                                 {/*{uploadedImages && uploadedImages.map((file, index) => (*/}
                                 {/*    <li key={index}>{file.name}</li>*/}
                                 {/*))}*/}
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-5 min-h-[200px]">
+                                <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
                                     {uploadedImages && uploadedImages.map((file, index) => (
                                         <div key={index} style={{position: "relative"}}>
                                             <img
@@ -561,11 +594,12 @@ const AddProperty: React.FC = () => {
                                      style={{
                                          border: "2px dashed #ccc",
                                          padding: "20px",
-                                         cursor: "pointer",
-                                         borderRadius: "10px"
+                                         cursor: uploadedVideos.length >= MAX_FILES ? "not-allowed" : "pointer",
+                                         opacity: uploadedVideos.length >= MAX_FILES ? 0.5 : 1,
+                                         marginBottom: "10px",
                                      }}>
                                     <input {...getVideoInputProps()} />
-                                    <p>Drag & drop videos here, or click to select</p>
+                                    <p>{uploadedVideos.length >= MAX_FILES ? "Max limit reached" : "Drag & drop videos here, or click to select"}</p>
                                 </div>
                                 {/*<ul>*/}
                                 {/*    {uploadedVideos && uploadedVideos.map((file, index) => (*/}
@@ -573,7 +607,7 @@ const AddProperty: React.FC = () => {
                                 {/*    ))}*/}
                                 {/*</ul>*/}
 
-                                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mt-5 min-h-[200px]">
+                                <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
 
 
                                     {uploadedVideos.map((file, index) => (
@@ -640,6 +674,13 @@ const AddProperty: React.FC = () => {
                     )}
                 </div>
             </form>
+
+            {uploadProgress !== null && (
+                <div style={{marginTop: "10px"}}>
+                    <progress value={uploadProgress} max={100} style={{width: "100%"}}/>
+                    <p>{uploadProgress}%</p>
+                </div>
+            )}
         </div>
     );
 };
