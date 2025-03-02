@@ -1,5 +1,5 @@
 'use client'
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import axios from 'axios';
 import {useAlert} from '@/contexts/AlertContext';
@@ -33,9 +33,6 @@ interface PropertyFormData {
     videos: File[] | null;
 }
 
-type FileType = 'image' | 'video';
-type PreviewMap = { [key: number]: string };
-
 const AVAILABLE_AMENITIES = [
     'WiFi', 'Parking', 'Air Conditioning', 'Swimming Pool', 'Gym',
     'Security', 'Furnished', 'Balcony', 'Garden', 'Pet Friendly',
@@ -43,29 +40,24 @@ const AVAILABLE_AMENITIES = [
 ];
 
 const MAX_FILES = 5;
-const MAX_IMAGE_SIZE = 30 * 1024 * 1024;
-const MAX_VIDEO_SIZE = 80 * 1024 * 1024;
 
+///////////////////////////////////////////////////////////////////////////////
 const AddProperty: React.FC = () => {
     const {showAlert} = useAlert();
     const [step, setStep] = useState<number>(1);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [imagePreview, setImagePreview] = useState<PreviewMap>({});
-    const [videoPreview, setVideoPreview] = useState<PreviewMap>({});
+
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
     const [uploadProgress, setUploadProgress] = useState<number | null>(null);
-    const [uploadError, setUploadError] = useState<string | null>(null);
-    const [isUploading, setIsUploading] = useState<boolean>(false);
-
     const {
         register,
         handleSubmit,
         formState: {errors},
         setValue,
-        watch,
+        watch, reset,
         trigger
     } = useForm<PropertyFormData>({
         defaultValues: {
@@ -123,21 +115,24 @@ const AddProperty: React.FC = () => {
 
     const onDropImages = useCallback(
         (acceptedFiles: File[]) => {
-            if (uploadedImages.length >= MAX_FILES) return; // Prevent exceeding limit
-            const newFiles = [...uploadedImages, ...acceptedFiles].slice(0, MAX_FILES);
-            setUploadedImages(newFiles);
-            setValue("images", newFiles);
+            setUploadedImages(prevImages => {
+                const newFiles = [...prevImages, ...acceptedFiles].slice(0, MAX_FILES);
+                setValue("images", newFiles);
+                return newFiles;
+            });
         },
-        [uploadedImages, setValue]
+        [setValue] // Remove `uploadedImages` from dependencies
     );
+
     const onDropVideos = useCallback(
         (acceptedFiles: File[]) => {
-            if (uploadedVideos.length >= MAX_FILES) return; // Prevent exceeding limit
-            const newFiles = [...uploadedVideos, ...acceptedFiles].slice(0, MAX_FILES);
-            setUploadedVideos(newFiles);
-            setValue("videos", newFiles);
+            setUploadedVideos(prevVideos => {
+                const newFiles = [...prevVideos, ...acceptedFiles].slice(0, MAX_FILES);
+                setValue("videos", newFiles);
+                return newFiles;
+            });
         },
-        [uploadedVideos, setValue]
+        [setValue] // Remove `uploadedVideos` from dependencies
     );
 
 
@@ -204,8 +199,6 @@ const AddProperty: React.FC = () => {
 
     const onSubmit = async (data: PropertyFormData) => {
         if (step !== 5) return;
-        setIsUploading(true);
-        setUploadError(null);
         setUploadProgress(0);
 
 
@@ -217,6 +210,8 @@ const AddProperty: React.FC = () => {
             return;
         }
 
+
+        if (isLoading) return;
         setIsLoading(true);
 
         const formData = new FormData();
@@ -232,25 +227,8 @@ const AddProperty: React.FC = () => {
             }
         });
         // Add files to formData
-        if (data.images) {
-            data.images.forEach((file, index) => {
-                if (file) {
-                    formData.append('images[]', file);
-                }
-            });
-        }
-
-        if (data.videos) {
-            data.videos.forEach((file, index) => {
-                if (file) {
-                    formData.append('videos[]', file);
-                }
-            });
-        }
-
-        // OR Use This
-        // uploadedImages.forEach((file) => formData.append("images", file));
-        // uploadedVideos.forEach((file) => formData.append("videos", file));
+        uploadedImages.forEach(file => formData.append("images[]", file));
+        uploadedVideos.forEach(file => formData.append("videos[]", file));
 
         formData.append('published', 'false');
         formData.append('can_rate', 'false');
@@ -270,7 +248,7 @@ const AddProperty: React.FC = () => {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json',
-                        'Content-Type': 'multipart/form-data'
+                        // 'Content-Type': 'multipart/form-data',
                     },
                     withCredentials: true,
                     onUploadProgress: (progressEvent) => {
@@ -279,53 +257,13 @@ const AddProperty: React.FC = () => {
                     },
                 }
             );
-            // const response = await fetch(baseURL + "/apartment", {
-            //     method: "POST",
-            //     body: formData,
-            //     headers: {
-            //         'Authorization': `Bearer ${token}`,
-            //         'Accept': 'application/json',
-            //     },
-            //     withCredentials: true
-            // });
-            // if (!response.ok) throw new Error("Upload failed");
-
-            // let progress = 0;
-            // const interval = setInterval(() => {
-            //     progress += 10;
-            //     setUploadProgress(progress);
-            //     if (progress >= 100) clearInterval(interval);
-            // }, 200);
-            //
-            // await response.json();
-            // setUploadProgress(100);
 
             if (response.data.success) {
-            // if (response.ok) {
-
-
                 showAlert('Property successfully added!', 'success');
-                // Reset form
-                setValue('category_id', 0);
-                setValue('title', '');
-                setValue('description', null);
-                setValue('number_of_rooms', null);
-                setValue('amount', 0);
-                setValue('currency_code', 'NGN');
-                setValue('security_deposit', null);
-                setValue('security_deposit_currency_code', null);
-                setValue('duration', 0);
-                setValue('duration_type', 'month');
-                setValue('amenities', []);
-                setValue('country_code', 'NG');
-                setValue('state_code', '');
-                setValue('city_code', '');
+                reset();
+                setSelectedAmenities([]);
                 setValue('images', []);
                 setValue('videos', []);
-
-                setImagePreview({});
-                setVideoPreview({});
-                setSelectedAmenities([]);
                 setStep(1);
                 try {
 
@@ -343,15 +281,15 @@ const AddProperty: React.FC = () => {
 
             setUploadProgress(100);
         } catch (error) {
-            // if (axios.isAxiosError(error)) {
-            //     if (error.response?.status === 401) {
-            //         showAlert('Your session has expired. Please login again.', 'error');
-            //     } else if (error.response?.status === 503) {
-            //         showAlert('Service temporarily unavailable. Please try again later.', 'error');
-            //     } else {
-            //         showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
-            //     }
-            // }
+            if (axios.isAxiosError(error)) {
+                if (error.response?.status === 401) {
+                    showAlert('Your session has expired. Please login again.', 'error');
+                } else if (error.response?.status === 503) {
+                    showAlert('Service temporarily unavailable. Please try again later.', 'error');
+                } else {
+                    showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
+                }
+            }
         } finally {
             setTimeout(() => setUploadProgress(null), 1500);
             setIsLoading(false);
@@ -550,9 +488,6 @@ const AddProperty: React.FC = () => {
                                     <p>{uploadedImages.length >= MAX_FILES ? "Max limit reached" : "Drag & drop images here, or click to select"}</p>
 
                                 </div>
-                                {/*{uploadedImages && uploadedImages.map((file, index) => (*/}
-                                {/*    <li key={index}>{file.name}</li>*/}
-                                {/*))}*/}
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
                                     {uploadedImages && uploadedImages.map((file, index) => (
                                         <div key={index} style={{position: "relative"}}>
@@ -582,7 +517,6 @@ const AddProperty: React.FC = () => {
                                         </div>
                                     ))}
                                 </div>
-
                             </div>
                         </div>
 
@@ -601,17 +535,11 @@ const AddProperty: React.FC = () => {
                                     <input {...getVideoInputProps()} />
                                     <p>{uploadedVideos.length >= MAX_FILES ? "Max limit reached" : "Drag & drop videos here, or click to select"}</p>
                                 </div>
-                                {/*<ul>*/}
-                                {/*    {uploadedVideos && uploadedVideos.map((file, index) => (*/}
-                                {/*        <li key={index}>{file.name}</li>*/}
-                                {/*    ))}*/}
-                                {/*</ul>*/}
-
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
 
 
                                     {uploadedVideos.map((file, index) => (
-                                        <div key={index} style={{position: "relative"}}>
+                                        <div key={index} style={{position: "relative", minHeight: "90px"}}>
                                             <video
                                                 src={URL.createObjectURL(file)}
                                                 width={120}
@@ -686,3 +614,7 @@ const AddProperty: React.FC = () => {
 };
 
 export default AddProperty;
+
+
+
+
