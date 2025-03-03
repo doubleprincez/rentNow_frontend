@@ -20,8 +20,9 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import {getAllApartments, deleteApartment, type Apartment} from '../api/get-all-apartments';
-import {Search, ChevronLeft, ChevronRight} from 'lucide-react';
+import {Search, ChevronLeft, ChevronRight,   Pencil} from 'lucide-react';
 import {updateApartment} from "../api/get-all-apartments";
+import Link from "next/link";
 
 const ViewApartment = () => {
     const [apartments, setApartments] = useState<Apartment[]>([]);
@@ -202,6 +203,9 @@ const ViewApartment = () => {
                                     <TableCell>{`${apartment.city_code}, ${apartment.state_code}`}</TableCell>
                                     <TableCell>{apartment.amount}</TableCell>
                                     <TableCell className={'flex '}>
+                                        <Link  href={"/admin/dashboard/edit-apartment/"+apartment.id}>
+                                            <Pencil />
+                                        </Link>
                                         <Button
                                             variant="destructive"
                                             size="sm"

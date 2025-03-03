@@ -34,7 +34,6 @@ const UserChat = () => {
             {/*    agentName={apartment.agent}*/}
             {/*/>*/}
 
-
         </div>
         </div>
         </div>
