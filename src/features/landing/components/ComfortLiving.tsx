@@ -10,6 +10,7 @@ import House2 from '@/components/assets/house2.jpeg';
 import House3 from '@/components/assets/house3.jpeg';
 import House4 from '@/components/assets/house4.jpeg';
 import House5 from '@/components/assets/house5.jpeg';
+import {baseURL} from "@/../next.config";
 
 const tabs = [
     {image:House},
@@ -66,7 +67,7 @@ const ComfortLiving = ({ initialData }: { initialData?: ApiResponse }) => {
         const fetchApartments = async () => {
             try {
                 setIsLoading(true);
-                const response = await fetch('/api/apartments');
+                const response = await fetch(baseURL+'/apartments');
                 const data: ApiResponse = await response.json();
                 if (data.success) {
                     setApartments(data.data.data);

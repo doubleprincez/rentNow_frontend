@@ -7,30 +7,8 @@ import { Send, MessageSquare, Loader2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import {baseURL} from "@/../next.config";
+import {ChatDialogProps, Message, RootState} from "@/types/chats";
 
-interface ChatDialogProps {
-  agentId: number;
-  agentName: string;
-}
-
-interface Message {
-  id: number;
-  from_id: string;
-  to_id: string;
-  message: string;
-  created_at: string;
-  updated_at: string;
-}
-
-interface UserState {
-  isLoggedIn: boolean;
-  userId?: number;
-  token?: string;
-}
-
-interface RootState {
-  user: UserState;
-}
 
 const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
   const [messages, setMessages] = useState<Message[]>([]);

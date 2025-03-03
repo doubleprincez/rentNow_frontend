@@ -13,6 +13,7 @@ import {
   CartesianGrid
 } from 'recharts';
 import {baseURL} from "@/../next.config";
+import {router} from "next/client";
 
 interface Statistics {
   total_apartments: number;
@@ -45,6 +46,13 @@ const Home = () => {
   const [error, setError] = useState<string | null>(null);
 
   const token = useSelector((state: any) => state.agent.token);
+
+  useEffect(() => {
+    if (!token) {
+      router.push('/agents/auth/login'); // Replace with your actual login route
+    }
+  }, [token, router]);
+
 
   useEffect(() => {
     let isMounted = true;
