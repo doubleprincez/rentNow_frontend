@@ -310,7 +310,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                 <h1 className="text-black/80 text-[1.5rem] font-semibold">Edit Property: </h1>
                 <span className="text-orange-500 font-medium">Step {step} / 5</span>
             </div>
-            <div className={"-mt-5"}>  {property?.title} </div>
+            <div className={"-mt-3"}>  {property?.title} </div>
 
             <form onSubmit={handleSubmit(onSubmit)}
                   className="w-full flex flex-col gap-6 bg-black/80 rounded-xl shadow-md shadow-orange-600 p-4">
