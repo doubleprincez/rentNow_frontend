@@ -215,7 +215,7 @@ const ViewApartment = () => {
                                             Delete
                                         </Button>
                                         {
-                                            apartment.published !== 'true' || !apartment.published ? <Button
+                                             !apartment.published ? <Button
                                                 variant="outline"
                                                 size="sm"
                                                 className='bg-green-500 text-white px-4 py-1 mx-3 rounded-md'
