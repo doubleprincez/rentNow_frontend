@@ -95,7 +95,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                 // Convert image URLs to File objects
                 if (images) {
                     const imageFiles = await Promise.all(
-                        images.map(async (url) => await urlToFile(url?.original_url))
+                        images.map(async (url) =>url)
                     );
                     setUploadedImages(imageFiles);
                 }
@@ -103,7 +103,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                 // Convert video URLs to File objects
                 if (videos) {
                     const videoFiles = await Promise.all(
-                        videos.map(async (url) => await urlToFile(url?.original_url))
+                        videos.map(async (url) => url)
                     );
                     setUploadedVideos(videoFiles);
                 }
