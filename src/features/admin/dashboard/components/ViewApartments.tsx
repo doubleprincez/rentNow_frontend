@@ -203,7 +203,7 @@ const ViewApartment = () => {
                                     <TableCell>{`${apartment.city_code}, ${apartment.state_code}`}</TableCell>
                                     <TableCell>{apartment.amount}</TableCell>
                                     <TableCell className={'flex '}>
-                                        <Link  href={"/admin/dashboard/edit-apartment/"+apartment.id}>
+                                        <Link  className={"mt-1"} href={"/admin/dashboard/edit-apartment/"+apartment.id}>
                                             <Pencil />
                                         </Link>
                                         <Button
