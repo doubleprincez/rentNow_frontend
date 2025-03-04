@@ -20,8 +20,9 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import {getAllApartments, deleteApartment, type Apartment} from '../api/get-all-apartments';
-import {Search, ChevronLeft, ChevronRight} from 'lucide-react';
+import {Search, ChevronLeft, ChevronRight,   Pencil} from 'lucide-react';
 import {updateApartment} from "../api/get-all-apartments";
+import Link from "next/link";
 
 const ViewApartment = () => {
     const [apartments, setApartments] = useState<Apartment[]>([]);
@@ -202,6 +203,9 @@ const ViewApartment = () => {
                                     <TableCell>{`${apartment.city_code}, ${apartment.state_code}`}</TableCell>
                                     <TableCell>{apartment.amount}</TableCell>
                                     <TableCell className={'flex '}>
+                                        <Link  className={"mt-1"} href={"/admin/dashboard/edit-apartment/"+apartment.id}>
+                                            <Pencil />
+                                        </Link>
                                         <Button
                                             variant="destructive"
                                             size="sm"
@@ -211,7 +215,7 @@ const ViewApartment = () => {
                                             Delete
                                         </Button>
                                         {
-                                            apartment.published !== 'true' || !apartment.published ? <Button
+                                             !apartment.published ? <Button
                                                 variant="outline"
                                                 size="sm"
                                                 className='bg-green-500 text-white px-4 py-1 mx-3 rounded-md'
@@ -221,13 +225,12 @@ const ViewApartment = () => {
                                             </Button> : <Button
                                                 variant="outline"
                                                 size="sm"
-                                                className='bg-green-500 text-white px-4 py-1 mx-3 rounded-md'
+                                                className='bg-red-500 text-white px-4 py-1 mx-3 rounded-md'
                                                 onClick={() => handlePublish(apartment.id, false)}
                                             >
                                                 UnPublish
                                             </Button>
                                         }
-
 
                                     </TableCell>
                                 </TableRow>

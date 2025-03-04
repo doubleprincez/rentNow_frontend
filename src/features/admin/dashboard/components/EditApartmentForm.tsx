@@ -1,12 +1,11 @@
-'use client'
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+'use client';
+
+import React, {useCallback, useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import axios from 'axios';
 import {useAlert} from '@/contexts/AlertContext';
-// import Dropzone from 'react-dropzone-uploader';
 import {baseURL} from "@/../next.config";
 import {useDropzone} from "react-dropzone";
-
 
 interface Category {
     id: number;
@@ -14,7 +13,8 @@ interface Category {
     slug: string;
 }
 
-interface PropertyFormData {
+export  interface PropertyFormData {
+    id: number;
     category_id: number;
     title: string;
     description: string | null;
@@ -29,6 +29,8 @@ interface PropertyFormData {
     country_code: string;
     state_code: string;
     city_code: string;
+    published: boolean;
+    can_rate: boolean;
     images: File[] | null;
     videos: File[] | null;
 }
@@ -41,36 +43,114 @@ const AVAILABLE_AMENITIES = [
 
 const MAX_FILES = 5;
 
-///////////////////////////////////////////////////////////////////////////////
-const AddProperty: React.FC = () => {
-    const { showAlert } = useAlert();
+interface EditApartmentFormProps {
+    property: PropertyFormData;
+}
+
+const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
+
+    const {showAlert} = useAlert();
     const [step, setStep] = useState(1);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
-    const progressRef = useRef<number>(0);
-    const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: {errors},
         setValue,
         watch,
         reset,
         trigger
     } = useForm<PropertyFormData>({
-        defaultValues: {
-            amenities: [],
-            currency_code: '₦',
-            security_deposit_currency_code: '₦',
-            country_code: 'Nigeria',
-            images: [],
-            videos: []
-        }
+        defaultValues: property
     });
+
+    // useEffect(() => {
+    //     if (property) {
+    //         reset(property, {keepDefaultValues: true}); // Reset form values to match the new property data
+    //         if (property.amenities) {
+    //             setSelectedAmenities(property.amenities);
+    //         }
+    //     }
+    // }, [property, step, reset]);
+
+
+    useEffect(() => {
+
+        fetchCategories().then(r => r);
+        if (property.amenities) {
+            setSelectedAmenities(property.amenities);
+        }
+
+        async function fetchMedia() {
+            try {
+
+                const images = property.images; // Extract media from response
+                const videos = property.videos; // Extract media from response
+
+                // Convert image URLs to File objects
+                if (images) {
+                    const imageFiles = await Promise.all(
+                        images.map(async (url) =>url)
+                    );
+                    setUploadedImages(imageFiles);
+                }
+
+                // Convert video URLs to File objects
+                if (videos) {
+                    const videoFiles = await Promise.all(
+                        videos.map(async (url) => url)
+                    );
+                    setUploadedVideos(videoFiles);
+                }
+            } catch (error) {
+                console.error("Error fetching media:", error);
+            }
+        }
+
+        if (property.id) {
+            fetchMedia().then(r => r);
+        }
+    }, []);
+
+    async function urlToFile(url: string) {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new File([blob], url.split("/").pop() || "file", {type: blob.type});
+    }
+
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get<{ success: boolean; data: Category[] }>(
+                baseURL + '/apartment-types',
+                {
+                    headers: {
+                        'Authorization': `Bearer ${getAuthToken()}`,
+                        'Accept': 'application/json',
+                    },
+                    withCredentials: true
+                }
+            );
+            if (response.data.success) {
+                setCategories(response.data.data);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.status === 401) {
+                showAlert('Please login to continue', 'error');
+            }
+        }
+    };
+
+    const getAuthToken = (): string | null => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('agentToken');
+        }
+        return null;
+    };
 
     const handleAmenityToggle = (amenity: string) => {
         setSelectedAmenities(prev => {
@@ -81,39 +161,6 @@ const AddProperty: React.FC = () => {
             return newAmenities;
         });
     };
-
-    const getAuthToken = (): string | null => {
-        if (typeof window !== 'undefined') {
-            return localStorage.getItem('agentToken');
-        }
-        return null;
-    };
-
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get<{ success: boolean; data: Category[] }>(
-                    baseURL + '/apartment-types',
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${getAuthToken()}`,
-                            'Accept': 'application/json',
-                        },
-                        withCredentials: true
-                    }
-                );
-                if (response.data.success) {
-                    setCategories(response.data.data);
-                }
-            } catch (error) {
-                if (axios.isAxiosError(error) && error.response?.status === 401) {
-                    showAlert('Please login to continue', 'error');
-                }
-            }
-        };
-
-        fetchCategories();
-    }, []);
 
     const onDropImages = useCallback(
         (acceptedFiles: File[]) => {
@@ -149,13 +196,13 @@ const AddProperty: React.FC = () => {
         setValue("videos", updatedFiles);
     };
 
-    const { getRootProps: getImageRootProps, getInputProps: getImageInputProps } = useDropzone({
-        accept: { "image/*": [] },
+    const {getRootProps: getImageRootProps, getInputProps: getImageInputProps} = useDropzone({
+        accept: {"image/*": []},
         onDrop: onDropImages,
     });
 
-    const { getRootProps: getVideoRootProps, getInputProps: getVideoInputProps } = useDropzone({
-        accept: { "video/*": [] },
+    const {getRootProps: getVideoRootProps, getInputProps: getVideoInputProps} = useDropzone({
+        accept: {"video/*": []},
         onDrop: onDropVideos,
     });
 
@@ -175,16 +222,17 @@ const AddProperty: React.FC = () => {
                 fieldsToValidate = ['country_code', 'state_code', 'city_code'];
                 break;
             case 5:
-                return uploadedImages.length > 0 && uploadedVideos.length > 0;
+                fieldsToValidate = ['images', 'videos'];
+                break;
         }
         return await trigger(fieldsToValidate);
     };
 
     const nextStep = async (): Promise<void> => {
-        const isValid = await validateStep();
-        if (isValid) {
-            setStep(current => Math.min(current + 1, 5));
-        }
+        // const isValid = await validateStep();
+        // if (isValid) {
+        setStep(current => Math.min(current + 1, 5));
+        // }
     };
 
     const prevStep = (): void => {
@@ -193,12 +241,6 @@ const AddProperty: React.FC = () => {
 
     const onSubmit = async (data: PropertyFormData) => {
         if (step !== 5) return;
-
-        if (!uploadedImages.length || !uploadedVideos.length) {
-            showAlert('Please upload at least one image and one video', 'info');
-            setIsLoading(false);
-            return;
-        }
 
         if (isLoading) return;
         setIsLoading(true);
@@ -215,11 +257,12 @@ const AddProperty: React.FC = () => {
             }
         });
 
-        uploadedImages.forEach(file => formData.append("images[]", file));
-        uploadedVideos.forEach(file => formData.append("videos[]", file));
-
-        formData.append('published', 'false');
-        formData.append('can_rate', 'false');
+        if (uploadedImages) {
+            uploadedImages.forEach(file => formData.append("images[]", file));
+        }
+        if (uploadedVideos) {
+            uploadedVideos.forEach(file => formData.append("videos[]", file));
+        }
 
         try {
             const token = getAuthToken();
@@ -229,48 +272,45 @@ const AddProperty: React.FC = () => {
                 return;
             }
 
-            const response = await axios.post(
-                baseURL + '/apartment',
+            const response = await axios.put(
+                baseURL + '/apartment/' + property.id,
                 formData,
                 {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json',
+                        "Content-Type": "application/json"
                     },
                     withCredentials: true,
-                    // onUploadProgress: (progressEvent) => {
-                    //     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    //     progressRef.current = percentCompleted;
-                    //     setUploadProgress(percentCompleted);
-                    // },
+
                 }
             );
 
             if (response.data.success) {
-                showAlert('Property successfully added!', 'success');
-                reset();
-                setSelectedAmenities([]);
-                setUploadedImages([]);
-                setUploadedVideos([]);
-                setStep(1);
+                showAlert('Property successfully updated!', 'success');
+                reset(response.data.data);
+
+
+                // setStep(1);
             }
 
-            setUploadProgress(100);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
             }
         } finally {
-            setTimeout(() => setUploadProgress(null), 1500);
             setIsLoading(false);
         }
     };
+
+
     return (
         <div className="w-full flex flex-col px-2 md:px-6 py-2 md:py-6 gap-2 md:gap-4">
             <div className="flex justify-between items-center">
-                <h1 className="text-black/80 text-[1.5rem] font-semibold">Add New Property</h1>
+                <h1 className="text-black/80 text-[1.5rem] font-semibold">Edit Property: </h1>
                 <span className="text-orange-500 font-medium">Step {step} / 5</span>
             </div>
+            <div className={"-mt-3"}>  {property?.title} </div>
 
             <form onSubmit={handleSubmit(onSubmit)}
                   className="w-full flex flex-col gap-6 bg-black/80 rounded-xl shadow-md shadow-orange-600 p-4">
@@ -280,7 +320,7 @@ const AddProperty: React.FC = () => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Property Category</label>
                             <select
-                                {...register('category_id', {required: 'Category is required'})}
+                                {...register('category_id')}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
                             >
                                 <option value="">Select Category</option>
@@ -296,7 +336,7 @@ const AddProperty: React.FC = () => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Title</label>
                             <input
-                                {...register('title', {required: 'Title is required'})}
+                                {...register('title',)}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
@@ -319,6 +359,24 @@ const AddProperty: React.FC = () => {
                                 rows={4}
                             />
                         </div>
+                        <div className={"flex justify-start"}><input type={"checkbox"}
+                                                                     {...register('published')}
+                                                                     className=" border border-gray-300 rounded-lg px-4 py-2 rounded"
+
+                        />
+                            <label
+                                className="block text-sm font-semibold mb-2 px-2 text-white  pt-2">{"Publish"}</label>
+
+                        </div>
+                        <div className={"flex justify-start"}><input type={"checkbox"}
+                                                                     {...register('can_rate')}
+                                                                     className=" border border-gray-300 rounded-lg px-4 py-2 rounded"
+
+                        />
+                            <label
+                                className="block text-sm font-semibold mb-2 text-white px-2 pt-2">{"Allow Rating"}</label>
+
+                        </div>
                     </div>
                 )}
 
@@ -328,7 +386,7 @@ const AddProperty: React.FC = () => {
                             <label className="block text-sm font-semibold mb-2 text-white">Amount</label>
                             <input
                                 type="number"
-                                {...register('amount', {required: 'Amount is required'})}
+                                {...register('amount')}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
@@ -337,7 +395,7 @@ const AddProperty: React.FC = () => {
                         <div className={"hidden"}>
                             <label className="block text-sm font-semibold mb-2 text-white">Currency Code</label>
                             <input
-                                {...register('currency_code', {required: 'Currency code is required'})}
+                                {...register('currency_code')}
                                 defaultValue="₦"
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
@@ -361,7 +419,7 @@ const AddProperty: React.FC = () => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Duration Type</label>
                             <select
-                                {...register('duration_type', {required: 'Duration type is required'})}
+                                {...register('duration_type')}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
                             >
                                 <option value="day">Day</option>
@@ -377,7 +435,7 @@ const AddProperty: React.FC = () => {
                             <label className="block text-sm font-semibold mb-2 text-white">Rent Duration</label>
                             <input
                                 type="number"
-                                {...register('duration', {required: 'Duration is required'})}
+                                {...register('duration')}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
                             />
                             {errors.duration && <p className="text-red-500 text-sm">{errors.duration.message}</p>}
@@ -409,7 +467,7 @@ const AddProperty: React.FC = () => {
                         <div className='hidden'>
                             <label className="block text-sm font-semibold mb-2 text-white">Country</label>
                             <input
-                                {...register('country_code', {required: 'Country code is required'})}
+                                {...register('country_code')}
                                 defaultValue="NG"
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
@@ -420,7 +478,7 @@ const AddProperty: React.FC = () => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">State</label>
                             <input
-                                {...register('state_code', {required: 'State is required'})}
+                                {...register('state_code')}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.state_code && <p className="text-red-500 text-sm">{errors.state_code.message}</p>}
@@ -429,7 +487,7 @@ const AddProperty: React.FC = () => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">City</label>
                             <input
-                                {...register('city_code', {required: 'City is required'})}
+                                {...register('city_code')}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.city_code && <p className="text-red-500 text-sm">{errors.city_code.message}</p>}
@@ -566,7 +624,7 @@ const AddProperty: React.FC = () => {
                             disabled={isLoading}
                             className="ml-auto px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50"
                         >
-                            {isLoading ? 'Submitting...' : 'Submit Property'}
+                            {isLoading ? 'Updating...' : 'Update Property'}
                         </button>
                     )}
                 </div>
@@ -582,7 +640,7 @@ const AddProperty: React.FC = () => {
     );
 };
 
-export default AddProperty;
+export default EditApartmentForm;
 
 
 

@@ -12,7 +12,7 @@ export interface Apartment {
     amount: string;
     duration: string;
     state_code: string;
-    published: boolean | string;
+    published: boolean ;
     can_rate: boolean;
     city_code: string;
     images: Record<string, {
