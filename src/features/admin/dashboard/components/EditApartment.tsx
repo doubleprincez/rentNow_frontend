@@ -5,14 +5,14 @@ import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {Loader} from "lucide-react";
 import {baseURL} from "@/../next.config";
-import EditApartmentForm from "./EditApartmentForm";
+import EditApartmentForm, {PropertyFormData} from "./EditApartmentForm";
 
 
 const EditApartment: React.FC = () => {
     const params = useParams();
     const {id} = params; // Extract the `id` parameter
 
-    const [apartment, setApartment] = useState({});
+    const [apartment, setApartment] = useState<PropertyFormData>();
     const [pageState, setPageState] = useState('loading');
     const [loading,setLoading] = useState(false);
 

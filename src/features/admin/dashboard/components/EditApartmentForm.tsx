@@ -13,7 +13,7 @@ interface Category {
     slug: string;
 }
 
-interface PropertyFormData {
+export  interface PropertyFormData {
     id: number;
     category_id: number;
     title: string;

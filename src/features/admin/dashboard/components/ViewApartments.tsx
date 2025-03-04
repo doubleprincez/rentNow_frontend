@@ -232,7 +232,6 @@ const ViewApartment = () => {
                                             </Button>
                                         }
 
-
                                     </TableCell>
                                 </TableRow>
                             ))
