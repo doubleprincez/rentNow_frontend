@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { BanknoteIcon, PlayIcon } from "lucide-react";
 import Paystack from "./Paystack";
 import { BankIcon } from "@/icons";
-import { formatAmountNumber } from "@/lib/utils"; 
+import { deleteFormData, formatAmountNumber, getFormData, hasFormData, saveFormData } from "@/lib/utils"; 
 import { useSelector } from "react-redux"; 
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
@@ -29,6 +29,8 @@ const Checkout = ( {plans}:CheckoutI)=>{
     const { isLoggedIn, firstName, lastName } = useSelector((state: RootState) => state.agent);
   
     useEffect(() => {
+    fetchToken();
+
       if (!isLoggedIn) {
         router.push('/auth/login');
       }
@@ -46,7 +48,7 @@ const Checkout = ( {plans}:CheckoutI)=>{
 // payment gateway selection
 const gateways:GatewayI[] = [
     {title:'Bank Transfer','slug':'bank-transfer',component:<BankTransfer plan={selectedPlan} onCompleted={setGatewayResponse} />,active:true,icon:<BanknoteIcon />,className:"text-lg font-bold bg-gray-800 text-white rounded hover:shadow-lg"},
-    {title:'Paystack','slug':'paystack',component:<Paystack plan={selectedPlan}  onCompleted={setGatewayResponse} />,active:false,icon:<BankIcon  />,className:"text-lg font-bold bg-blue-200 text-black rounded hover:shadow-lg"}
+    {title:'Paystack','slug':'paystack',component:<Paystack plan={selectedPlan}  onCompleted={setGatewayResponse} />,active:false,icon:<BankIcon  />,className:"  bg-orange-500 hover:bg-orange-600 text-white   text-lg font-bold   rounded hover:shadow-lg"}
 
 ]
 
@@ -55,20 +57,35 @@ const selectedPlanIs = (id:number) =>{
     const set = plans?.filter((r=>r.id==id));
 
     if(set){
-        setSelectedPlan(set[0])
+        setSelectedPlan(set[0]);
+        saveFormData('checkout_plan', set[0]);
     }
 }
 
-const selectedPaymentMethodIs = (slug:string,active:boolean)=>{
-    console.log('here',slug,active);
+const selectedPaymentMethodIs = (slug:string,active:boolean=true)=>{
+    
     if(!active){
         return alert('Gateway Not Available');
     }
     const set = gateways?.filter((r=>r.slug==slug));
     if(set){
-    setSelectedGateway(set[0])
+    setSelectedGateway(set[0]);
+    saveFormData('checkout_gateway', set[0]);
     }
 }
+
+
+const fetchToken=()=>{
+    if(hasFormData('checkout_plan')){
+        setSelectedPlan(getFormData('checkout_plan'));
+        deleteFormData('checkout_plan')
+    }
+    if(hasFormData('checkout_type')){
+        selectedPaymentMethodIs(getFormData('checkout_type'));
+        deleteFormData('checkout_type')
+    } 
+}
+
 
 const PlanSelection =()=>{
     return  <div>

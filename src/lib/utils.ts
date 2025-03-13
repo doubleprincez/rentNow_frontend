@@ -1,3 +1,4 @@
+import axios, { Axios } from "axios";
 import { type ClassValue, clsx } from "clsx"
 import { formatDistanceToNow } from "date-fns";
 
@@ -17,3 +18,61 @@ export const formatAmountNumber = (num:number|string|null|undefined) => {
 export const formatDate = (timestamp:any) => {
   return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
 };
+
+/////////////////////////// COOKIE ////////////////////////////////////////////
+export function hasFormData(name:string) {
+  const cookies = document.cookie.split("; ");
+  return cookies.some(cookie => cookie.startsWith(`${name}=`));
+}
+
+
+export function saveFormData(name:string, data:any, duration = 30) {
+  const expires = new Date();
+  expires.setTime(expires.getTime() + duration * 24 * 60 * 60 * 1000); // Convert days to milliseconds
+  document.cookie = `${name}=${encodeURIComponent(JSON.stringify(data))}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Strict`;
+}
+
+export function getFormData(name:string) {
+  const cookies = document.cookie.split("; ");
+  for (let cookie of cookies) {
+      const [key, value] = cookie.split("=");
+      if (key === name) {
+          return JSON.parse(decodeURIComponent(value));
+      }
+  }
+  return null;
+}
+
+export function deleteFormData(name:string) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+}
+
+
+export const AxiosApi  =  () =>{
+  //  axios.defaults.withCredentials = true; // Ensure cookies are sent with requests
+  //  axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+  
+  // const csrfTokenMeta = localStorage.getItem('token')??localStorage.getItem('agentToken')??localStorage.getItem('adminToken');
+  // if (csrfTokenMeta) {
+  //     axios.defaults.headers.Authorization = `Bearer ${ csrfTokenMeta}` ;
+    
+  // }  
+  const instance = axios.create({
+    withCredentials: true, // Ensure cookies are sent with requests
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  });
+
+  // Retrieve token dynamically
+  const csrfTokenMeta =
+    localStorage.getItem('token') ??
+    localStorage.getItem('agentToken') ??
+    localStorage.getItem('adminToken');
+
+  if (csrfTokenMeta) {
+    instance.defaults.headers.Authorization = `Bearer ${csrfTokenMeta}`;
+  }
+
+  return instance; 
+}

@@ -89,7 +89,7 @@ const UserChat = () => {
                       
                         <div className="flex items-center">
                             <a className="inline-flex items-start mr-3" href="#0">
-                                <img className="rounded-full" src={ '#'} width="48" height="48" alt="Lauren Marsano" />
+                                <img className="rounded-full" src={ selectedApartment.images && Object.values(selectedApartment.images)[0]?.preview_url || '/placeholder.jpg'} width="48" height="48" alt="Lauren Marsano" />
                             </a>
                             <div className="pr-1">
                                 <a className="inline-flex text-gray-800 hover:text-gray-900" href="#0">

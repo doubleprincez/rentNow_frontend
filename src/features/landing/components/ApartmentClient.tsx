@@ -11,55 +11,26 @@ import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import ChatDialog from '@/features/landing/components/ChatDialog';
 import {baseURL} from "@/../next.config";
+import Link from 'next/link';
+import { saveFormData } from '@/lib/utils';
 
 interface ClientProps {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  apartment: Apartment; 
 }
 
-export default function ApartmentClient({ params, searchParams }: ClientProps) {
-  const router = useRouter();
-  const [apartment, setApartment] = useState<Apartment | null>(null);
-  const { isLoggedIn, token } = useSelector((state: any) => state.user);
-  const [isLoading, setIsLoading] = useState(true);
+export default function ApartmentClient({ apartment }: ClientProps) {
+ 
+  const router = useRouter(); 
+  const { isLoggedIn, token, userData } = useSelector((state: any) => state.user);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [bookingData, setBookingData] = useState({
     start: '',
     end: '',
   });
   const [isBooking, setIsBooking] = useState(false);
+ 
 
-  useEffect(() => {
-    try {
-      const data = searchParams.data;
-      if (data && typeof data === 'string') {
-        const decodedApartment = JSON.parse(decodeURIComponent(data));
-        setApartment(decodedApartment);
-        setIsLoading(false);
-      } else {
-        fetchApartment();
-      }
-    } catch (error) {
-      //console.error('Error parsing apartment data:', error);
-      fetchApartment();
-    }
-  }, [params.slug, searchParams]);
-
-  const fetchApartment = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch('/api/apartments');
-      const data = await response.json();
-      if (data.success) {
-        const apt = data.data.data.find((a: Apartment) => a.id.toString() === params.slug);
-        setApartment(apt || null);
-      }
-    } catch (error) {
-      //console.error('Error fetching apartment:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const calculateEndDate = (startDate: string, duration: string): string => {
     const start = new Date(startDate);
@@ -148,7 +119,7 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
 
   if (!apartment) {
     return <div className="flex justify-center items-center min-h-screen">Apartment not found</div>;
-  }
+  } 
 
   return (
     <div className="w-full px-4 py-20 md:py-28">
@@ -214,7 +185,10 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
               </div>
 
               <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-2'>
-                <Dialog>
+              {
+            
+            isLoggedIn ?   userData && userData.isSubscribed===true?<>
+               <Dialog>
                   <DialogTrigger asChild>
                     <Button className="bg-orange-500 hover:bg-orange-600 text-white">
                       Book Apartment
@@ -224,20 +198,9 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
                     <DialogHeader>
                       <DialogTitle>Book Apartment</DialogTitle>
                     </DialogHeader>
-                    {!isLoggedIn ? (
-                      <div className="text-center py-4">
-                        <p className="text-gray-600 mb-4">
-                          Please log in to book a viewing session.
-                        </p>
-                        <Button 
-                          onClick={() => router.push('/login')}
-                          className="bg-orange-500 hover:bg-orange-600 text-white"
-                        >
-                          Go to Login
-                        </Button>
-                      </div>
-                    ) : (
+                   
                       <div className="grid gap-4 py-4">
+                        
                         <div className="grid gap-2">
                           <label htmlFor="start-date" className="text-sm font-medium">
                             Start Date
@@ -264,17 +227,29 @@ export default function ApartmentClient({ params, searchParams }: ClientProps) {
                         >
                           {isBooking ? 'Booking...' : 'Confirm Booking'}
                         </Button>
+                         
                       </div>
-                    )}
+                    
                   </DialogContent>
                 </Dialog>
-
                 <ChatDialog 
                   agentId={apartment.agent_id} 
                   agentName={apartment.agent}
                 />
+              </>: <Button onClick={()=>router.push('/checkout')} className='bg-orange-500 hover:bg-orange-600 text-white w-full mt-2'>Subscribe Now</Button>  
+           :<div className="text-center col-span-2 py-4 w-full">
+                        <p className="text-gray-600 mb-4">
+                          Please log in to continue
+                        </p>
+                        <Button 
+                          onClick={() => {saveFormData('intended_url','/find-homes/'+apartment.id);router.push('/auth/login')}}
+                          className="bg-orange-500 hover:bg-orange-600 text-white"
+                        >
+                          Go to Login
+                        </Button>
+                      </div>
+            } 
               </div>
-
               <div className="mt-4">
                 <h2 className="text-xl font-semibold mb-2">Description</h2>
                 <p className="text-gray-600">{apartment.description}</p>

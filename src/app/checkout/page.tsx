@@ -13,7 +13,7 @@ const Page = async()=>{
   return <>
     <div>
       <Header/>
-      <Checkout plans={data} />
+      {data &&<Checkout plans={data} />}
       <Footer/>
     </div>
    

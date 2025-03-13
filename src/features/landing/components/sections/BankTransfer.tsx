@@ -1,12 +1,13 @@
 "use client"
 import { Button } from "@/components/ui/button";
-import { formatAmountNumber } from "@/lib/utils";
+import { AxiosApi, formatAmountNumber, getFormData, hasFormData, saveFormData } from "@/lib/utils";
 import { PlansInterface, SubscriptionInterface } from "@/types/subscription";
 import { useEffect, useState } from "react";
 import { baseURL } from "@/../next.config";
 import axios from "axios";
-import { Loader } from "lucide-react";
+import {  LucideLoader2 } from "lucide-react";
 import { useSelector } from "react-redux";
+import { redirect } from "next/navigation";
 
 
 
@@ -19,13 +20,17 @@ interface BankTransferI{
 
 // provide user with the bank account to pay, get the payment
 
-const BankTransfer  =({plan,onCompleted}:BankTransferI)=>{
-    const token = useSelector((state: any) => state.agent.token);
-  
+const BankTransfer  =({plan,onCompleted}:BankTransferI)=>{ 
+
+    const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn); 
 
     const [loading,setLoading] = useState(false);
+    const [reference ,setReference] = useState();
     const [subscription,setSubscription] = useState<SubscriptionInterface>();
     const [invoice,setInvoice] =useState();
+
+
+
 
 
 // on refresh or check if subscription exists
@@ -33,12 +38,8 @@ const checkSubscription =async ()=>{
     if(loading) return ;
     setLoading(true);
 // if exists set the subscription
-     await axios.get(baseURL+'/check-pending-subscription',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        })
+     await AxiosApi().get(baseURL+'/transaction/pending')
+        
     .then(response=>{
         // set subscription
        setSubscription(response.data) ;
@@ -47,21 +48,45 @@ const checkSubscription =async ()=>{
     .finally(()=>setLoading(false));
 }
 
+const fetchReference=async()=>{
+    
+    await axios.post(baseURL+'/transaction/generateKey')
+    .then(res=>{
+        console.log('reference',res.data);
+        setReference(res.data)})
 
+}
 // check current state and return the response
-useEffect(()=>{
-checkSubscription()
-},[]);
+    useEffect(()=>{ 
+    fetchReference();
+    checkSubscription();
 
+    },[]);
+
+  
 const generateSubscription =async()=>{
-    if(loading) return ;
+
+    if(loading) return;
     setLoading(true);
-// generate new subscription if no current one
-   await axios.get(baseURL+'/new-subscription/'+plan?.id,  {
-    headers: {
-      Authorization: `Bearer ${token}`
+
+    if(!isLoggedIn){ 
+        saveFormData('intended_url','/checkout');
+        saveToken();
+        return redirect('auth/login?next=checkout');
     }
-  })
+    /**
+     *    $request->validate([
+            'plan_id' => 'required',
+            'gateway' => 'required',
+            'reference' => 'required',
+            'amount' => 'required',
+            'currency' => 'required',
+            'callback_url' => 'required'
+        ]);
+     */
+// generate new subscription if no current one
+
+   await AxiosApi().post(baseURL+'/transaction/generateKey',{plan_id:plan?.id})
     .then(response=>{
         // return subscription
        setSubscription(response.data);
@@ -78,7 +103,11 @@ const generateSubscription =async()=>{
 
 }
 
+const saveToken = ()=>{
+    saveFormData('checkout_plan', plan);
+    saveFormData('checkout_type','bank-transfer');
 
+}
 
 // show payment information and invoice generate 
 
@@ -103,11 +132,11 @@ const showSubscriptionDetails =()=>{
 }
 
 return <>
-<div className="w-3/4 border border-gray-300 p-3">
+<div className="w-3/4 border border-gray-300 min-h-[300px] p-3">
     <h3 className="text-center text-2xl mb-4">Direct Bank Transfer</h3>
 
     {
-        loading?<Loader/>:
+        loading?<div className="min-h-[300px] flex justify-center items-center"><LucideLoader2 /></div>:
         subscription?showSubscriptionDetails(): <div className="space-y-3">
         <p> 
         <label>
@@ -121,7 +150,7 @@ return <>
             <label>Duration: {plan?.invoice_period} / {plan?.invoice_interval}</label>
         </p>
         <p className="mt-24">
-           <Button className="bg-green-400 hover:bg-green-500  text-gray-100" onClick={()=>generateSubscription}>Pay Now</Button>
+           <Button disabled={loading} className="bg-green-500 hover:bg-green-600  text-gray-100" onClick={()=>generateSubscription()}>Pay Now</Button>
         </p>
 
     </div>

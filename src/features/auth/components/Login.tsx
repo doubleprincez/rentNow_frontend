@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@radix-ui/react-label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,6 +16,7 @@ import { useDispatch } from "react-redux";
 import { login } from "@/redux/userSlice";
 import { useAlert } from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
+import { deleteFormData, getFormData, hasFormData } from "@/lib/utils";
 
 interface LoginResponse {
     success: boolean;
@@ -57,10 +58,12 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
         password: "",
         email: "",
         account_id:1
-    });
+    }); 
     const [showPassword, setShowPassword] = useState(false);
-    const router = useRouter();
+    const router = useRouter(); 
     const dispatch = useDispatch();
+
+    const nextUrl = getFormData('intended_url');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
@@ -145,6 +148,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                 email: data.user.email,
                 phoneNumber: data.user.phone ? parseInt(data.user.phone) : null,
                 userId: data.user.id, // Make sure this is being set
+                isSubscribed:data.user.is_subscribed,
                 accountType: data.user.account.slug,
                 apartments: data.user.apartments || [],
                 rentedApartments: data.user.rented_apartments || []
@@ -154,7 +158,13 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
             dispatch(login(userData));
             //console.log(userData)
             showAlert("Login Successful", "success");
-            router.push("/");
+            if(nextUrl){
+                deleteFormData('intended_url');
+                router.push("/"+nextUrl);
+            }else{
+                  router.push("/");
+            }
+          
 
             // Verify the data was stored properly
             setTimeout(() => {

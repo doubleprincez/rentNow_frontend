@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface UserState {
     isLoggedIn: boolean;
+    isSubscribed:boolean;
     firstName: string;
     lastName: string;
     email: string;
@@ -15,6 +16,7 @@ interface UserState {
 
 const initialState: UserState = {
     isLoggedIn: false,
+    isSubscribed:false,
     firstName: '',
     lastName: '',
     email: '',
@@ -68,11 +70,13 @@ const userSlice = createSlice({
             email: string;
             phoneNumber: number | null;
             userId: number;
+            isSubscribed:boolean;
             accountType?: string;
             apartments?: Array<any>;
             rentedApartments?: Array<any>;
         }>) => {
             state.isLoggedIn = true;
+            state.isSubscribed = action.payload.isSubscribed;
             state.firstName = action.payload.firstName;
             state.lastName = action.payload.lastName;
             state.email = action.payload.email;
@@ -87,6 +91,7 @@ const userSlice = createSlice({
             if (typeof window !== 'undefined') {
                 const stateToStore = {
                     isLoggedIn: true,
+                    isSubscribed:action.payload.isSubscribed,
                     firstName: action.payload.firstName,
                     lastName: action.payload.lastName,
                     email: action.payload.email,
