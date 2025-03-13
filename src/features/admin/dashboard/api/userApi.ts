@@ -14,7 +14,7 @@ export interface User {
   business_email: string | null;
   business_phone: string | null;
   business_address: string | null;
-  account: {
+  account?: {
     id: number;
     name: string;
     slug: string;

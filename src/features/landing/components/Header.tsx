@@ -33,8 +33,9 @@ const Header = () => {
             {title: 'Find Homes', link: '/find-homes'},
             {title: 'About', link: '/about'},
             {title: 'Contact Us', link: '/contact'},
-            {title: 'Chats', link: '/user-chat'},
-            {title: 'Rents', link: '/user-rent'}
+            {title: 'Chats', link: '/user/chat'},
+            {title: 'Rents', link: '/user/rent'},
+            {title: 'Subscriptions', link: '/user/subscriptions'}
         ];
     }
     const handleLogout = () => {

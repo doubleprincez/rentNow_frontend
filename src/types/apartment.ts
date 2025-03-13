@@ -24,12 +24,12 @@ export interface Image {
   }
   
   export interface Apartment {
-    agent_type: string;
+    agent_type?: string;
     agent_id: number;
     id: number;
     agent: string;
-    my_apartment: boolean;
-    business_name: string;
+    my_apartment?: boolean;
+    business_name?: string;
     category_id: string;
     category: string;
     title: string;

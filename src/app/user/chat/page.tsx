@@ -1,5 +1,5 @@
 import React from 'react';
-import UserChat from '@/features/landing/components/UserChat';
+import UserChat from '@/features/user/UserChat';
 
 const page = () => {
     return (

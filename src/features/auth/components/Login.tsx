@@ -56,6 +56,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
     const [formData, setFormData] = useState({
         password: "",
         email: "",
+        account_id:1
     });
     const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
@@ -120,7 +121,8 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                 },
                 body: JSON.stringify({
                     email: formData.email,
-                    password: formData.password
+                    password: formData.password,
+                    account_id:formData.account_id
                 })
             });
 
