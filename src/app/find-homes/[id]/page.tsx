@@ -1,8 +1,7 @@
 import { Suspense } from 'react';
 import ApartmentClient from '@/features/landing/components/ApartmentClient';
 import { baseURL } from '@/../next.config';
-import { Apartment } from '@/types/apartment';
-import { useRouter } from 'next/navigation';
+import { Apartment } from '@/types/apartment'; 
 import { Loader } from 'lucide-react';
 
  

@@ -10,7 +10,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import ChatDialog from '@/features/landing/components/ChatDialog';
-import {baseURL} from "@/../next.config";
+import {baseURL, frontendURL} from "@/../next.config";
 import Link from 'next/link';
 import { saveFormData } from '@/lib/utils';
 
@@ -21,7 +21,8 @@ interface ClientProps {
 export default function ApartmentClient({ apartment }: ClientProps) {
  
   const router = useRouter(); 
-  const { isLoggedIn, token, userData } = useSelector((state: any) => state.user);
+  const { isLoggedIn, token ,isSubscribed} = useSelector((state: any) => state.user);
+ 
   const [isLoading, setIsLoading] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [bookingData, setBookingData] = useState({
@@ -75,7 +76,7 @@ export default function ApartmentClient({ apartment }: ClientProps) {
     
     setIsBooking(true);
     try {
-      const formattedStart = bookingData.start.split('T')[0]; 
+      const formattedStart = bookingData?.start?.split('T')[0];
       const formattedEnd = calculateEndDate(formattedStart, apartment.duration);
   
       const bookingPayload = {
@@ -138,117 +139,140 @@ export default function ApartmentClient({ apartment }: ClientProps) {
 
             <div className="flex flex-col gap-4">
               <h1 className="text-2xl font-bold text-gray-800">{apartment.title}</h1>
-              
+
               <div className="flex items-center gap-2">
-                <User className="text-orange-500" />
-                <span className="text-gray-600">{apartment.agent_type}: {apartment.agent}</span>
+                <Home className="text-orange-500"/>
+                <span className="text-gray-600">Rooms: {apartment.number_of_rooms}</span>
+              </div>
+
+              {
+                  apartment.agent && <div className="flex items-center gap-2">
+                    <User className="text-orange-500"/>
+                    <span className="text-gray-600">{apartment.agent_type}: {apartment.agent}</span>
+                  </div>
+              }
+
+              {
+                 isSubscribed  && <>
+                    apartment.security_deposit
+                  </>
+              }
+              {
+                  apartment.business_name &&
+                  <div className="flex items-center gap-2">
+                    <Building className="text-orange-500"/>
+                    <span className="text-gray-600">Business: {apartment.business_name || 'Not specified'}</span>
+                  </div>
+              }
+
+              {
+                  apartment.category && <div className="flex items-center gap-2">
+                    <Boxes className="text-orange-500"/>
+                    <span className="text-gray-600">Category: {apartment.category}</span>
+                  </div>
+              }
+
+
+              <div className="flex items-center gap-2">
+                <MapPin className="text-orange-500"/>
+                <span
+                    className="text-gray-600">{`${apartment.city_code}, ${apartment.state_code}, ${apartment.country_code}`}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <Building className="text-orange-500" />
-                <span className="text-gray-600">Business: {apartment.business_name || 'Not specified'}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Boxes className="text-orange-500" />
-                <span className="text-gray-600">Category: {apartment.category}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <MapPin className="text-orange-500" />
-                <span className="text-gray-600">{`${apartment.city_code}, ${apartment.state_code}, ${apartment.country_code}`}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Banknote className="text-orange-500" />
+                <Banknote className="text-orange-500"/>
                 <span className="text-gray-600">Price: {apartment.amount}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <Shield className="text-orange-500" />
+                <Clock className="text-orange-500"/>
+                <span className="text-gray-600">Duration: {apartment.duration}</span>
+              </div>
+
+
+              <div className="flex items-center gap-2">
+                <Shield className="text-orange-500"/>
                 <span className="text-gray-600">Security Deposit: {apartment.security_deposit || 'None'}</span>
               </div>
 
               <div className="flex items-center gap-2">
-                <Clock className="text-orange-500" />
-                <span className="text-gray-600">Duration: {apartment.duration}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Home className="text-orange-500" />
-                <span className="text-gray-600">Rooms: {apartment.number_of_rooms}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <List className="text-orange-500" />
-                <span className="text-gray-600">Amenities: {apartment.amenities?.length ? apartment.amenities.join(', ') : 'None listed'}</span>
+                <List className="text-orange-500"/>
+                <span
+                    className="text-gray-600">Amenities: {apartment.amenities?.length ? apartment.amenities.join(', ') : 'None listed'}</span>
               </div>
 
               <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-2'>
-              {
-            
-            isLoggedIn ?   userData && userData.isSubscribed===true?<>
-               <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                      Book Apartment
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Book Apartment</DialogTitle>
-                    </DialogHeader>
-                   
-                      <div className="grid gap-4 py-4">
-                        
-                        <div className="grid gap-2">
-                          <label htmlFor="start-date" className="text-sm font-medium">
-                            Start Date
-                          </label>
-                          <Input
-                            id="start-date"
-                            type="date"
-                            value={bookingData.start}
-                            onChange={(e) => setBookingData(prev => ({ ...prev, start: e.target.value }))}
-                            className="col-span-3"
-                          />
-                        </div>
-                        
-                        <div className="bg-orange-50 p-3 rounded-md mt-2">
-                          <p className="text-sm text-orange-800">
-                            The booking duration will be {apartment.duration} from the selected start date.
-                          </p>
-                        </div>
+                {
 
-                        <Button 
-                          onClick={handleBooking} 
-                          disabled={isBooking || !bookingData.start}
-                          className="bg-orange-500 hover:bg-orange-600 text-white w-full mt-2"
-                        >
-                          {isBooking ? 'Booking...' : 'Confirm Booking'}
-                        </Button>
-                         
-                      </div>
-                    
-                  </DialogContent>
-                </Dialog>
-                <ChatDialog 
-                  agentId={apartment.agent_id} 
-                  agentName={apartment.agent}
-                />
-              </>: <Button onClick={()=>router.push('/checkout')} className='bg-orange-500 hover:bg-orange-600 text-white w-full mt-2'>Subscribe Now</Button>  
-           :<div className="text-center col-span-2 py-4 w-full">
+                  isLoggedIn ? isSubscribed === true ? <>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button className="bg-orange-500 hover:bg-orange-600 text-white">
+                              Book Apartment
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="sm:max-w-[425px]">
+                            <DialogHeader>
+                              <DialogTitle>Book Apartment</DialogTitle>
+                            </DialogHeader>
+
+                            <div className="grid gap-4 py-4">
+
+                              <div className="grid gap-2">
+                                <label htmlFor="start-date" className="text-sm font-medium">
+                                  Start Date
+                                </label>
+                                <Input
+                                    id="start-date"
+                                    type="date"
+                                    value={bookingData.start}
+                                    onChange={(e) => setBookingData(prev => ({...prev, start: e.target.value}))}
+                                    className="col-span-3"
+                                />
+                              </div>
+
+                              <div className="bg-orange-50 p-3 rounded-md mt-2">
+                                <p className="text-sm text-orange-800">
+                                  The booking duration will be {apartment.duration} from the selected start date.
+                                </p>
+                              </div>
+
+                              <Button
+                                  onClick={handleBooking}
+                                  disabled={isBooking || !bookingData.start}
+                                  className="bg-orange-500 hover:bg-orange-600 text-white w-full mt-2"
+                              >
+                                {isBooking ? 'Booking...' : 'Confirm Booking'}
+                              </Button>
+
+                            </div>
+
+                          </DialogContent>
+                        </Dialog>
+                        <ChatDialog
+                            agentId={apartment.agent_id}
+                            agentName={apartment.agent}
+                        />
+                      </> : <div className='col-span-2  py-4 w-full'>
+                        <div className='text-xs'>Subscribe now to enjoy the full benefits of our platform</div>
+                        <Button onClick={() => router.push('/subscribe')}
+                                    className='bg-orange-500 hover:bg-orange-600 text-white w-full mt-2'>Subscribe
+                        Now</Button></div>
+                      : <div className="text-center col-span-2 py-4 w-full">
                         <p className="text-gray-600 mb-4">
                           Please log in to continue
                         </p>
-                        <Button 
-                          onClick={() => {saveFormData('intended_url','/find-homes/'+apartment.id);router.push('/auth/login')}}
-                          className="bg-orange-500 hover:bg-orange-600 text-white"
+                        <Button
+                            onClick={() => {
+                              saveFormData('intended_url', frontendURL+'/find-homes/' + apartment.id);
+                              router.push('/auth/login')
+                            }}
+                            className="bg-orange-500 hover:bg-orange-600 text-white"
                         >
                           Go to Login
                         </Button>
                       </div>
-            } 
+                }
               </div>
               <div className="mt-4">
                 <h2 className="text-xl font-semibold mb-2">Description</h2>
@@ -260,7 +284,7 @@ export default function ApartmentClient({ apartment }: ClientProps) {
           <div className="mt-8">
             <h2 className="text-xl font-semibold mb-4">Property Images</h2>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {apartment.images && Object.values(apartment.images).map((image, index) => (
+            {apartment.images && Object.values(apartment.images).map((image, index) => (
                 <div key={index} className="w-full h-[150px] rounded-lg overflow-hidden">
                   <img 
                     src={image.preview_url}

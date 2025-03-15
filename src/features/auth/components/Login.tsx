@@ -27,6 +27,7 @@ interface LoginResponse {
       name: string;
       email: string;
       phone: string | null;
+      is_subscribed:boolean|null;
       account: {
         name: string;
         slug: string;
@@ -44,6 +45,7 @@ interface LoginResponse {
       name: string;
       email: string;
       phone: string | null;
+      is_subscribed:boolean|null;
       account: {
         name: string;
         slug: string;
@@ -84,6 +86,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
             email: data.user.email,
             phoneNumber: data.user.phone ? parseInt(data.user.phone) : null,
             userId: data.user.id, 
+            isSubscribed:data.user.is_subscribed,
             accountType: data.user.account.slug,
             apartments: data.user.apartments || [],
             rentedApartments: data.user.rented_apartments || []
@@ -101,6 +104,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
             email: data.data.email,
             phoneNumber: data.data.phone ? parseInt(data.data.phone) : null,
             userId: data.data.id, 
+            isSubscribed: data.data.is_subscribed,
             accountType: data.data.account.slug,
             apartments: [], 
             rentedApartments: [] 
@@ -148,7 +152,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                 email: data.user.email,
                 phoneNumber: data.user.phone ? parseInt(data.user.phone) : null,
                 userId: data.user.id, // Make sure this is being set
-                isSubscribed:data.user.is_subscribed,
+                isSubscribed:data.user.is_subscribed??false,
                 accountType: data.user.account.slug,
                 apartments: data.user.apartments || [],
                 rentedApartments: data.user.rented_apartments || []
@@ -160,7 +164,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
             showAlert("Login Successful", "success");
             if(nextUrl){
                 deleteFormData('intended_url');
-                router.push("/"+nextUrl);
+                router.push(nextUrl);
             }else{
                   router.push("/");
             }

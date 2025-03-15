@@ -4,7 +4,8 @@ import { PlansInterface } from "@/types/subscription";
 
 interface PaystackI{
     plan?:PlansInterface,
-    onCompleted?:any
+    onCompleted?:any,
+    onGoBack: () => void
 }
 
 const Paystack = ({plan,onCompleted}:PaystackI)=>{

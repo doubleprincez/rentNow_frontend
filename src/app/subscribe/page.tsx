@@ -1,6 +1,6 @@
 import Footer from "@/features/landing/components/Footer";
 import Header from "@/features/landing/components/Header";
-import Checkout from "@/features/landing/components/sections/Checkout";
+import Subscribe from "@/features/landing/components/sections/Subscribe";
 import { baseURL } from "@/../next.config";
 import { PlansInterface } from "@/types/subscription";
 
@@ -13,7 +13,7 @@ const Page = async()=>{
   return <>
     <div>
       <Header/>
-      {data &&<Checkout plans={data} />}
+      {data &&<Subscribe plans={data} />}
       <Footer/>
     </div>
    
