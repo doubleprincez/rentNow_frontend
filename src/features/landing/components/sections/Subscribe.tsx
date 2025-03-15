@@ -9,6 +9,7 @@ import { deleteFormData, formatAmountNumber, getFormData, hasFormData, saveFormD
 import { useSelector } from "react-redux"; 
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
+import {baseURL} from "../../../../../next.config";
 
 interface CheckoutI {
     plans?:PlansInterface[]
@@ -32,6 +33,7 @@ const Checkout = ( {plans}:CheckoutI)=>{
     fetchToken();
 
       if (!isLoggedIn) {
+          saveFormData('intended_url', baseURL+'/subscribe');
         router.push('/auth/login');
       }
     }, [isLoggedIn, router]);
