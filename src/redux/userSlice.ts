@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { redirect, useRouter } from 'next/navigation';
 
 interface UserState {
     isLoggedIn: boolean;
@@ -30,6 +31,7 @@ const initialState: UserState = {
 
 // Improved loadState function with proper type checking and error handling
 const loadState = (): UserState => {
+
     if (typeof window !== 'undefined') {
         try {
             const savedState = localStorage.getItem('userState');
@@ -109,7 +111,7 @@ const userSlice = createSlice({
             if (typeof window !== 'undefined') {
                 localStorage.removeItem('userState');
                 localStorage.removeItem('token');
-            }
+            } 
         }
     }
 });

@@ -98,7 +98,7 @@ const PendingInvoice =()=>{
                                                     </TableCell>
                                                     <TableCell>{sub?.currency} {formatAmountNumber(sub?.amount)}</TableCell>
 
-                                                    <TableCell>{`${sub?.payable?.plan?.invoice_duration}, ${sub?.payable?.plan?.invoice_interval}`}</TableCell>
+                                                    <TableCell>{`${sub?.payable?.plan?.invoice_period}, ${sub?.payable?.plan?.invoice_interval}`}</TableCell>
 
                                                     <TableCell>{sub?.payable?.status}</TableCell>
                                                       <TableCell className={'flex '}>  

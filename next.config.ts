@@ -9,7 +9,7 @@ export const baseURL = 'http://localhost:8000/api';
 
 const nextConfig: NextConfig = {
     images: {
-        domains: ['images.unsplash.com', 'www.lummi.ai', 'www.rent9ja.com.ng', "api.rent9ja.com.ng"],
+        domains: ['images.unsplash.com', 'www.lummi.ai', 'www.rent9ja.com.ng', "api.rent9ja.com.ng","localhost"],
     },
     async headers() {
         return [
