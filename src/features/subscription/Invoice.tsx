@@ -42,7 +42,7 @@ const Invoice = ({transaction}:InoviceI)=> {
                     <div className="flex space-x-4">
                         <div className="">
                         <FacebookShareButton url={window.location.href}>
-                            <FacebookIcon className="rounded"  height={40} width={40}/>
+                            <FacebookIcon className="rounded" height={40} width={40}/>
                         </FacebookShareButton>
                         </div>
                         <div className="">
@@ -109,7 +109,7 @@ const Layout = React.forwardRef(({transaction}:InoviceI, ref) => {
                     <strong
                         className={setColor(transaction?.status) + ' font-bold text-2xl md:text-3xl'}>{ transaction?.currency} {formatAmountNumber(transaction?.amount)}</strong>
                 </p>
-                <p className={"text-center font-bold text-gray-500"}>{transaction?.status.toUpperCase()} </p>
+                <p className={"text-center uppercase font-bold text-gray-500"}>{transaction?.status=='completed'?'success':transaction?.status.toUpperCase()} </p>
                 <p className={" text-center flex justify-center"}>
                             <span className={"mx-1"}>
                                 <svg className="_6aYwdjzDCvXK0bVJQOb rxe6apEJoEk8r75xaVNG ADSeKHR1DvUUA48Chci_"
