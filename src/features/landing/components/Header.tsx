@@ -39,7 +39,7 @@ const toggleUserMenu = () => setIsUserMenu((prev) => !prev);
     }, [user.isLoggedIn, user.accountType]);
     
     const handleLogout = () => {
-        dispatch(logout());  router.push('/');
+        dispatch(logout());  return router.push('/');
     };
 
     const getUserIdDisplay = () => {
