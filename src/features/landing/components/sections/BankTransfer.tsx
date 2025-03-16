@@ -17,6 +17,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { useAlert } from "@/contexts/AlertContext";
+import PendingInvoice from "@/features/user/PendingInvoice";
 
 
 
@@ -40,28 +41,10 @@ const BankTransfer  =({plan,onCompleted}:BankTransferI)=>{
     const [loading,setLoading] = useState(false);
     const [loadingRef,setLoadingRef] = useState(false);
     const [reference ,setReference] = useState();
-    const [subscription,setSubscription] = useState<TransactionHistory>();
-    const [pendingSubs,setPendingsubs] = useState<TransactionHistory[]>();
+    const [subscription,setSubscription] = useState<TransactionHistory>(); 
     const [invoice,setInvoice] =useState();
 
- 
-// on refresh or check if subscription exists
-const checkSubscription =async ()=>{
-    if(loading) return ;
-    setLoading(true);
-// if exists set the subscription
-     await AxiosApi().get(baseURL+'/transaction/unpaid')
-        
-    .then(response=>{
-        // set subscription
-        if(response.data.subscription){
-            setPendingsubs(response.data.subscription) ;
-        }
-    
-    })
-    .finally(()=>setLoading(false));
-}
-
+  
 const fetchReference=async()=>{
     if(loadingRef) return;
     setLoadingRef(true);
@@ -72,8 +55,7 @@ const fetchReference=async()=>{
 }
 // check current state and return the response
     useEffect(()=>{ 
-    fetchReference();
-    checkSubscription();
+    fetchReference(); 
 
     },[]);
 
@@ -199,83 +181,7 @@ return <>
            <Button disabled={loading} className="bg-green-500 hover:bg-green-600  text-gray-100" onClick={()=>generateSubscription()}>Pay Now</Button>
         </div>
 
-        <div className="mt-[20px]">
-            <h2>  Pending Subscriptions</h2>
-            <div className="py-3 px-2">
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader>
-                        <TableRow> 
-                            <TableHead>Reference</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Amount</TableHead>
-                            <TableHead>Duration</TableHead>
-                            <TableHead>Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-
-                    <TableBody>
-                        {loading ? (
-                            <TableRow>
-                                <TableCell colSpan={5} className="text-center">
-                                    Loading...
-                                </TableCell>
-                            </TableRow>
-                        ) : !Array.isArray(pendingSubs) || pendingSubs.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={5} className="text-center">
-                                    No Pending Inovice found
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            pendingSubs.map((sub:TransactionHistory) => (
-                                <TableRow key={sub.id}>
-                                     
-                                    <TableCell>
-                                         {sub?.payable?.name??sub?.payable?.title}
-                                    </TableCell>
-                                    <TableCell>{sub?.currency} {formatAmountNumber(sub?.amount)}</TableCell>
-                                    <TableCell>{`${sub?.payable?.invoice_duration}, ${sub?.payable?.invoice_interval}`}</TableCell>
-                                    <TableCell>{sub?.status}</TableCell>
-                                    {/* <TableCell className={'flex '}>
-                                        <Link  className={"mt-1"} href={"/admin/dashboard/edit-apartment/"+apartment.id}>
-                                            <Pencil />
-                                        </Link>
-                                        <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            className='bg-red-500 text-white px-4 py-1 mx-3 rounded-md'
-                                            onClick={() => handleDelete(apartment.id)}
-                                        >
-                                            Delete
-                                        </Button>
-                                        {
-                                             !apartment.published ? <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className='bg-green-500 text-white px-4 py-1 mx-3 rounded-md'
-                                                onClick={() => handlePublish(apartment.id, true)}
-                                            >
-                                                Publish
-                                            </Button> : <Button
-                                                variant="outline"
-                                                size="sm"
-                                                className='bg-red-500 text-white px-4 py-1 mx-3 rounded-md'
-                                                onClick={() => handlePublish(apartment.id, false)}
-                                            >
-                                                UnPublish
-                                            </Button>
-                                        }
-
-                                    </TableCell> */}
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-             </div>
-        </div>
+         <PendingInvoice/>
     </div>
     }
 </div>

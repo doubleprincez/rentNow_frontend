@@ -11,6 +11,7 @@ export interface User {
   country: string | null;
   state: string | null;
   city: string | null;
+  profile_photo_path:string|null;
   business_email: string | null;
   business_phone: string | null;
   business_address: string | null;

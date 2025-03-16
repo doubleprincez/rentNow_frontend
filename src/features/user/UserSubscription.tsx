@@ -1,7 +1,7 @@
 'use client'
 import React, {useEffect, useState} from 'react';
 import {Tabs, TabsTrigger, TabsContent, TabsList} from '@/components/ui/tabs';
-import {Banknote, MapPin, Clock, Search, Pencil, ChevronLeft, ChevronRight} from 'lucide-react';
+import {Banknote, MapPin, Clock, Search, Pencil, ChevronLeft, ChevronRight, Loader2} from 'lucide-react';
 import {redirect, useRouter} from 'next/navigation';
 import type {
     Apartment,
@@ -18,7 +18,9 @@ import Link from "next/link";
 import {useSelector} from "react-redux";
 import {baseURL} from "@/../next.config";
 import {getUserSubscriptions} from "@/features/landing/api/subscriptions";
-import { SubscriptionInterface } from '@/types/subscription';
+import { SubscriptionInterface, TransactionHistory } from '@/types/subscription';
+import { AxiosApi, formatAmountNumber } from '@/lib/utils';
+import PendingInvoice from './PendingInvoice';
 
 
 const UserSubscription = () => {
@@ -26,7 +28,7 @@ const UserSubscription = () => {
     const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn); 
       
     const [subscriptions, setSubscriptions] = useState<SubscriptionInterface[] | any>()
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -46,6 +48,7 @@ const UserSubscription = () => {
 
     const fetchSubscriptions = async () => {
         try {
+            if(loading) return;
             setLoading(true);
             const response = await getUserSubscriptions(currentPage, searchTerm);
 
@@ -68,15 +71,18 @@ const UserSubscription = () => {
     useEffect(() => { 
         if (!isLoggedIn) {
             return redirect( '/auth/login');
-        }
+        } 
         fetchSubscriptions();
     }, [isLoggedIn])
 
 
     
+    
     return <div className={"min-h-screen mt-20"}>
         <div className={"px-3 md:px-5"}>
             <h3 className={"sm:text-lg font-bold"}>Subscription History</h3>
+            
+            <PendingInvoice/>
             <div className={"mt-5"}>
                 <div className="p-6">
                     <div className="mb-6">
@@ -111,8 +117,8 @@ const UserSubscription = () => {
                             <TableBody>
                                 {loading ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="text-center">
-                                            Loading...
+                                        <TableCell colSpan={5} className="flex justify-center">
+                                            <Loader2 className='animate-spin'/> Loading...
                                         </TableCell>
                                     </TableRow>
                                 ) : !Array.isArray(subscriptions) || subscriptions.length === 0 ? (

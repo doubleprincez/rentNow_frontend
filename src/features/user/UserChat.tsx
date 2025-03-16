@@ -16,6 +16,8 @@ import { useSelector } from 'react-redux';
 import { User } from '../admin/dashboard/api/userApi';
 import { Button } from '@/components/ui/button';
 import { formatAmountNumber,formatDate } from '@/lib/utils';
+import { router } from 'next/client';
+import { frontendURL } from '../../../next.config';
 
 
     interface chatCard{
@@ -26,7 +28,7 @@ const UserChat = () => {
     // http://localhost:8000/api/conversations
 
 
-    const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn); 
+    const {isLoggedIn,isSubscribed} = useSelector((state: any) => state.user); 
     const currentUser:any  = localStorage.getItem('userState');
     const [loading, setLoading] = useState(false); 
     const [selectedAgent,setSelectedAgent] = useState<User|any>({});
@@ -151,12 +153,12 @@ const UserChat = () => {
                 {/*display all previously contacted clients then when one is selected, chat him /her up using the component*/}
              
               
-                <section className="flex flex-col justify-center antialiased bg-gray-50 text-gray-600 min-h-screen p-4">
+                <section className="flex flex-col justify-start antialiased bg-gray-50 text-gray-600 min-h-screen p-4">
                  
                 <h3 className={"text-black font-bold text-lg"}>Previous Conversations</h3>
   <div className="h-full">
             {/* <!-- Card --> */}
-            <div className="relative max-w-[440px]  bg-white shadow-lg rounded-lg">
+            <div className="relative max-w-[440px] min-h-[360px] bg-white shadow-lg rounded-lg">
                 {/* <!-- Card header --> */}
                 {SelectedAgentInfo()}
                 {/* <!-- Card body --> */}
@@ -169,7 +171,15 @@ const UserChat = () => {
                     {
                         loading? <Loader2 className="w-4 h-4 animate-spin" />
                         : 
-                            Object.keys(selectedAgent).length > 0 ?  <div className='flex flex-col justify-center align-center items-center mt-20'> <ChatDialog  agentId={selectedAgent.id} agentName={selectedAgent.name}  />
+                            Object.keys(selectedAgent).length > 0 ?  
+                            <div className='flex flex-col justify-center align-center items-center mt-20'>
+                                {
+                                    isSubscribed ?<ChatDialog  agentId={selectedAgent.id} agentName={selectedAgent.name}  />:
+                                <div>
+                                    <Button onClick={()=>router.push(frontendURL+'/subscribe')} variant={"default"} >Subscribe</Button>
+                                </div>
+                                }
+                                
                             
                             <div className='mt-20'>
                                 <Button  onClick={()=>{setSelectedAgent({});setSelectedApartment({})}}>Close</Button>
