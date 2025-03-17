@@ -99,7 +99,6 @@ const PendingInvoice =()=>{
                                                     <TableCell>{sub?.currency} {formatAmountNumber(sub?.amount)}</TableCell>
 
                                                     <TableCell>{`${sub?.payable?.plan?.invoice_period}, ${sub?.payable?.plan?.invoice_interval}`}</TableCell>
-
                                                     <TableCell>{sub?.payable?.status}</TableCell>
                                                       <TableCell className={'flex '}>  
                                                         <Link  className={"mt-1"} href={"/invoice/"+sub?.reference}>

@@ -2,7 +2,7 @@
 import React from 'react'
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { BookOpenText, CirclePlus, CircleUser, Home, LogOut, Mail, ContactRound, LayoutGrid, Users, AtSign, Globe } from 'lucide-react';
+import { BookOpenText, CirclePlus, CircleUser, Home, LogOut, Mail, ContactRound, LayoutGrid, Users, AtSign, Globe, ShoppingBag } from 'lucide-react';
 
 const BottomNav = () => {
     const pathname = usePathname();
@@ -27,6 +27,11 @@ const BottomNav = () => {
             name: "View Apartment",
             link: "/admin/dashboard/view-apartments",
             icon: LayoutGrid,
+        },
+        {
+            name: "Subscriptions",
+            link: "/admin/dashboard/view-subscriptions",
+            icon: ShoppingBag,
         },
         {
             name: "Access Rents", 

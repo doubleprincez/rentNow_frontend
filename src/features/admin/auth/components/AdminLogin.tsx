@@ -20,7 +20,7 @@ import { useAlert } from '@/contexts/AlertContext';
 const loginSchema = z.object({
     email: z.string().email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
-    account_id: z.string().optional(),  
+    account_id: z.number().optional(),  
 });
 
 type LoginFormData = z.infer<typeof loginSchema>;

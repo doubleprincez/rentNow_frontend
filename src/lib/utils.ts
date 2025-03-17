@@ -92,7 +92,7 @@ export function deleteFormData(name:string) {
 }
 
 
-export const AxiosApi  =  () =>{
+export const AxiosApi  =  (tokenFor='user') =>{
   //  axios.defaults.withCredentials = true; // Ensure cookies are sent with requests
   //  axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
   
@@ -108,11 +108,17 @@ export const AxiosApi  =  () =>{
     },
   });
 
+  
+let csrfTokenMeta;
+
   // Retrieve token dynamically
-  const csrfTokenMeta =
-    localStorage.getItem('token') ??
-    localStorage.getItem('agentToken') ??
-    localStorage.getItem('adminToken');
+  if(tokenFor=='user'){
+     csrfTokenMeta = localStorage.getItem('token') ;
+  }else if(tokenFor=='agent'){
+      csrfTokenMeta = localStorage.getItem('agentToken')  ;
+  }else{
+      csrfTokenMeta =localStorage.getItem('adminToken') ;
+  } 
 
   if (csrfTokenMeta) {
     instance.defaults.headers.Authorization = `Bearer ${csrfTokenMeta}`;
