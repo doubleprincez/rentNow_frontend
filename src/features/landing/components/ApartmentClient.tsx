@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Banknote, MapPin, Clock, Home, User, Building, Shield, Boxes, List } from 'lucide-react';
+import { Banknote, MapPin, Clock, Home, User, Building, Shield, Boxes, List, CreditCardIcon, PhoneCallIcon, Building2Icon, Globe2Icon, MailIcon, BuildingIcon, GlobeIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -12,19 +12,41 @@ import { useSelector } from 'react-redux';
 import ChatDialog from '@/features/landing/components/ChatDialog';
 import {baseURL, frontendURL} from "@/../next.config";
 import Link from 'next/link';
-import { saveFormData } from '@/lib/utils';
+import { AxiosApi, formatAmountNumber, saveFormData } from '@/lib/utils';
+import { EmailIcon } from 'react-share';
 
 interface ClientProps {
-  apartment: Apartment; 
+  apartmentId: number; 
 }
 
-export default function ApartmentClient({ apartment }: ClientProps) {
+export default function ApartmentClient({ apartmentId }: ClientProps) {
  
   const router = useRouter(); 
   const { isLoggedIn, token ,isSubscribed} = useSelector((state: any) => state.user);
  
   const [isLoading, setIsLoading] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+
+  const [apartment ,setApartment ] = useState<Apartment>();
+
+
+  const fetchApartment = async()=>{
+    if(isLoading) return;
+    setIsLoading(true);
+     await AxiosApi().get (baseURL+'/apartment/'+apartmentId)
+     .then((response:{data:any})=>{ 
+      
+        setApartment(response?.data.data);  
+    }).finally(()=>setIsLoading(false));
+  }
+
+
+    useEffect(()=>{
+        fetchApartment();
+        return ()=>{}
+    },[apartmentId]);
+
+
   const [bookingData, setBookingData] = useState({
     start: '',
     end: '',
@@ -84,8 +106,7 @@ export default function ApartmentClient({ apartment }: ClientProps) {
         amount: parseInt(apartment.amount.replace(/[^0-9]/g, '')),
         currency_code: "NGN",
         start: formattedStart,
-        end: formattedEnd,
-        approved: true
+        end: formattedEnd
       };
   
       //console.log('Sending booking payload:', bookingPayload); 
@@ -100,8 +121,10 @@ export default function ApartmentClient({ apartment }: ClientProps) {
       });
       
       if (response.ok) {
-        alert('Viewing session booked successfully!');
+        const data = await response.json();
+        alert('Viewing Session Booked successfully!');
         setBookingData({ start: '', end: '' });
+        router.push('user/rent/'+data.data.id);
       } else {
         const errorData = await response.json();
         alert(errorData.message || 'Failed to book viewing session. Please try again.');
@@ -145,17 +168,14 @@ export default function ApartmentClient({ apartment }: ClientProps) {
                 <span className="text-gray-600">Rooms: {apartment.number_of_rooms}</span>
               </div>
 
-              {
-                  apartment.agent && <div className="flex items-center gap-2">
-                    <User className="text-orange-500"/>
-                    <span className="text-gray-600">{apartment.agent_type}: {apartment.agent}</span>
-                  </div>
-              }
 
               {
-                 isSubscribed  && <>
-                    apartment.security_deposit
-                  </>
+                  
+                    apartment.security_deposit &&
+                    <div className="flex items-center gap-2">
+                    <CreditCardIcon className="text-orange-500"/>
+                    <span className="text-gray-600">Security Deposit: {formatAmountNumber(apartment.security_deposit) || 'Not specified'}</span>
+                  </div>
               }
               {
                   apartment.business_name &&
@@ -200,7 +220,64 @@ export default function ApartmentClient({ apartment }: ClientProps) {
                 <span
                     className="text-gray-600">Amenities: {apartment.amenities?.length ? apartment.amenities.join(', ') : 'None listed'}</span>
               </div>
+ {
+                  apartment.agent && <div className="flex items-center gap-2">
+                    <User className="text-orange-500"/>
+                    <span className="text-gray-600">{String(apartment.agent_type).toLocaleUpperCase()}: {apartment.agent}</span>
+                  </div>
+              }
+              {
+                apartment?.agent_type=='agent'?<>
+              {
+                apartment?.agent_email && <div className="flex items-center gap-2">
+                <MailIcon className="text-orange-500"/>
+                <span className="text-gray-600">Email: {apartment?.agent_email}</span>
+              </div>
+              }
+{
+                apartment?.agent_phone && <div className="flex items-center gap-2">
+                <PhoneCallIcon className="text-orange-500"/>
+                <span className="text-gray-600">Phone: {apartment?.agent_phone}</span>
+              </div>
+              }          
+                </>:<>
+                <div className='flex justify-start space-x-2'>
+                {
+                apartment?.business_logo && <div className="flex items-center gap-2"> 
+                <img src={apartment?.business_logo} className='w-32 rounded-lg hover:shadow-lg' />
+                 </div>
+              }{
+                apartment?.business_name && <div className="flex items-center gap-2">
+                <BuildingIcon className="text-orange-500"/>
+                <span className="text-gray-600">Email: {apartment?.business_name}</span>
+              </div>
+              }
+                </div>
+                
+{
+                apartment?.business_address && <div className="flex items-center gap-2">
+                <GlobeIcon className="text-orange-500"/>
+                <span className="text-gray-600">Phone: {apartment?.business_address}</span>
+              </div>
+              }
+                
+{
+                apartment?.business_email && <div className="flex items-center gap-2">
+                <EmailIcon className="text-orange-500"/>
+                <span className="text-gray-600">Phone: {apartment?.business_email}</span>
+              </div>
+              }
+              {
+                apartment?.business_phone && <div className="flex items-center gap-2">
+                <PhoneCallIcon className="text-orange-500"/>
+                <span className="text-gray-600">Phone: {apartment?.business_phone}</span>
+              </div>
+              }
+                </>
+              }
+             
 
+             
               <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-2'>
                 {
 

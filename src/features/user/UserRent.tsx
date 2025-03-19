@@ -16,24 +16,20 @@ import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from "@
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import {useSelector} from "react-redux";
-import {baseURL} from "@/../next.config"; 
+import {baseURL, frontendURL} from "@/../next.config"; 
 import { getUserRents } from '../landing/api/rents'; 
 import { RentInterface } from '@/types/rent';
-import { formatAmountNumber } from '@/lib/utils';
-import { router } from 'next/client';
+import { formatAmountNumber } from '@/lib/utils' 
 
 
 const UserRent = () => {
-
+    const router = useRouter();
     //    view previous rents
 
     // make it easy to upload proof of payment
 
     // print out
-
-
-
-
+ 
 
     const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn); 
       
@@ -48,9 +44,8 @@ const UserRent = () => {
     // get all transactions
 
     // allow viewing and downloading invoice
-const handleApartmentClick = (apartment: Apartment) => {
-    const encodedData = encodeURIComponent(JSON.stringify(apartment));
-    router.push(`/find-homes/${apartment.id}?data=${encodedData}`);
+const handleApartmentClick = (apartment:number) => { 
+    router.push(frontendURL+`/find-homes/${apartment}`);
   };
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,10 +144,10 @@ const handleApartmentClick = (apartment: Apartment) => {
                                         <TableRow key={i}>
                                             <TableCell>
                                                 <div className='w-14 h-14 rounded-md overflow-hidden'>
-                                                    {i}
+                                                    {rent?.id}
                                                 </div>
                                             </TableCell>
-                                            <TableCell><button  onClick={()=>handleApartmentClick(rent?.apartment)} >{rent?.apartment?.title}</button></TableCell>
+                                            <TableCell><button  onClick={()=>handleApartmentClick(rent?.apartment_id)} >{rent?.apartment?.title}</button></TableCell>
                                             <TableCell>{new Date(rent.start).toDateString()} <br/> {new Date(rent?.end).toDateString()}</TableCell>
                                             
                                             <TableCell> {rent?.currency_code}{formatAmountNumber(rent?.amount)} </TableCell>

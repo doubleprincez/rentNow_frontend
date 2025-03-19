@@ -114,8 +114,7 @@ const Transaction = ({ reference }: TransactionI) => {
                                     </label>
                                     <input type="file" id="proof" hidden name="proof_of_payment" onChange={handleFileChange} disabled={uploading} />
                                 </div>
-                                <div>
-                                    <h3 className="font-semibold mb-2">Proof of Payment</h3>
+                                <div> 
                                     <Button type="submit" className="bg-green-500 hover:bg-green-600 text-white" disabled={uploading}>
                                         {uploading ? "Uploading..." : "Submit"}
                                     </Button>

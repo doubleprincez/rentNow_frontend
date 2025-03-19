@@ -26,10 +26,16 @@ export interface Image {
   export interface Apartment {
     agent_type?: string;
     agent_id: number;
+    agent_phone?:number|string;
+    agent_email?:string;
     id: number;
     agent: string;
     my_apartment?: boolean;
     business_name?: string;
+    business_address?: string;
+    business_email?: string;
+    business_logo?: string;
+    business_phone?:string|number;
     category_id: string;
     category: string;
     title: string;
