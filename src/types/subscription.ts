@@ -10,13 +10,13 @@ export interface FeatureInterface{
   name:string;
   slug:string;
   description?:any;
-  value:any;
+  value?:any;
+  sort_order?:number;
   resettable_period?:number;
   resetable_interface?:string;
-  sort_order:number;
-  created_at:Date|string;
-  updated_at: Date|string;
-  deleted_at:Date|string;
+  created_at?:Date|string;
+  updated_at?: Date|string;
+  deleted_at?:Date|string;
 }
 
 
@@ -41,6 +41,27 @@ export type PlansInterface = {
     'active_subscribers_limit': number | null,
     'sort_order': number | null,
     'features':FeatureInterface[]
+}
+
+
+export interface ApiPlansResponse{
+  success: boolean;
+  message: string;
+  data: {
+    current_page: number;
+    data: PlansInterface[]|[]|null|undefined;
+    first_page_url: string;
+    from: number;
+    last_page: number;
+    last_page_url: string;
+    links: PaginationLink[];
+    next_page_url: string | null;
+    path: string;
+    per_page: number;
+    prev_page_url: string | null;
+    to: number;
+    total: number;
+  };
 }
 
 

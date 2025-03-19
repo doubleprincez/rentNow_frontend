@@ -9,6 +9,7 @@ import {motion} from 'framer-motion';
 import {logout} from '@/redux/userSlice';
 import Image from 'next/image';
 import Logo from '@/components/assets/logo/logo.png'
+import accountRefresher from '@/redux/accountRefresher';
 
 const Header = () => {
     const pathname = usePathname();
@@ -24,6 +25,8 @@ const toggleUserMenu = () => setIsUserMenu((prev) => !prev);
     useEffect(()=>{
 
     },[user.isLoggedIn]);
+    accountRefresher(); // Automatically refresh user state
+
     
     const links = useMemo(() => {
         const baseLinks = [

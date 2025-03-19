@@ -5,6 +5,7 @@ import { DialogHeader } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getUserSubscriptions } from "@/features/landing/api/subscriptions";
+import { formatAmountNumber, formatDate, simpleDateFormat } from "@/lib/utils";
 import { SubscriptionInterface } from "@/types/subscription";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 import { ChevronLeft, ChevronRight, Loader2, Search } from "lucide-react";
@@ -35,7 +36,7 @@ const SubSubscriptions = ()=>{
     const fetchSubscriptions = async () => {
         try {
             if(loading) return;
-            setLoading(true);
+            setLoading(()=>true);
             const response = await getUserSubscriptions(currentPage, searchTerm);
 
             if (response.success && response.data) {
@@ -50,12 +51,14 @@ const SubSubscriptions = ()=>{
             setError(err.message || 'Failed to fetch subscriptions');
             setSubscriptions('');
         } finally {
-            setLoading(false);
+            setLoading(()=>false);
         }
     }; 
 
 
-
+    useEffect(()=>{
+        fetchSubscriptions();
+    },[]);
 
 
     return  <div  className="p-6 bg-gray-50 min-h-screen">
@@ -63,7 +66,7 @@ const SubSubscriptions = ()=>{
                 
             <h1 className="text-2xl font-bold mb-4">Subscriptions</h1>
         <div className="mb-6">
-            <div className="relative">
+            <div className="relative w-2/3 md:w-2/4">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground"/>
                 <Input
                     placeholder="Search subscriptions..."
@@ -85,22 +88,23 @@ const SubSubscriptions = ()=>{
                 <TableHeader>
                     <TableRow>
                         <TableHead>Id</TableHead>
-                        <TableHead>Title</TableHead>
+                        <TableHead>User</TableHead>
                         <TableHead>Plan</TableHead>
-                        <TableHead>Description</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Cancelled on</TableHead>
                     </TableRow>
                 </TableHeader>
 
                 <TableBody>
                     {loading ? (
                         <TableRow>
-                            <TableCell colSpan={5} className="flex justify-center">
+                            <TableCell colSpan={4} className="flex justify-center">
                                 <Loader2 className='animate-spin'/> Loading...
                             </TableCell>
                         </TableRow>
                     ) : !Array.isArray(subscriptions) || subscriptions.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={5} className="text-center">
+                            <TableCell colSpan={4} className="text-center">
                                 No Subscription Yet
                             </TableCell>
                         </TableRow>
@@ -112,7 +116,7 @@ const SubSubscriptions = ()=>{
                                         {subscription.id}
                                     </div>
                                 </TableCell>
-                                <TableCell>{subscription?.name}</TableCell>
+                                <TableCell>{subscription?.subscriber?.name}</TableCell>
                                 <TableCell>
                                     <Dialog>
                                         <DialogTrigger asChild>
@@ -139,7 +143,7 @@ const SubSubscriptions = ()=>{
                                                         </p>
 
                                                         <p>
-                                                            <strong>Price:</strong> {subscription?.plan?.price}
+                                                            <strong>Price:</strong> {subscription?.plan?.currency} {formatAmountNumber(subscription?.plan?.price)}
                                                         </p>
                                                         <p>
                                                             <strong>Duration:</strong> {subscription?.plan?.invoice_interval} {subscription?.plan?.invoice_period}
@@ -149,14 +153,14 @@ const SubSubscriptions = ()=>{
                                                 </div>
                                                 <div>
                                                     <h3 className="font-semibold mb-2">Description</h3>
-                                                    <p>{subscription?.plan.description}</p>
+                                                    <p>{subscription?.plan?.description}</p>
                                                 </div>
                                             </div>
                                         </DialogContent>
                                     </Dialog>
                                 </TableCell>
-                                <TableCell> {subscription?.description} </TableCell>
-                                <TableCell>{subscription?.starts_at} - {subscription?.ends_at} </TableCell>
+                                <TableCell>{simpleDateFormat(subscription?.starts_at)} - {simpleDateFormat(subscription?.ends_at)} </TableCell>
+                                <TableCell> {simpleDateFormat(subscription?.canceled_at)} </TableCell>
 
                             </TableRow>
                         ))

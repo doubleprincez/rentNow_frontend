@@ -19,7 +19,7 @@ import {useSelector} from "react-redux";
 import {baseURL} from "@/../next.config";
 import {getUserSubscriptions} from "@/features/landing/api/subscriptions";
 import { SubscriptionInterface, TransactionHistory } from '@/types/subscription';
-import { AxiosApi, formatAmountNumber } from '@/lib/utils';
+import { AxiosApi, formatAmountNumber, simpleDateFormat } from '@/lib/utils';
 import PendingInvoice from './PendingInvoice';
 
 
@@ -86,7 +86,7 @@ const UserSubscription = () => {
             <div className={"mt-5"}>
                 <div className="p-6">
                     <div className="mb-6">
-                        <div className="relative">
+                        <div className="relative w-2/3 md:w-1/4">
                             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground"/>
                             <Input
                                 placeholder="Search subscriptions..."
@@ -111,6 +111,7 @@ const UserSubscription = () => {
                                     <TableHead>Title</TableHead>
                                     <TableHead>Plan</TableHead>
                                     <TableHead>Description</TableHead>
+                                    <TableHead>Duration</TableHead>
                                 </TableRow>
                             </TableHeader>
 
@@ -179,7 +180,7 @@ const UserSubscription = () => {
                                                 </Dialog>
                                             </TableCell>
                                             <TableCell> {subscription?.description} </TableCell>
-                                            <TableCell>{subscription?.starts_at} - {subscription?.ends_at} </TableCell>
+                                            <TableCell>{simpleDateFormat(subscription?.starts_at)} - {simpleDateFormat(subscription?.ends_at)} </TableCell>
 
                                         </TableRow>
                                     ))

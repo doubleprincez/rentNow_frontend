@@ -62,11 +62,7 @@ const loadState = (): UserState => {
     return initialState;
 };
 
-const userSlice = createSlice({
-    name: 'user',
-    initialState: loadState(),
-    reducers: {
-        login: (state, action: PayloadAction<{
+export interface userSlicePayload {
             firstName: string;
             lastName: string;
             email: string;
@@ -76,7 +72,14 @@ const userSlice = createSlice({
             accountType?: string;
             apartments?: Array<any>;
             rentedApartments?: Array<any>;
-        }>) => {
+        
+}
+
+const userSlice = createSlice({
+    name: 'user',
+    initialState: loadState(),
+    reducers: {
+        login: (state, action: PayloadAction<userSlicePayload>) => {
             state.isLoggedIn = true;
             state.isSubscribed = action.payload.isSubscribed;
             state.firstName = action.payload.firstName;
@@ -104,6 +107,14 @@ const userSlice = createSlice({
                     rentedApartments: action.payload.rentedApartments || []
                 };
                 localStorage.setItem('userState', JSON.stringify(stateToStore));
+            }
+        },
+        updateSubscription: (state, action: PayloadAction<boolean>) => {
+            state.isSubscribed = action.payload;
+
+            if (typeof window !== 'undefined') {
+                const storedState = JSON.parse(localStorage.getItem('userState') || "{}");
+                localStorage.setItem('userState', JSON.stringify({ ...storedState, isSubscribed: action.payload }));
             }
         },
         logout: (state) => {
