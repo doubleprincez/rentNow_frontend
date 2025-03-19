@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DialogHeader } from "@/components/ui/dialog";
 import { AxiosApi, formatAmountNumber, saveFormData, simpleDateFormat } from "@/lib/utils";
 import { Apartment } from "@/types/apartment";
+import {redirect, useRouter} from 'next/navigation';
 import { RentInterface } from "@/types/rent";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 import { Banknote, Boxes, Building, BuildingIcon, Calendar1Icon, CheckCheckIcon, Clock, CreditCardIcon, FileIcon, GlobeIcon, Home, LinkIcon, List, MailIcon, MapPin, PhoneCallIcon, ReceiptCentIcon, Shield, ShoppingBag, ShoppingBagIcon, User } from "lucide-react";
@@ -15,6 +16,7 @@ import { baseURL, frontendURL } from "@/../next.config";
 import ChatDialog from "../landing/components/ChatDialog";
 import { useAlert } from "@/contexts/AlertContext";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 
 interface BookApartmentI{
@@ -24,7 +26,16 @@ interface BookApartmentI{
 
 const BookApartment =({bookingId}:BookApartmentI)=>{
 
-    const [isLoading,setIsLoading] = useState(false);
+  
+      const {isLoggedIn,isSubscribed} = useSelector((state: any) => state.user); 
+      
+          useEffect(() => { 
+              if (!isLoggedIn) {
+                  return redirect( '/auth/login');
+              } 
+          }, [isLoggedIn])
+      
+        const [isLoading,setIsLoading] = useState(false);
         const { showAlert } = useAlert();
         
     /**

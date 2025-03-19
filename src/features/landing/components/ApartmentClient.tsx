@@ -124,7 +124,7 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
         const data = await response.json();
         alert('Viewing Session Booked successfully!');
         setBookingData({ start: '', end: '' });
-        router.push('user/rent/'+data.data.id);
+        router.push(frontendURL+'/user/rent/'+data.data.id);
       } else {
         const errorData = await response.json();
         alert(errorData.message || 'Failed to book viewing session. Please try again.');
