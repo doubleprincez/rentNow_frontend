@@ -103,7 +103,7 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
   
       const bookingPayload = {
         apartment_id: apartment.id,
-        amount: parseInt(apartment.amount.replace(/[^0-9]/g, '')),
+        amount: parseInt(apartment.amount.replace(/[^0-9]/g, ''))+parseInt(apartment?.security_deposit.replace(/[^0-9]/g, '')),
         currency_code: "NGN",
         start: formattedStart,
         end: formattedEnd
@@ -212,7 +212,7 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
 
               <div className="flex items-center gap-2">
                 <Shield className="text-orange-500"/>
-                <span className="text-gray-600">Security Deposit: {apartment.security_deposit || 'None'}</span>
+                <span className="text-gray-800 font-bold">Security Deposit: {apartment.security_deposit || 'None'}</span>
               </div>
 
               <div className="flex items-center gap-2">

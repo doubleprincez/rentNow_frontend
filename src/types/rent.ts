@@ -1,4 +1,6 @@
+import { UserInfo } from "os";
 import { Apartment, PaginationLink } from "./apartment";
+import { User } from "@/features/admin/dashboard/api/userApi";
 
 export interface RentInterface{
     id:number,
@@ -7,6 +9,7 @@ export interface RentInterface{
     amount:number,
     currency_code:string|null,
     proof_of_payment?:File|null,
+    proof_url?:string|null,
     start?:Date|string|null,
     end?: Date|string|null,
     metadata: any,
@@ -14,7 +17,7 @@ export interface RentInterface{
     created_at:Date|string,
     updated_at:Date|string
     apartment?:Apartment
-    
+    tenant?:User
     } 
     
     
