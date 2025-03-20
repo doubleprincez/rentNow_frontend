@@ -30,7 +30,8 @@ export default SubPlans
 
 
 const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
-    const [plan, setPlan] = useState(initialData || {
+   
+    const [plan, setPlan] = useState<PlansInterface>(initialData || {
         name: "",
         description: "",
         price: 2000,
@@ -50,13 +51,13 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
 
     // Remove a feature by index
     const removeFeature = (index: number) => {
-        const updatedFeatures = plan.features.filter((_, i) => i !== index);
+        const updatedFeatures = plan.features.filter((_: any, i: number) => i !== index);
         setPlan({ ...plan, features: updatedFeatures });
     };
 
     // Handle feature updates
     const updateFeature = (index: number, key: string, value: string | number) => {
-        const updatedFeatures = plan.features.map((feature:FeatureInterface, i) =>
+        const updatedFeatures = plan.features.map((feature:FeatureInterface, i: number) =>
             i === index ? { ...feature, [key]: value } : feature
         );
         setPlan({ ...plan, features: updatedFeatures });
@@ -67,6 +68,8 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
         await onSave(plan);
         onClose();
     }; 
+
+    
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
         <DialogContent>
@@ -119,7 +122,7 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
                     name="invoice_period"
                     placeholder="Duration" type="number" max={12}
                     value={plan.invoice_period}
-                    onChange={(e) => setPlan({ ...plan, invoice_period: e.target.value })}
+                    onChange={(e) => setPlan({ ...plan, invoice_period: Number(e.target.value) })}
                 />
                 </div>
               
@@ -176,10 +179,13 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
             <span className="font-light text-xs "><Check/>{feature.name}:</span> {feature.value}
           </div>
         ))}
-      </TableCell>
+      </TableCell>  
       <TableCell>
+      <div className="flex space-x-2">
+
         <Button size="sm" variant="outline" onClick={() => onEdit(plan)}><Edit /></Button>
         <Button size="sm" variant="destructive" onClick={() => onDelete(plan.id)} className="ml-2"><Trash /></Button>
+      </div>
       </TableCell>
     </TableRow>
   );
@@ -190,7 +196,7 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
     const [plans, setPlans] = useState<PlansInterface[]|null>( );
     const [searchTerm, setSearchTerm] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedPlan, setSelectedPlan] = useState(null);
+    const [selectedPlan, setSelectedPlan] = useState<PlansInterface>( );
   
     useEffect(() => {
       fetchPlans();
@@ -211,7 +217,7 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
     if(loading)return; setLoading(()=>true)
      if(confirm('This operation will prevent users from being able to subscribe to this plan')){
         
-      await AxiosApi('admin').get<ApiPlansResponse>(baseURL+`/plan/${id}`)
+      await AxiosApi('admin').delete<ApiPlansResponse>(baseURL+`/plan/${id}`)
       .then((response)=> { 
         showAlert("Plan Deleted","success");
         setPlans(plans?.filter((plan) => plan.id !== id))})
@@ -220,7 +226,7 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
      }
     };
   
-    const handleSavePlan = async (plan: any) => {
+    const handleSavePlan = async (plan: PlansInterface) => {
        
         if(plan.id){
             await AxiosApi('admin').put(baseURL+`/plans/${plan.id}`,plan)
@@ -252,8 +258,14 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
             .finally(()=>setLoading(()=>false));
 
         }
-         }
+        }
   
+        const openEditForm = async (plan:PlansInterface) =>{ 
+          setSelectedPlan(plan);
+          setIsModalOpen(true); 
+        }
+
+
     return (
       <div className="p-6 bg-gray-50 min-h-screen">
         <h1 className="text-2xl font-bold mb-4">Plans</h1>
@@ -297,7 +309,7 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
                 </TableRow>
               ) : (
                 plans?.map((plan) => (
-                  <PlanTableRow key={plan.id} plan={plan} onEdit={setSelectedPlan} onDelete={handleDeletePlan} />
+                  <PlanTableRow key={plan.id} plan={plan} onEdit={openEditForm} onDelete={handleDeletePlan} />
                 ))
               )}
             </TableBody>

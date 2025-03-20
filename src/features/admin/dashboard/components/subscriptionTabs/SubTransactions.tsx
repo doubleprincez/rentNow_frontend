@@ -84,7 +84,7 @@ const SubTransactions = () => {
                 <TableBody>
                         {loading ? (
                             <TableRow>
-                                 <TableCell colSpan={5} className="text-center">
+                                 <TableCell colSpan={7} className="text-center">
                                     <div className='flex justify-center '>
                                         <Loader2 className='animate-spin'/> Loading...
                                     </div>
@@ -92,7 +92,7 @@ const SubTransactions = () => {
                             </TableRow>
                         ) : !Array.isArray(transactions) || transactions.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center">
+                                <TableCell colSpan={7} className="text-center">
                                     No Transactions found
                                 </TableCell>
                             </TableRow>
@@ -163,7 +163,7 @@ const AdminTransaction = ({ transaction,closeSelected }: { transaction: Transact
     const updateTransactionStatus = async (newStatus: string) => {
         setLoading(true);
         try {
-            await AxiosApi().post(baseURL+`/transaction/verify`, { user_id:transaction.user_id,reference:transaction.reference, plan_id:transaction.payable.plan_id,status: newStatus });
+            await AxiosApi('admin').post(baseURL+`/transaction/verify`, { user_id:transaction.user_id,reference:transaction.reference, plan_id:transaction.payable.plan_id,status: newStatus });
             setStatus(newStatus);
             showAlert(`Transaction ${newStatus} successfully!`, "success");
         } catch (error) {

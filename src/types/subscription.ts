@@ -6,9 +6,9 @@ import { PaginationLink } from "./apartment"
 export type TransactionInterface = {}
 
 export interface FeatureInterface{
-  plan_id:number;
-  name:string;
-  slug:string;
+  plan_id?:number;
+  name?:string;
+  slug?:string;
   description?:any;
   value?:any;
   sort_order?:number;
@@ -24,22 +24,22 @@ export type PlansInterface = {
   'id':number,
     'name': any,
     'slug': string,
-    'description': any | null,
-    'is_active': boolean | null,
-    'price': number | null,
-    'signup_fee': number | null,
-    'currency': string,
-    'trial_period': number | null,
-    'trial_interval': string | null,
-    'invoice_period': number | null,
-    'invoice_interval': string | null,
-    'grace_period': number | null,
-    'grace_interval': string | null,
-    'prorate_day': number | null,
-    'prorate_period': number | null,
-    'prorate_extend_due': number | null,
-    'active_subscribers_limit': number | null,
-    'sort_order': number | null,
+    'description'?: any  ,
+    'is_active'?: boolean  ,
+    'price'?: string|number ,
+    'signup_fee?': number  ,
+    'currency'?: string,
+    'trial_period'?: number  ,
+    'trial_interval'?: string ,
+    'invoice_period'?: number  ,
+    'invoice_interval'?: string  ,
+    'grace_period'?: number  ,
+    'grace_interval'?: string  ,
+    'prorate_day'?: number  ,
+    'prorate_period'?: number  ,
+    'prorate_extend_due'?: number  ,
+    'active_subscribers_limit'?: number  ,
+    'sort_order'?: number, 
     'features':FeatureInterface[]
 }
 
@@ -55,10 +55,10 @@ export interface ApiPlansResponse{
     last_page: number;
     last_page_url: string;
     links: PaginationLink[];
-    next_page_url: string | null;
+    next_page_url?: string  ;
     path: string;
     per_page: number;
-    prev_page_url: string | null;
+    prev_page_url?: string  ;
     to: number;
     total: number;
   };
@@ -76,10 +76,10 @@ export interface ApiPlansResponse{
       last_page: number;
       last_page_url: string;
       links: PaginationLink[];
-      next_page_url: string | null;
+      next_page_url?: string  ;
       path: string;
       per_page: number;
-      prev_page_url: string | null;
+      prev_page_url?: string  ;
       to: number;
       total: number;
     };
@@ -93,11 +93,11 @@ export type SubscriptionInterface = {
     'slug': string,
     'description': string,
     'timezone': string,
-    'trial_ends_at': Date | null,
-    'starts_at': Date | null,
-    'ends_at': Date | null,
-    'cancels_at': Date | null,
-    'canceled_at': Date | null
+    'trial_ends_at'?: Date  ,
+    'starts_at'?: Date  ,
+    'ends_at'?: Date  ,
+    'cancels_at'?: Date  ,
+    'canceled_at'?: Date  ,
     'plan': PlansInterface
 }
 

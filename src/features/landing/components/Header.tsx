@@ -22,9 +22,9 @@ const Header = () => {
     const toggleMenu = () => setIsMenu((prev) => !prev);
 const toggleUserMenu = () => setIsUserMenu((prev) => !prev);
 
-    useEffect(()=>{
+    // useEffect(()=>{
 
-    },[user.isLoggedIn]);
+    // },[user.isLoggedIn]);
     accountRefresher(); // Automatically refresh user state
 
     

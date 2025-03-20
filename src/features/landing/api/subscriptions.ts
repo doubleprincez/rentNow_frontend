@@ -5,24 +5,15 @@ import { PaginationLink } from '@/types/apartment';
 import {redirect} from "next/navigation";
 import {useSelector} from "react-redux";
 import { ApiSubscriptionResponse } from '@/types/subscription';
+import { AxiosApi } from '@/lib/utils';
 
    
   export const getUserSubscriptions = async (page: number = 1, search: string = '') => {
     try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error('No authentication token found');
-        }
+        
 
-        const response = await axios.get<ApiSubscriptionResponse>(
-            baseURL + `/subscriptions?page=${page}&search=${search}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: 'application/json',
-                },
-            }
-        );
+        const response = await AxiosApi('admin').get<ApiSubscriptionResponse>(
+            baseURL + `/subscriptions?page=${page}&search=${search}` );
 
         return response.data;
     } catch (error) {

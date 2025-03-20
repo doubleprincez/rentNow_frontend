@@ -42,7 +42,8 @@ export interface Image {
     description: string;
     number_of_rooms: string;
     amount: string;
-    security_deposit: string;
+    security_deposit?: string;
+    security_deposit_currency_code?:string;
     duration: string;
     amenities: any[];
     country_code: string;

@@ -212,7 +212,8 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
 
               <div className="flex items-center gap-2">
                 <Shield className="text-orange-500"/>
-                <span className="text-gray-800 font-bold">Security Deposit: {apartment.security_deposit || 'None'}</span>
+                <span className="text-gray-800 font-bold">Security Deposit: {apartment?.security_deposit_currency_code}
+                {formatAmountNumber(apartment?.security_deposit)  }</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -220,22 +221,23 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
                 <span
                     className="text-gray-600">Amenities: {apartment.amenities?.length ? apartment.amenities.join(', ') : 'None listed'}</span>
               </div>
- {
+                
+              {
+                apartment?.agent_type=='agent'?<>
+                {
                   apartment.agent && <div className="flex items-center gap-2">
                     <User className="text-orange-500"/>
                     <span className="text-gray-600">{String(apartment.agent_type).toLocaleUpperCase()}: {apartment.agent}</span>
                   </div>
               }
               {
-                apartment?.agent_type=='agent'?<>
-              {
-                apartment?.agent_email && <div className="flex items-center gap-2">
+               isSubscribed && apartment?.agent_email && <div className="flex items-center gap-2">
                 <MailIcon className="text-orange-500"/>
                 <span className="text-gray-600">Email: {apartment?.agent_email}</span>
               </div>
               }
 {
-                apartment?.agent_phone && <div className="flex items-center gap-2">
+                 isSubscribed && apartment?.agent_phone && <div className="flex items-center gap-2">
                 <PhoneCallIcon className="text-orange-500"/>
                 <span className="text-gray-600">Phone: {apartment?.agent_phone}</span>
               </div>
@@ -249,26 +251,25 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
               }{
                 apartment?.business_name && <div className="flex items-center gap-2">
                 <BuildingIcon className="text-orange-500"/>
-                <span className="text-gray-600">Email: {apartment?.business_name}</span>
+                <span className="text-gray-600">{String(apartment.agent_type).toLocaleUpperCase()}: {apartment?.business_name}</span>
               </div>
-              }
+              } 
                 </div>
-                
-{
-                apartment?.business_address && <div className="flex items-center gap-2">
+                { 
+               isSubscribed &&   apartment?.business_address && <div className="flex items-center gap-2">
                 <GlobeIcon className="text-orange-500"/>
                 <span className="text-gray-600">Phone: {apartment?.business_address}</span>
               </div>
               }
                 
-{
-                apartment?.business_email && <div className="flex items-center gap-2">
+              {
+                 isSubscribed && apartment?.business_email && <div className="flex items-center gap-2">
                 <EmailIcon className="text-orange-500"/>
                 <span className="text-gray-600">Phone: {apartment?.business_email}</span>
               </div>
               }
               {
-                apartment?.business_phone && <div className="flex items-center gap-2">
+                 isSubscribed && apartment?.business_phone && <div className="flex items-center gap-2">
                 <PhoneCallIcon className="text-orange-500"/>
                 <span className="text-gray-600">Phone: {apartment?.business_phone}</span>
               </div>
