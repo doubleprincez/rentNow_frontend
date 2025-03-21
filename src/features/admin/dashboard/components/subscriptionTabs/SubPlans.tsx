@@ -316,9 +316,11 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center">
-                    <Loader2 className="animate-spin" /> Loading...
-                  </TableCell>
+                   <TableCell colSpan={6} className="text-center">
+                                                      <div className='flex justify-center '>
+                                                          <Loader2 className='animate-spin'/> Loading...
+                                                      </div>
+                                                       </TableCell>
                 </TableRow>
               ) : plans?.length === 0 ? (
                 <TableRow>

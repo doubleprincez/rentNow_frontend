@@ -147,7 +147,7 @@ export const logoutAdmin = createAsyncThunk(
             const token = getFromStorage('adminToken');
             if (token) {
                 await axios.post(
-                    baseURL+'/admin/logout',
+                    baseURL+'/logout',
                     {},
                     {
                         headers: {

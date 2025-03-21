@@ -57,7 +57,7 @@ const BottomNav = () => {
     ]
 
     return (
-        <div className='px-4 py-2 w-full h-full bg-black/85 text-white flex flex-col'>
+        <div className='px-4 py-2 w-full h-full bg-black/85 text-white flex flex-col overflow-x-auto'>
             <div className='flex justify-center items-center gap-6 sm:gap-8 md:gap-14'>
                 {links.map((link, index) => (
                     <Link href={link.link} key={index} className=''>

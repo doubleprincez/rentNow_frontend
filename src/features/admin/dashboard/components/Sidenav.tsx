@@ -76,13 +76,16 @@ const Sidenav = () => {
     ]
 
     return (
-        <div className='px-4 py-6 w-full h-full bg-black/85 text-white flex flex-col'>
+        <div className='px-4 py-6 w-full h-full bg-black/85 text-white'>
+          
             <div className='flex flex-col w-full leading-[4px]'>
                 <div className="text-[1.8em] font-semibold text-orange-500">
                     <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
                 </div>
                 <span className='ml-[120px] text-[.8em] text-white/90'>Admin</span>
-            </div>
+            </div>  
+            <div className='flex flex-col overflow-y-auto max-h-[550px] pb-[50px] px-2'>
+                
 
             <div className='py-20 flex flex-col gap-4'>
                 {links.map((link, index) => (
@@ -103,6 +106,7 @@ const Sidenav = () => {
                     <LogOut className='w-6 h-6 text-white' />
                     <span className='text-white text-[.9em]'>Logout</span>
                 </button>
+            </div>
             </div>
         </div>
     )

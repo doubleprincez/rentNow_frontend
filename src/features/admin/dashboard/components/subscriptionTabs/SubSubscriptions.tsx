@@ -98,13 +98,15 @@ const SubSubscriptions = ()=>{
                 <TableBody>
                     {loading ? (
                         <TableRow>
-                            <TableCell colSpan={4} className="flex justify-center">
-                                <Loader2 className='animate-spin'/> Loading...
-                            </TableCell>
+                           <TableCell colSpan={5} className="text-center">
+                                    <div className='flex justify-center '>
+                                        <Loader2 className='animate-spin'/> Loading...
+                                    </div>
+                                     </TableCell>
                         </TableRow>
                     ) : !Array.isArray(subscriptions) || subscriptions.length === 0 ? (
                         <TableRow>
-                            <TableCell colSpan={4} className="text-center">
+                            <TableCell colSpan={5} className="text-center">
                                 No Subscription Yet
                             </TableCell>
                         </TableRow>
