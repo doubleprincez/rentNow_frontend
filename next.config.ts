@@ -1,11 +1,9 @@
 import type {NextConfig} from "next";
 
 
-
-
 // export const baseURL = 'https://api.rent9ja.com.ng/api';
-export const frontendURL = 'http://localhost:3000';
-export const backendUrl = 'http://localhost:8000';
+export const frontendURL = 'https://rent9ja.com.ng';
+export const backendUrl = 'https://app.rent9ja.com.ng';
 export const baseURL = backendUrl+'/api';
 
 const nextConfig: NextConfig = {
