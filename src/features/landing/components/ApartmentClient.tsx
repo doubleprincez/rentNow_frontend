@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Banknote, MapPin, Clock, Home, User, Building, Shield, Boxes, List, CreditCardIcon, PhoneCallIcon, Building2Icon, Globe2Icon, MailIcon, BuildingIcon, GlobeIcon } from 'lucide-react';
+import { Banknote, MapPin, Clock, Home, User, Building, Shield, Boxes, List, CreditCardIcon, PhoneCallIcon, Building2Icon, Globe2Icon, MailIcon, BuildingIcon, GlobeIcon, EyeIcon, LucideEye, HeartIcon, Facebook } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -10,10 +10,12 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import ChatDialog from '@/features/landing/components/ChatDialog';
-import {baseURL, frontendURL} from "@/../next.config";
+import {backendUrl, baseURL, frontendURL} from "@/../next.config";
 import Link from 'next/link';
 import { AxiosApi, formatAmountNumber, saveFormData } from '@/lib/utils';
-import { EmailIcon } from 'react-share';
+import { EmailIcon, FacebookIcon, FacebookMessengerIcon, FacebookShareButton, WhatsappIcon, WhatsappShareButton } from 'react-share';
+import WhatsAppFloater from '@/app/WhatsappFloater';
+import { useAlert } from '@/contexts/AlertContext';
 
 interface ClientProps {
   apartmentId: number; 
@@ -22,10 +24,12 @@ interface ClientProps {
 export default function ApartmentClient({ apartmentId }: ClientProps) {
  
   const router = useRouter(); 
-  const { isLoggedIn, token ,isSubscribed} = useSelector((state: any) => state.user);
+  const { isLoggedIn, token ,isSubscribed} = useSelector((state: any) => state.user); 
+  const { showAlert } = useAlert();
  
   const [isLoading, setIsLoading] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [likedApartment,setLikedApartment] = useState(false);
 
   const [apartment ,setApartment ] = useState<Apartment>();
 
@@ -33,11 +37,50 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
   const fetchApartment = async()=>{
     if(isLoading) return;
     setIsLoading(true);
-     await AxiosApi().get (baseURL+'/apartment/'+apartmentId)
+     await AxiosApi().get(baseURL+'/apartment/'+apartmentId)
      .then((response:{data:any})=>{ 
-      
-        setApartment(response?.data.data);  
+      const fetched = response?.data.data;
+        setApartment(fetched);
+        setLikedApartment(fetched?.like_apartment??false);  
     }).finally(()=>setIsLoading(false));
+  }
+
+  const toggleLike = async ()=>{
+      const newState = !likedApartment;
+        setLikedApartment(()=>newState);
+       
+      if(newState){
+        const res = apartment?.like_count??0+1;
+       setApartment(apartment=>({ ...apartment, like_count:res }));
+        await  AxiosApi().post(baseURL+'/apartment/'+apartmentId+'/like')
+        .then(res=>{
+          const fetched = res.data?.data;
+          if(fetched){ 
+            setApartment(fetched);
+            setLikedApartment(fetched.like_apartment);
+          }
+        })
+        .catch((error: any)=> showAlert(
+          error?.response?.data?.message||  error.message || "Unable to Process, Please try again.",
+            "error"
+        ))
+      }else{
+        const res =apartment?.like_count??1-1;
+
+        setApartment(apartment=>({...apartment, like_count:res }));
+        await  AxiosApi().post(baseURL+'/apartment/'+apartmentId+'/unlike')
+        .then(res=>{ 
+          const fetched = res.data?.data;
+          if(fetched){ 
+            setApartment(fetched);
+            setLikedApartment(fetched.like_apartment);
+          }
+        })
+        .catch((error: any)=> showAlert(
+          error?.response?.data?.message||  error.message || "Unable to Process, Please try again.",
+            "error"
+        ))
+      }
   }
 
 
@@ -101,9 +144,10 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
       const formattedStart = bookingData?.start?.split('T')[0];
       const formattedEnd = calculateEndDate(formattedStart, apartment.duration);
   
+      const deposit = (apartment?.security_deposit && parseInt(apartment?.security_deposit.replace(/[^0-9]/g, '')));
       const bookingPayload = {
         apartment_id: apartment.id,
-        amount: parseInt(apartment.amount.replace(/[^0-9]/g, ''))+parseInt(apartment?.security_deposit.replace(/[^0-9]/g, '')),
+        amount: parseInt(apartment.amount.replace(/[^0-9]/g, '')+deposit),
         currency_code: "NGN",
         start: formattedStart,
         end: formattedEnd
@@ -162,21 +206,21 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
 
             <div className="flex flex-col gap-4">
               <h1 className="text-2xl font-bold text-gray-800">{apartment.title}</h1>
-
+            
               <div className="flex items-center gap-2">
                 <Home className="text-orange-500"/>
                 <span className="text-gray-600">Rooms: {apartment.number_of_rooms}</span>
               </div>
 
 
-              {
+              {/* {
                   
                     apartment.security_deposit &&
                     <div className="flex items-center gap-2">
                     <CreditCardIcon className="text-orange-500"/>
                     <span className="text-gray-600">Security Deposit: {formatAmountNumber(apartment.security_deposit) || 'Not specified'}</span>
                   </div>
-              }
+              } */}
               {
                   apartment.business_name &&
                   <div className="flex items-center gap-2">
@@ -201,7 +245,7 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
 
               <div className="flex items-center gap-2">
                 <Banknote className="text-orange-500"/>
-                <span className="text-gray-600">Price: {apartment.amount}</span>
+                <span className="text-gray-600 font-bold">Price: {apartment.amount}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -355,6 +399,30 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
               <div className="mt-4">
                 <h2 className="text-xl font-semibold mb-2">Description</h2>
                 <p className="text-gray-600">{apartment.description}</p>
+              </div>
+              <div className='flex justify-center space-x-2'>
+                <div className='flex space-x-2'>{formatAmountNumber(apartment?.views_count)}<LucideEye/></div>
+                <div className='flex justify-center space-x-2'>
+                 <div>{apartment?.like_count}</div>
+                 <div> <HeartIcon onClick={()=>toggleLike()} className={(likedApartment==true?'text-red-800 fill-red-800':'text-green-800 fill-green-800')+' cursor-pointer'}/>
+                </div></div>
+                <div className='flex justify-center'>
+                  <span className="px-2">Share:</span>
+                  <div className="px-2">
+                      <FacebookShareButton url={window.location.href}  >
+                   <FacebookIcon  height={24} width={24}  />
+                   </FacebookShareButton >
+                  </div>
+                  <div className="px-2">
+                    <WhatsappShareButton  className="px-2" url={window.location.href}>
+                   <WhatsappIcon height={24} width={24} className='fill-white bg-white text-green-600'/>
+                   </WhatsappShareButton>
+                  </div>
+              
+               
+
+                </div>
+              
               </div>
             </div>
           </div>

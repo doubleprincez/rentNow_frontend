@@ -99,9 +99,8 @@ const ComfortLiving = ({ initialData }: { initialData?: ApiResponse }) => {
     };
 
 
-    const handleApartmentClick = (apartment: Apartment) => {
-        const encodedData = encodeURIComponent(JSON.stringify(apartment));
-        router.push(`/find-homes/${apartment.id}?data=${encodedData}`);
+    const handleApartmentClick = (apartment: Apartment) => { 
+        router.push(`/find-homes/${apartment.id}`);
     };
 
     if (isLoading) {

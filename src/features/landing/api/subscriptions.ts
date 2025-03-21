@@ -8,11 +8,11 @@ import { ApiSubscriptionResponse } from '@/types/subscription';
 import { AxiosApi } from '@/lib/utils';
 
    
-  export const getUserSubscriptions = async (page: number = 1, search: string = '') => {
+  export const getUserSubscriptions = async (page: number = 1, search: string = '',account='user') => {
     try {
         
 
-        const response = await AxiosApi('admin').get<ApiSubscriptionResponse>(
+        const response = await AxiosApi(account).get<ApiSubscriptionResponse>(
             baseURL + `/subscriptions?page=${page}&search=${search}` );
 
         return response.data;

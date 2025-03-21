@@ -54,7 +54,7 @@ const PointContact = () => {
 
     const handleApartmentClick = (apartment: Apartment) => {
         const encodedData = encodeURIComponent(JSON.stringify(apartment));
-        router.push(`/find-homes/${apartment.id}?data=${encodedData}`);
+        router.push(`/find-homes/${apartment.id}`);
     };
 
     if (isLoading) {

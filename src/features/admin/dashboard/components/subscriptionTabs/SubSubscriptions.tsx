@@ -37,7 +37,7 @@ const SubSubscriptions = ()=>{
         try {
             if(loading) return;
             setLoading(()=>true);
-            const response = await getUserSubscriptions(currentPage, searchTerm);
+            const response = await getUserSubscriptions(currentPage, searchTerm,'admin');
 
             if (response.success && response.data) {
                 setSubscriptions(response.data.data);

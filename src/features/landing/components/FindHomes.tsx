@@ -82,8 +82,7 @@ const FindHomes: React.FC<FindHomesProps> = ({ initialData }) => {
     fetchApartments();
   }, [initialData]);
 
-  const handleApartmentClick = (apartment: Apartment) => {
-    const encodedData = encodeURIComponent(JSON.stringify(apartment));
+  const handleApartmentClick = (apartment: Apartment) => { 
     router.push(`/find-homes/${apartment.id}`);
   };
 

@@ -50,12 +50,12 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
               ...{
                 id:undefined,
                 name: "",
-             description: "",
-              price: 2000,
-              currency: "NGN",
-              invoice_interval: "month",
-              invoice_period: 3,
-              features: [],
+                description: "",
+                price: 2000,
+                currency: "NGN",
+                invoice_interval: "month",
+                invoice_period: 3,
+                features: [],
             }
         }))
       }
