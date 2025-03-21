@@ -3,7 +3,7 @@
 import {useSelector, useDispatch} from 'react-redux';
 import {AppDispatch, RootState} from '@/redux/store';
 import { login, logout, userSlicePayload } from "./userSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AxiosApi } from "@/lib/utils";
 import { baseURL } from '@/../next.config';
 import { UserState } from '@/types/chats';
@@ -24,9 +24,10 @@ const accountRefresher =(account='user')=>{
     }else{
         isLoggedin =  useSelector((state: RootState) => state.user.isLoggedIn);
     }
-   
+   const [counter,setCounter] =useState(0);
+
     const fetchUserData = async () => {
-        await AxiosApi().get(baseURL+"/profile")  
+        await AxiosApi(account).get(baseURL+"/profile")  
              .then((response: { data: any })=>{
                 if (response.data) {
                     let data = response.data.data; 
@@ -44,11 +45,16 @@ const accountRefresher =(account='user')=>{
                     apartments: data.apartments || [],
                     rentedApartments: data.rented_apartments || []
                 }));
+                setCounter(()=>0)
             }   
     }).catch ((error:any) => { 
         if(error.status==401){
-       logoutUserAutomatically(account); 
-    }
+            console.log('Authentication failed for '+account);
+           if(counter>=2){
+            logoutUserAutomatically(account); 
+           } 
+            setCounter(()=>counter+1);
+        }
     })
     }
     const logoutUserAutomatically= async(account='user')=>{

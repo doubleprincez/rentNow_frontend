@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useAlert } from "@/contexts/AlertContext";
 import { AxiosApi } from "@/lib/utils";
 import { ApiPlansResponse, FeatureInterface, PlansInterface } from "@/types/subscription"; 
-import { Check, Edit, Loader2, Plus, Search, Trash } from "lucide-react"
+import { Check, Edit, Loader2, Plus, PlusIcon, Search, Trash, Trash2Icon } from "lucide-react"
 import { useEffect, useState } from "react"
 import { baseURL } from "@/../next.config";
 import { Label } from "@/components/ui/label";
@@ -40,6 +40,27 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
         invoice_period: 3,
         features: [],
     });
+
+    useEffect(() => {
+      if (initialData) { 
+          setPlan(initialData); // Ensure form updates when `initialData` changes
+      }else{
+        setPlan(plan=>({
+             ...plan, 
+              ...{
+                id:undefined,
+                name: "",
+             description: "",
+              price: 2000,
+              currency: "NGN",
+              invoice_interval: "month",
+              invoice_period: 3,
+              features: [],
+            }
+        }))
+      }
+    // console.log('initaial data',initialData);
+  }, [initialData]);
 
     // Add a new feature
     const addFeature = () => {
@@ -83,14 +104,14 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
             <div className="space-y-3 overflow-y-auto max-h-[350px]">
                 <Input
                     placeholder="Plan Name"
-                    value={plan.name}
+                    defaultValue={plan.name}
                     onChange={(e) => setPlan({ ...plan, name: e.target.value })}
                 />
                 <div>
                     
                 <Input
                     placeholder="Description"
-                    value={plan.description}
+                    defaultValue={plan.description}
                     onChange={(e) => setPlan({ ...plan, description: e.target.value })}
                 />
                 </div>
@@ -101,17 +122,17 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
                 <Input
                     placeholder="Price"
                     type="number"
-                    value={plan.price}
+                    defaultValue={plan.price}
                     onChange={(e) => setPlan({ ...plan, price: e.target.value })}
                 />
                 </div>
                 <div>
                     <label>Type</label>
                     <select
-                        value={plan.invoice_interval}
+                        defaultValue={plan.invoice_interval}
                         onChange={(e) => setPlan({ ...plan, invoice_interval: e.target.value })}
                     >
-                        <option selected value="month">Month</option>
+                        <option   value="month">Month</option>
                         <option value="year">Year</option>
                     </select>
                 </div>
@@ -121,7 +142,7 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
                       <Input
                     name="invoice_period"
                     placeholder="Duration" type="number" max={12}
-                    value={plan.invoice_period}
+                    defaultValue={plan.invoice_period}
                     onChange={(e) => setPlan({ ...plan, invoice_period: Number(e.target.value) })}
                 />
                 </div>
@@ -134,27 +155,29 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
                         <div key={index} className="grid grid-cols-3 gap-2 items-center">
                             <Input
                                 placeholder="Feature Name"
-                                value={feature.name}
+                                defaultValue={feature.name}
                                 onChange={(e) => updateFeature(index, "name", e.target.value)}
                             />
                             <Input
                                 placeholder="Description"
-                                value={feature.description}
+                                defaultValue={feature.description}
                                 onChange={(e) => updateFeature(index, "description", e.target.value)}
                             />
                             <Input
                                 placeholder="Sort Order"
                                 type="number"
-                                value={feature.sort_order}
+                                defaultValue={feature.sort_order}
                                 onChange={(e) => updateFeature(index, "sort_order", Number(e.target.value))}
                             />
-                            <Button variant="destructive" onClick={() => removeFeature(index)}>
-                                Remove
+                            <div>
+                            <Button variant="destructive" className="p-1 bg-red-700 hover:bg-red-800 text-white text-xs my-2" onClick={() => removeFeature(index)}>
+                                <Trash2Icon className="text-xs"/>
                             </Button>
+                            </div>
                         </div>
                     ))}
-                    <Button onClick={addFeature} variant="secondary">
-                        + Add Feature
+                    <Button onClick={addFeature} className="flex" variant="secondary">
+                        <PlusIcon /> Add Feature
                     </Button>
                 </div>
             </div>
@@ -176,7 +199,7 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
       <TableCell>
         {plan?.features?.map((feature:FeatureInterface) => (
           <div key={feature.slug} className="mb-2">
-            <span className="font-light text-xs "><Check/>{feature.name}:</span> {feature.value}
+            <span className="font-light text-xs "><Check/>{feature.name}</span> {feature.value}
           </div>
         ))}
       </TableCell>  
@@ -211,7 +234,7 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
         .catch ((error:any) => showAlert( error?.response?.data?.message||  error.message || "Unable to Process, Please try again.","error"))
         .finally(()=>setLoading(()=>false));
      
-    };
+    };   
   
     const handleDeletePlan = async (id: number) => {
     if(loading)return; setLoading(()=>true)
@@ -227,35 +250,29 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
     };
   
     const handleSavePlan = async (plan: PlansInterface) => {
-       
+     
         if(plan.id){
-            await AxiosApi('admin').put(baseURL+`/plans/${plan.id}`,plan)
+            await AxiosApi('admin').put(baseURL+`/plan/${plan.id}`,plan)
             .then((response)=> { 
               showAlert("Plan Updated","success");
-               if (plan.id) {
                 console.log(plan,response.data);
-                // setPlans(plans?.map((p) => (p.id === plan.id ? response.data : p)));
-              } else {
-                // setPlans([...plans, response.data]);
-              }
+               if (plan.id) {
+                setPlans(plans?.map((p) => (p.id === plan.id ? response.data : p)));
+             
+              }  
           
           })
             .catch ((error:any) => showAlert( error?.response?.data?.message||  error.message || "Unable to Process, Please try again.","error"))
-            .finally(()=>setLoading(()=>false));
+            .finally(()=>{   fetchPlans(); setLoading(()=>false);});
      
         }else{
             await AxiosApi('admin').post(baseURL+`/plan`,plan)
             .then((response)=> { 
               showAlert("Plan Created","success"); 
-               if (plan.id) {
-                setPlans(plans?.map((p) => (p.id === plan.id ? response.data : p)));
-              } else {
-                // setPlans({...plans, response.data});
-              }
-          
+             
           })
             .catch ((error:any) => showAlert( error?.response?.data?.message||  error.message || "Unable to Process, Please try again.","error"))
-            .finally(()=>setLoading(()=>false));
+            .finally(()=>{   fetchPlans(); setLoading(()=>false);});
 
         }
         }
@@ -279,7 +296,7 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
             onKeyDown = {(e) => { if(e. key == 'Enter')fetchPlans(); }}
           /> 
             </div>
-          <Button className="ml-auto" onClick={() => { setIsModalOpen(true); setSelectedPlan(null); }}>
+          <Button className="ml-auto" onClick={() => { setIsModalOpen(true); setSelectedPlan(undefined) }}>
             <Plus /> Add Plan
           </Button>
         </div>

@@ -21,7 +21,7 @@ export interface FeatureInterface{
 
 
 export type PlansInterface = {
-  'id':number,
+  'id'?:number,
     'name': any,
     'slug': string,
     'description'?: any  ,
