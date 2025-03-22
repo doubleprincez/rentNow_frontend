@@ -22,17 +22,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 
-window.fcm_app = app;
+ export const fcm_app = app;
 const messaging = getMessaging(app);
 
 
-window.fcm_analytics = analytics;
+export const fcm_analytics = analytics;
 
 
 export const requestForToken = async () => {
     try {
         const currentToken = await getToken(messaging, {
-            vapidKey: fcm_vapid,
+            // vapidKey: fcm_vapid,
         });
 
         if (currentToken) {

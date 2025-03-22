@@ -191,7 +191,7 @@ const proofOfPayment =()=>{
         </label>
         <div>
             
-        {!rent.proof_of_payment && (
+        {rent && !rent.proof_of_payment && (
             <Dialog>
                 <DialogTrigger asChild>
                     <button className="px-2 py-1 text-xs font-bold hover:bg-gray-300 bg-gray-200 rounded">

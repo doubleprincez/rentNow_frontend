@@ -32,7 +32,7 @@ const UserChat = () => {
     const currentUser:any  = localStorage.getItem('userState');
     const [loading, setLoading] = useState(false); 
     const [selectedAgent,setSelectedAgent] = useState<User|any>({});
-    const [selectedApartment,setSelectedApartment] = useState<Apartment|any>({})
+    const [selectedApartment,setSelectedApartment] = useState<Apartment>({})
     const [error, setError] = useState(''); 
     const [conversations,setConversations] = useState<Message[] | any>([]);
 
@@ -98,7 +98,7 @@ const UserChat = () => {
                                     <h2 className="text-xl leading-snug font-bold">{selectedApartment?.title}</h2>
                                 </a>
                                 <a className="block text-sm font-medium hover:text-indigo-500" href="#0">Rooms {selectedApartment?.number_of_rooms}</a>
-                                <div>For: {selectedApartment?.currency_code}  {formatAmountNumber(selectedApartment?.amount)}</div>
+                                <div>For: { selectedApartment?.amount}</div>
                             </div>
                         </div>
 

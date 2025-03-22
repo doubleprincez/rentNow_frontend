@@ -62,7 +62,10 @@ const Transaction = ({ reference }: TransactionI) => {
         setUploading(true);
 
         const formData = new FormData();
-        formData.append('transfer_id',transaction.payable_id);
+        if(transaction?.payable_id){
+             formData.append('transfer_id',String(transaction.payable_id));
+        }
+       
         formData.append("proof_of_payment", proofFile);
 
         try {
