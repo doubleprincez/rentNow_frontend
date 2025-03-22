@@ -19,7 +19,7 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({ apartment, onClick }) => 
     <div className="flex flex-col gap-2">
       <div className="flex w-full h-[200px] rounded-lg overflow-hidden">
         <img 
-          src={Object.values(apartment.images)[0]?.preview_url || '/placeholder.jpg'} 
+          src={apartment?.images && Object.values(apartment?.images)[0]?.preview_url || '/placeholder.jpg'} 
           alt={apartment.title} 
           className="w-full h-full object-cover"
         />
@@ -73,8 +73,9 @@ const FindHomes: React.FC<FindHomesProps> = ({ initialData }) => {
   useEffect(() => {
     if (initialData) {
       setApartments(initialData.data.data);
-      const uniqueCategories = [...new Set(initialData.data.data.map(apt => apt.category))];
-      setCategories(uniqueCategories);
+      const uniqueCategories = [...new Set(initialData.data.data.map(apt => apt.category))]
+                    .filter((category): category is string => category !== undefined);
+                    setCategories(uniqueCategories);
       return;
     }
 

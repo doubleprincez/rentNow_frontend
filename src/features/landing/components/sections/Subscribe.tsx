@@ -129,8 +129,11 @@ const PlanSelection =()=>{
                             }
                         </ul>
                     </div>
-                    <button className="relative flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-white before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
-                   ><span className="relative text-sm font-semibold text-black" onClick={()=>{selectedPlanIs(pl.id)}}>Get Started</span></button>
+                    {
+                         <button className="relative flex h-9 w-full items-center justify-center px-4 before:absolute before:inset-0 before:rounded-full before:bg-white before:transition before:duration-300 hover:before:scale-105 active:duration-75 active:before:scale-95 sm:w-max"
+                   ><span className="relative text-sm font-semibold text-black" onClick={()=>{pl.id &&selectedPlanIs(pl.id)}}>Get Started</span></button>
+                    }
+                    
                     </div>
                 </div>
             </div>

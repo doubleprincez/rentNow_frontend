@@ -3,7 +3,7 @@ import { redirect, useRouter } from 'next/navigation';
 
 interface UserState {
     isLoggedIn: boolean;
-    isSubscribed:boolean;
+    isSubscribed?:boolean;
     firstName: string;
     lastName: string;
     email: string;
@@ -68,7 +68,7 @@ export interface userSlicePayload {
             email: string;
             phoneNumber: number | null;
             userId: number;
-            isSubscribed:boolean;
+            isSubscribed?:boolean;
             accountType?: string;
             apartments?: Array<any>;
             rentedApartments?: Array<any>;

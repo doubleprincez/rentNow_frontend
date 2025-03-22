@@ -45,7 +45,7 @@ interface LoginResponse {
       name: string;
       email: string;
       phone: string | null;
-      is_subscribed:boolean|null;
+      is_subscribed?:boolean;
       account: {
         name: string;
         slug: string;
@@ -159,6 +159,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
             };
 
             // Dispatch login action with user details
+
             dispatch(login(userData));
             //console.log(userData)
             showAlert("Login Successful", "success");

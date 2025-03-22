@@ -97,8 +97,8 @@ const PointContact = () => {
                         >
                             <div className='w-[30%] h-full rounded-lg md:rounded-xl overflow-hidden'>
                                 <Image 
-                                    src={Object.values(apartment?.images)[0]?.preview_url || '/placeholder.jpg'} 
-                                    alt={apartment.title} 
+                                    src={apartment?.images&&Object.values(apartment?.images)[0]?.preview_url || '/placeholder.jpg'} 
+                                    alt={apartment?.title??'image'} 
                                     width={200}
                                     height={200}
                                     className='w-full h-full object-cover'

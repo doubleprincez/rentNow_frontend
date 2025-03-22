@@ -98,9 +98,9 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
  
 
 
-  const calculateEndDate = (startDate: string, duration: string): string => {
+  const calculateEndDate = (startDate: string, duration?: string): string => {
     const start = new Date(startDate);
-    const durationMatch = duration.match(/(\d+)\s*(Year|Month|Week|Day)s?/i);
+    const durationMatch = duration?.match(/(\d+)\s*(Year|Month|Week|Day)s?/i);
     
     if (!durationMatch) return startDate; 
     
@@ -142,12 +142,12 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
     setIsBooking(true);
     try {
       const formattedStart = bookingData?.start?.split('T')[0];
-      const formattedEnd = calculateEndDate(formattedStart, apartment.duration);
+      const formattedEnd = calculateEndDate(formattedStart, apartment?.duration);
   
-      const deposit = (apartment?.security_deposit && parseInt(apartment?.security_deposit.replace(/[^0-9]/g, '')));
+      const deposit = Number(apartment?.security_deposit && parseInt(apartment?.security_deposit.replace(/[^0-9]/g, '')));
       const bookingPayload = {
         apartment_id: apartment.id,
-        amount: parseInt(apartment.amount.replace(/[^0-9]/g, '')+deposit),
+        amount: Number(apartment?.amount? apartment?.amount?.replace(/[^0-9]/g, ''):0) + deposit,
         currency_code: "NGN",
         start: formattedStart,
         end: formattedEnd
@@ -371,10 +371,13 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
 
                           </DialogContent>
                         </Dialog>
-                        <ChatDialog
-                            agentId={apartment.agent_id}
-                            agentName={apartment.agent}
+                        {
+                          apartment?.agent_id && (apartment?.agent||apartment?.business_name) &&   <ChatDialog
+                            agentId={apartment?.agent_id}
+                            agentName={apartment?.agent??apartment?.business_name}
                         />
+                        }
+                       
                       </> : <div className='col-span-2  py-4 w-full'>
                         <div className='text-xs'>Subscribe now to enjoy the full benefits of our platform</div>
                         <Button onClick={() => router.push('/subscribe')}
@@ -410,12 +413,12 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
                   <span className="px-2">Share:</span>
                   <div className="px-2">
                       <FacebookShareButton url={window.location.href}  >
-                   <FacebookIcon  height={24} width={24}  />
+                   <FacebookIcon  size={24}  />
                    </FacebookShareButton >
                   </div>
                   <div className="px-2">
                     <WhatsappShareButton  className="px-2" url={window.location.href}>
-                   <WhatsappIcon height={24} width={24} className='fill-white bg-white text-green-600'/>
+                    <WhatsappIcon size={24} className='fill-white bg-white text-green-600'/>
                    </WhatsappShareButton>
                   </div>
               

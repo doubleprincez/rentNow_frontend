@@ -16,7 +16,7 @@ interface InoviceI {
 
 const Invoice = ({transaction}:InoviceI)=> {
  
-    const componentRef = useRef();
+    const componentRef = useRef<HTMLDivElement>(null);
     // Function to download PDF
     const handlePrint = useReactToPrint({
         contentRef: componentRef,
@@ -30,7 +30,7 @@ const Invoice = ({transaction}:InoviceI)=> {
                 <Layout transaction={transaction} ref={componentRef}/>
 
                 <div className="flex justify-between mt-6">
-                    <button className={"  px-2 py-1 m-0 hover:shadow-lg"} onClick={handlePrint}>
+                    <button className={"  px-2 py-1 m-0 hover:shadow-lg"} onClick={() => handlePrint()}>
                         <svg xmlns="http://www.w3.org/2000/svg"
                              fill="#000000" width="24" height="24" viewBox="0 0 512 512" data-name="Layer 1"
                              id="Layer_1">
@@ -42,12 +42,12 @@ const Invoice = ({transaction}:InoviceI)=> {
                     <div className="flex space-x-4">
                         <div className="">
                         <FacebookShareButton url={window.location.href}>
-                            <FacebookIcon className="rounded" height={40} width={40}/>
+                            <FacebookIcon className="rounded" size={24}/>
                         </FacebookShareButton>
                         </div>
                         <div className="">
                         <WhatsappShareButton url={window.location.href}>
-                           <WhatsappIcon  className="rounded"  height={40} width={40} />
+                           <WhatsappIcon  className="rounded"    size={24} />
                         </WhatsappShareButton></div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@ const Invoice = ({transaction}:InoviceI)=> {
 export default Invoice;
 
 
-const Layout = React.forwardRef(({transaction}:InoviceI, ref) => {
+const Layout = React.forwardRef<HTMLDivElement, InoviceI>(({transaction}  , ref) => {
      
     const withdrawal = (bank:bankInterface) => { 
        return  <>

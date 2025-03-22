@@ -3,7 +3,7 @@ import { PaginationLink } from "./apartment";
 
 export interface ChatDialogProps {
     agentId: number;
-    agentName: string;
+    agentName?: string;
 }
 
 export interface Message {

@@ -48,6 +48,7 @@ interface Property {
   videos: Record<string, Video>;
   thumbnail: string | null;
   views_count: number;
+  likes_count?:number;
 }
 
 interface PaginatedResponse {
@@ -179,6 +180,7 @@ const ManageProperty: React.FC = () => {
                 <th className="p-4 text-[.8em] font-medium text-white">Category</th>
                 <th className="p-4 text-[.8em] font-medium text-white">Rooms</th>
                 <th className="p-4 text-[.8em] font-medium text-white">Amount</th>
+                <th className="p-4 text[.8em] font-medium text-white">Stats</th>
                 <th className="p-4 text-[.8em] font-medium text-white">Location</th>
                 <th className="p-4 text-[.8em] font-medium text-white">Actions</th>
               </tr>
@@ -201,6 +203,7 @@ const ManageProperty: React.FC = () => {
                   <td className="p-4 text-gray-700 text-[.8em]">{property.category}</td>
                   <td className="p-4 text-gray-700 text-[.8em]">{property.number_of_rooms}</td>
                   <td className="p-4 text-gray-700 text-[.8em]">{property.amount}</td>
+                  <td className='p-4 text0-gray-700 text-[.8em]'><span>{property?.views_count} views</span> <span>{property?.likes_count} Likes</span></td>
                   <td className="p-4 text-gray-700 text-[.8em]">
                     {`${property.city_code}, ${property.state_code}`}
                   </td>

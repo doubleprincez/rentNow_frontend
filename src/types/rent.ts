@@ -9,7 +9,7 @@ export interface RentInterface{
     amount:number,
     currency_code:string|null,
     proof_of_payment?:File|null,
-    proof_url?:string|null,
+    proof_url?:string,
     start?:Date|string|null,
     end?: Date|string|null,
     metadata: any,
