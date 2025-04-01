@@ -1,10 +1,12 @@
 'use client'
+
 import React, { useEffect, useState } from "react";
 import { motion } from 'framer-motion';
 import { fadeIn } from '@/lib/variants';
 import { HomeIcon, Star, Target, X } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {backendUrl, baseURL, frontendURL} from "@/../next.config";
 import type { Apartment, ApiResponse } from '@/types/apartment';
 import House from '@/components/assets/house1.jpeg';
 import House2 from '@/components/assets/house2.jpeg';
@@ -40,7 +42,7 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const response = await fetch('/api/apartments');
+                const response = await fetch(baseUrl+'/api/apartments');
                 const data: ApiResponse = await response.json();
                 
                 if (data.success) {
@@ -126,7 +128,7 @@ const Home: React.FC = () => {
             // Always include country_code=NGA
             queryParams.append('country_code', 'NGA');
 
-            const response = await fetch(`/api/apartments${queryParams.toString() ? `?${queryParams.toString()}` : ''}`);
+            const response = await fetch(`${baseUrl}/api/apartments${queryParams.toString() ? `?${queryParams.toString()}` : ''}`);
             const data: ApiResponse = await response.json();
 
             if (data.success) {
@@ -360,6 +362,7 @@ const Home: React.FC = () => {
                                         <img 
                                             src={selectedApartment?.images && Object.values(selectedApartment.images)[0]?.preview_url || '/placeholder.jpg'}
                                             alt={selectedApartment.title}
+                                            loading="lazy"
                                             className="w-full h-full object-cover"
                                         />
                                     </div>

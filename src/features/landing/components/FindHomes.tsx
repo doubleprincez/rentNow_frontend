@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Tabs, TabsTrigger, TabsContent, TabsList } from '@/components/ui/tabs';
 import { Banknote, MapPin, Clock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import {backendUrl, baseURL, frontendURL} from "@/../next.config";
 import type { 
   Apartment, 
   ApiResponse, 
