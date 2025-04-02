@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Footer from "@/features/landing/components/Footer";
 import Header from "@/features/landing/components/Header";
 import Subscribe from "@/features/landing/components/sections/Subscribe";
