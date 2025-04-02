@@ -221,13 +221,13 @@ export default function ApartmentClient({ apartmentId }: ClientProps) {
                     <span className="text-gray-600">Security Deposit: {formatAmountNumber(apartment.security_deposit) || 'Not specified'}</span>
                   </div>
               } */}
-              {
-                  apartment.business_name &&
-                  <div className="flex items-center gap-2">
-                    <Building className="text-orange-500"/>
-                    <span className="text-gray-600">Business: {apartment.business_name || 'Not specified'}</span>
-                  </div>
-              }
+              {/*{*/}
+              {/*    apartment.business_name &&*/}
+              {/*    <div className="flex items-center gap-2">*/}
+              {/*      <Building className="text-orange-500"/>*/}
+              {/*      <span className="text-gray-600">Business: {apartment.business_name || 'Not specified'}</span>*/}
+              {/*    </div>*/}
+              {/*}*/}
 
               {
                   apartment.category && <div className="flex items-center gap-2">
