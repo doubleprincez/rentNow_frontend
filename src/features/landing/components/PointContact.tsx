@@ -107,7 +107,7 @@ const PointContact = ({apartments}: PointContactI) => {
                                     alt={apartment?.title ?? 'image'}
                                     width={200}
                                     height={200}
-                                    className='w-full h-full object-cover'  unoptimized
+                                    className='w-full h-full object-cover'
                                 />
                             </div>
                             <div className='w-[70%] h-full flex flex-col gap-2'>

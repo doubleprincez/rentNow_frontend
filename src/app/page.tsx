@@ -19,21 +19,21 @@ import {Button} from "@/components/ui/button";
 import Link from "next/link";
 
 const page = async () => {
-    let data: ApiResponse = [];
+    let data: ApiResponse | undefined;
+    let loading = true;
 
     try {
         const response = await fetch(baseURL + '/apartments');
         const res = await response.json();
         if (!res.success) {
-            console.log('false one')
-            data = false
+            loading = false;
+            data = undefined;
         } else {
             data = res;
         }
 
     } catch (e) {
-        console.log('false two', e.message);
-        data = false;
+        loading = false;
     }
     return (
         <WhatsAppFloater>
@@ -45,13 +45,13 @@ const page = async () => {
             {/*    className="animate-spin"/>&nbsp;Loading...</div>}>*/}
 
             {
-                data == false ? <div className="flex justify-center items-center min-h-screen">
+                loading == false ? <div className="flex justify-center items-center min-h-screen">
                         <div>
                         <span className={"flex"}><CancelIcon
                             className=""/>&nbsp;Unable to Load</span> <br/> <Link
                             href={"/"}> Reload</Link></div>
                     </div> :
-                    Object.keys(data).length > 0 ? <>
+                    data && Object.keys(data).length > 0 ? <>
                         <ComfortLiving initialData={data}/>
                         <PointContact apartments={data.data.data}/>
                     </> : <div className="flex justify-center items-center min-h-screen"><Loader
