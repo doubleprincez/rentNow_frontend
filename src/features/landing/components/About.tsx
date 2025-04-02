@@ -46,7 +46,7 @@ const About = () => {
                     Who We Are
                 </h2>
                 <p className='text-gray-700 text-[.9em]'>
-                    Welcome to <span className="font-bold text-orange-800">RentNaija</span>, 
+                    Welcome to <span className="font-bold text-orange-800">RentNow</span>,
                     your trusted platform for finding the perfect home. Whether you&apos;re 
                     looking for a cozy apartment, a spacious family house, or a luxury 
                     rental, we are here to connect you with the best options tailored to 
@@ -73,7 +73,7 @@ const About = () => {
                     What Our Mission Is
                 </h2>
                 <p className='text-gray-100 text-[.9em]'>
-                    At <span className="font-bold text-orange-500">RentNaija</span>, our mission is 
+                    At <span className="font-bold text-orange-500">RentNow</span>, our mission is
                     simple: to make the rental process smooth, secure, and enjoyable. We strive to 
                     empower renters and property owners by bridging the gap between them, ensuring 
                     that every rental experience is hassle-free and rewarding.
@@ -105,10 +105,10 @@ const About = () => {
         <section className="py-10 md:py-20 px-6 md:px-12 bg-gray-100 flex flex-col justify-center items-center gap-2">
             <h1 className='text-[.8em] font-bold text-orange-500'>WHY CHOOSE US?</h1>
             <h2 className='text-gray-700 text-[1.8em] font-semibold'>
-                Why Choose RentNaija?
+                Why Choose RentNow?
             </h2>
             <p className="text-[1em] leading-7 text-center mb-6">
-                Choosing <span className="font-bold text-orange-500">RentNaija</span> means 
+                Choosing <span className="font-bold text-orange-500">RentNow</span> means
                 transparency, efficiency, and a diverse range of properties for every lifestyle.
             </p>
             <div className="max-w-[800px] flex flex-col md:flex-row justify-center gap-2 md:gap-4 mt-4">

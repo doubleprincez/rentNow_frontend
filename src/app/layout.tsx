@@ -3,7 +3,7 @@ import { Providers } from './providers';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'RentNaija',
+  title: 'RentNow',
   description: 'Online apartment leasing agency',
 }
 

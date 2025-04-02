@@ -83,7 +83,7 @@ const AgentLand: React.FC = () => {
                 >
                     <h1 className="text-[3em] md:text-[4em] lg:text-[5em] text-white font-semibold mb-4">Join Our Agent Network</h1>
                     <p className="text-[.9em] lg:text-[1.1em] text-center md:leading-7 lg:max-w-[60%] text-white">
-                        Empower your real estate career with RentNaija. Earn competitive
+                        Empower your real estate career with RentNow. Earn competitive
                         commissions, connect with renters, and grow your portfolio with our
                         advanced tools and support.
                     </p>
@@ -157,7 +157,7 @@ const AgentLand: React.FC = () => {
             <div className="max-w-4xl mx-auto px-4">
             <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
             <p className="text-lg mb-6">
-                Take your real estate career to the next level with RentNaija. Join
+                Take your real estate career to the next level with RentNow. Join
                 our network of successful agents today.
             </p>
             <button className="bg-white text-orange-500 font-bold py-3 px-6 rounded-lg shadow-md hover:bg-gray-100">

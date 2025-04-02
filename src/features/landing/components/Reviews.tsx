@@ -9,22 +9,22 @@ const Reviews = () => {
   const data = [
     { 
         name: 'Stephanie Moore', 
-        review: 'RentNaija is a fantastic platform! I found a beautiful apartment within days, and the process was seamless. Highly recommend it to anyone looking for a reliable home.', 
+        review: 'RentNow is a fantastic platform! I found a beautiful apartment within days, and the process was seamless. Highly recommend it to anyone looking for a reliable home.',
         stars: 5 
     },
     { 
         name: 'Micheal Coker',
-        review: `RentNaija has made finding a home so easy. The listings are accurate, and the team was super helpful throughout the process. Great experience overall!`, 
+        review: `RentNow has made finding a home so easy. The listings are accurate, and the team was super helpful throughout the process. Great experience overall!`,
         stars: 4 
     },
     { 
         name: 'Paul Bettany', 
-        review: 'I love using RentNaija! They have so many options, and the customer support team was quick to answer my questions. A truly reliable service.', 
+        review: 'I love using RentNow! They have so many options, and the customer support team was quick to answer my questions. A truly reliable service.',
         stars: 5 
     },
     { 
         name: 'Jane Olayemi', 
-        review: 'RentNaija helped me secure a great apartment in a prime location. The entire experience was smooth and stress-free. I highly recommend their service.', 
+        review: 'RentNow helped me secure a great apartment in a prime location. The entire experience was smooth and stress-free. I highly recommend their service.',
         stars: 4 
     },
 ];

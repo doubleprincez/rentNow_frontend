@@ -15,7 +15,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Log In | RentNaija",
+  title: "Log In | RentNow",
   description: 'Online apartment leasing agency',
 };
 
