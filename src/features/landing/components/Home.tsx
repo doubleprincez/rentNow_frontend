@@ -42,7 +42,7 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const response = await fetch(baseURL + '/api/apartments');
+                const response = await fetch(baseURL + '/apartments');
                 const data: ApiResponse = await response.json();
 
                 if (data.success) {
@@ -128,7 +128,7 @@ const Home: React.FC = () => {
             // Always include country_code=NGA
             queryParams.append('country_code', 'NGA');
 
-            const response = await fetch(`${baseURL}/api/apartments${queryParams.toString() ? `?${queryParams.toString()}` : ''}`);
+            const response = await fetch(`${baseURL}/apartments${queryParams.toString() ? `?${queryParams.toString()}` : ''}`);
             const data: ApiResponse = await response.json();
 
             if (data.success) {

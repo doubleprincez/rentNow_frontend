@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { AppleIcon, GoogleIcon } from "@/icons";
 import axios from "axios";
 import { useAlert } from '@/contexts/AlertContext';
+import {baseURL} from "../../../../next.config";
 
 interface FormData {
   firstName: string;
@@ -96,7 +97,7 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
 
     try {
       //console.log('Sending registration request:', requestData); // Debug log
-      const response = await axios.post('/api/register', requestData);
+      const response = await axios.post(baseURL+'/register', requestData);
       
       //console.log('Registration response:', response.data); // Debug log
 
