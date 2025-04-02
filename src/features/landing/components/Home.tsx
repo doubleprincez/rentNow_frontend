@@ -219,7 +219,7 @@ const Home: React.FC = () => {
                         className="w-full flex flex-col items-center lg:items-start gap-2"
                     >
                         <h1 className="text-[3em] md:text-[4em] lg:text-[5em] font-semibold text-orange-500">
-                            Rent<span className="text-green-500">Naija</span>
+                            Rent<span className="text-green-500">Now</span>
                         </h1>
                         <p className="text-[1em] lg:text-[1.5em] text-center md:text-start md:leading-9 lg:max-w-[50%] font-semibold text-white">
                             Perfect Firm For Selling Or Leasing Houses, Flats, And Villas.
