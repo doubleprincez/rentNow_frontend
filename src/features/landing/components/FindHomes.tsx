@@ -54,7 +54,7 @@ const FindHomes: React.FC<FindHomesProps> = ({ initialData }) => {
     const fetchApartments = async () => {
   
         setIsLoading(true);
-        await AxiosApi().get('/api/apartments')
+        await AxiosApi().get('/apartments')
 
         .then((response)=>{
           let data:ApiResponse = response.data;
