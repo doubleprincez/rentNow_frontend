@@ -48,7 +48,7 @@ const BottomNav = () => {
         //     icon: CircleUser,
         // },
         {
-            name: "Go to Rent9ja", 
+            name: "Go to RentNow",
             link: "/",
             icon: Globe,
         },

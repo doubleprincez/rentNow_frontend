@@ -1,2 +1,2 @@
-#Rent9ja.com.ng
+#RentNow.ng
 

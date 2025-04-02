@@ -64,7 +64,7 @@
 //               <h1 className='text-[.9em] md:text-[1.2em] font-medium text-orange-500'>Contact us</h1>
 //               <ul className='text-gray-200 text-[.8em] md:text-[.9em] flex flex-col gap-1 md:gap-2 lg:items-end'>
 //                 <li className='hover:underline duration-300 ease-in-out hover:text-orange-500 cursor-pointer'>+234 123 456 7890</li>
-//                 <li className='hover:underline duration-300 ease-in-out hover:text-orange-500 cursor-pointer'>info@rent9ja.com</li>
+//                 <li className='hover:underline duration-300 ease-in-out hover:text-orange-500 cursor-pointer'>info@rentnow.com</li>
 //                 <li className='hover:underline duration-300 ease-in-out hover:text-orange-500 cursor-pointer'>Support</li>
 //               </ul>
 //             </div>
@@ -73,7 +73,7 @@
 //       </div>
 
 //       <div className='w-full px-2 md:px-8 py-4 md:py-8 flex flex-col md:flex-row items-center justify-center md:justify-between text-[.7em] md:text-[.8em] font-medium text-orange-500 border-t border-orange-500'>
-//         <span>Copyright &copy; 2025 Rent9ja, All rights reserved</span>
+//         <span>Copyright &copy; 2025 RentNow, All rights reserved</span>
 //         <span>Developed by DEENOluwatobi</span>
 //       </div>
 //     </div>
@@ -109,7 +109,7 @@ const Footer = () => {
         </div>
 
       <div className='w-full px-2 md:px-8 py-4 md:py-8 flex flex-col md:flex-row items-center justify-center md:justify-between text-[.7em] md:text-[.8em] font-medium text-orange-500 border-t border-orange-500'>
-        <span>Copyright &copy; 2025 Rent9ja, All rights reserved</span>
+        <span>Copyright &copy; 2025 RentNow, All rights reserved</span>
         <span>Developed by DEENOluwatobi</span>
       </div>
     </div>
