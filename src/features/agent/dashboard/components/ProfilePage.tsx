@@ -38,7 +38,7 @@ const ProfilePage: React.FC = () => {
 
   // Create axios instance with authentication
   const authenticatedAxios = axios.create({
-    baseURL: 'https://api.rent9ja.com.ng/api',
+    baseURL: 'https://api.rentnow.ng/api',
     headers: {
       'Authorization': `Bearer ${token}`
     }

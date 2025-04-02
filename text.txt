@@ -2,7 +2,7 @@ DUMMY DATA OF APARTMENT API REPONSE IF SUCCESS IS TRUE
 
 success	true
 message	""
-data	Object { current_page: 1, first_page_url: "https://api.rent9ja.com.ng/api/apartments?page=1", from: 1, … }
+data	Object { current_page: 1, first_page_url: "https://api.rentnow.ng/api/apartments?page=1", from: 1, … }
 current_page	1
 data	[ {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, … ]
 0	Object { id: 30, agent_id: 8, agent: "Nona Funk", … }
@@ -49,13 +49,13 @@ views_count	0
 9	Object { id: 18, agent_id: 5, agent: "Rae Reynolds", … }
 10	Object { id: 34, agent_id: 2, agent: "Prof. Annamarie Bartell", … }
 11	Object { id: 12, agent_id: 9, agent: "Ayden Jakubowski DVM", … }
-first_page_url	"https://api.rent9ja.com.ng/api/apartments?page=1"
+first_page_url	"https://api.rentnow.ng/api/apartments?page=1"
 from	1
 last_page	3
-last_page_url	"https://api.rent9ja.com.ng/api/apartments?page=3"
+last_page_url	"https://api.rentnow.ng/api/apartments?page=3"
 links	[ {…}, {…}, {…}, {…}, {…} ]
-next_page_url	"https://api.rent9ja.com.ng/api/apartments?page=2"
-path	"https://api.rent9ja.com.ng/api/apartments"
+next_page_url	"https://api.rentnow.ng/api/apartments?page=2"
+path	"https://api.rentnow.ng/api/apartments"
 per_page	12
 prev_page_url	null
 to	12
