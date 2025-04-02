@@ -8,7 +8,7 @@ export const baseURL = backendUrl+'/api';
 
 const nextConfig: NextConfig = {
     images: {
-        domains: ['images.unsplash.com', 'www.lummi.ai', 'www.rent9ja.com.ng','www.rentnow.ng','api.rentnow.ng', "api.rent9ja.com.ng","localhost"],
+        domains: ['images.unsplash.com', 'www.lummi.ai', 'www.rentnow.ng','api.rentnow.ng',"localhost"],
     },
     async headers() {
         return [
