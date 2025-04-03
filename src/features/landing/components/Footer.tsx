@@ -98,7 +98,8 @@ const Footer = () => {
           <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
           </Link>
           <p className="text-[.8em] md:text-[.9em] md:leading-6 md:font-medium text-white">
-              Perfect Firm For Selling Or Leasing Houses, Flats, And Villas.
+              Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria.
+
           </p>
           <div className='flex items-center gap-5 md:mt-4'>
             <Facebook className='text-white'/>

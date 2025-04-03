@@ -222,7 +222,8 @@ const Home: React.FC = () => {
                             Rent<span className="text-green-500">Now</span>
                         </h1>
                         <p className="text-[1em] lg:text-[1.5em] text-center md:text-start md:leading-9 lg:max-w-[50%] font-semibold text-white">
-                            Perfect Firm For Selling Or Leasing Houses, Flats, And Villas.
+                            Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria.
+
                         </p>
                     </motion.div>
 
@@ -288,13 +289,13 @@ const Home: React.FC = () => {
                                 viewport={{once: false, amount: 0.1}}
                                 className="w-[350px] mx-auto md:mx-0 md:w-full flex flex-col md:flex-row md:items-center gap-2 md:gap-4"
                             >
-                                <div
-                                    className="flex items-center gap-3 bg-black bg-opacity-70 backdrop-blur-md px-4 py-4 rounded-lg">
-                                    <HomeIcon className="text-orange-500 w-5 md:w-6 h-5 md:h-6"/>
-                                    <span className="text-[.8em] md:text-[.9em] text-white">
-                                        12a, Location Street, City, Country.
-                                    </span>
-                                </div>
+                                {/*<div*/}
+                                {/*    className="flex items-center gap-3 bg-black bg-opacity-70 backdrop-blur-md px-4 py-4 rounded-lg">*/}
+                                {/*    <HomeIcon className="text-orange-500 w-5 md:w-6 h-5 md:h-6"/>*/}
+                                {/*    <span className="text-[.8em] md:text-[.9em] text-white">*/}
+                                {/*        12a, Location Street, City, Country.*/}
+                                {/*    </span>*/}
+                                {/*</div>*/}
 
                                 <div
                                     className="flex items-center gap-3 bg-black bg-opacity-70 backdrop-blur-md px-4 py-4 rounded-lg">
