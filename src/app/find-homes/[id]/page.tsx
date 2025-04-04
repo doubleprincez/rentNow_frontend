@@ -23,7 +23,7 @@ export default async function Page({params}: any) {
             description: apartment.description || "Explore this beautiful apartment available for rent.",
             images: [
                 {
-                    url: apartment.images[0]?.url ?? defaultImage, // Set a default image if not provided
+                    url: apartment?.images[0]?.url ?? defaultImage, // Set a default image if not provided
                     width: 800,
                     height: 600,
                     alt: apartment.title || "Apartment Image",
@@ -39,7 +39,7 @@ export default async function Page({params}: any) {
             description: apartment.description || "Explore this beautiful apartment available for rent.",
              images: [
                 {
-                    url: apartment.images[0]?.url ?? defaultImage, // Correctly use `images` here
+                    url: apartment?.images[0]?.url ?? defaultImage, // Correctly use `images` here
                     width: 800,
                     height: 600,
                     alt: apartment.title || "Apartment Image",
