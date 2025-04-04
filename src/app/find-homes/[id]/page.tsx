@@ -49,13 +49,10 @@ export default async function Page({params}: any) {
     };
 
     return (
-        <>
-            {/* You can pass the metadata to the head here or use a head manager */}
-            {/* Example: */}
+        <> 
             <head>
                 <title>{metadata.title}</title>
                 <meta name="description" content={metadata.description}/>
-                {/* Add OpenGraph and Twitter meta tags here */}
             </head>
 
             <Suspense fallback={<div className="flex justify-center items-center min-h-screen">
