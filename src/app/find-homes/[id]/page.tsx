@@ -5,9 +5,10 @@ import {AxiosApiServer} from "@/lib/server-utils";
 import {ApiSubscriptionResponse} from "@/types/subscription";
 import {baseURL} from "@/../next.config";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page({params}:any) {
+    const { id } = await params;
     const response = await AxiosApiServer().get<ApiSubscriptionResponse>(
-        `${baseURL}/apartment/${params.id}`
+        `${baseURL}/apartment/${id}`
     );
 
     return (
