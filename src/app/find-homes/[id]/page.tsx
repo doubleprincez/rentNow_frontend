@@ -4,28 +4,29 @@ import {Loader2Icon} from 'lucide-react';
 import {AxiosApiServer} from "@/lib/server-utils";
 import {baseURL} from "@/../next.config";
 import {Metadata} from "next";
+import {Apartment} from "@/types/apartment";
 
 export default async function Page({params}: any) {
 
     const {id} = await params;
     const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
-    const apartment = response.data.data;
+    const apartment:Apartment = response.data.data;
     const defaultImage =  '/uploads/logo.png';
 
     // Dynamically update metadata based on fetched apartment data
     const metadata: Metadata = {
-        title: apartment.name || "Apartment Details",
+        title: apartment.title || "Apartment Details",
         description: apartment.description || "Explore this beautiful apartment available for rent.",
         openGraph: {
             url: `${baseURL}/apartment/${id}`,
-            title: apartment.name || "Apartment Details",
+            title: apartment.title || "Apartment Details",
             description: apartment.description || "Explore this beautiful apartment available for rent.",
             images: [
                 {
-                    url: apartment.image || defaultImage, // Set a default image if not provided
+                    url: apartment.images[0]?.url ?? defaultImage, // Set a default image if not provided
                     width: 800,
                     height: 600,
-                    alt: apartment.name || "Apartment Image",
+                    alt: apartment.title || "Apartment Image",
                     type: 'image/jpeg',
                 },
             ],
@@ -34,22 +35,22 @@ export default async function Page({params}: any) {
         twitter: {
             card: "summary_large_image",
             site: "@RentNowNG",
-            title: apartment.name || "Apartment Details",
+            title: apartment.title || "Apartment Details",
             description: apartment.description || "Explore this beautiful apartment available for rent.",
              images: [
                 {
-                    url: apartment.image || defaultImage, // Correctly use `images` here
+                    url: apartment.images[0]?.url ?? defaultImage, // Correctly use `images` here
                     width: 800,
                     height: 600,
-                    alt: apartment.name || "Apartment Image",
-                    type: 'image/jpeg',
+                    alt: apartment.title || "Apartment Image",
+                    type: 'image/png',
                 },
             ],
         },
     };
 
     return (
-        <> 
+        <>
             <head>
                 <title>{metadata.title}</title>
                 <meta name="description" content={metadata.description}/>
