@@ -2,7 +2,7 @@ import "./globals.css";
 import {Providers} from './providers';
 import {Metadata} from 'next';
 import {frontendURL} from "../../next.config";
-import Head from "next/head";
+import Metas from "@/features/metas";
 
 const img = frontendURL + '/favicon.ico';
 export const metadata: Metadata = {
@@ -35,28 +35,14 @@ export const metadata: Metadata = {
         index: true,
         follow: true, // Allow search engines to follow links
     },
-
 }
 
-export default function RootLayout({ children}: Readonly<{
+export default function RootLayout({children}: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
         <html lang="en">
-        <Head>
-            <meta name="description" content={metadata?.description??''}/>
-            <meta property="og:title" content={metadata?.openGraph?.title??''}/>
-            <meta property="og:description" content={metadata?.openGraph?.description??''}/>
-            <meta property="og:url" content={metadata?.openGraph?.url??''}/>
-            <meta property="og:image" content={metadata?.openGraph?.images[0]?.url??''}/>
-            <meta property="og:image:width" content={String(metadata?.openGraph?.images[0]?.width)}/>
-            <meta property="og:image:height" content={String(metadata?.openGraph?.images[0]?.height)}/>
-            <meta name="twitter:card" content={metadata?.twitter?.card??''}/>
-            <meta name="twitter:title" content={metadata?.twitter?.title??''}/>
-            <meta name="twitter:description" content={metadata?.twitter?.description??''}/>
-            <meta name="twitter:image"
-                  content={metadata?.twitter?.images && metadata?.twitter?.images[0]?.url ?? ''}/>
-        </Head>
+        <Metas metadata={metadata}/>
         <body className="w-full flex flex-col">
         <Providers>
             {children}
