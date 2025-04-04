@@ -62,7 +62,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
         const newState = !likedApartment;
         setLikedApartment(() => newState);
 
-        if (newState) {
+        if (newState && apartment) {
             const res = apartment?.like_count ?? 0 + 1;
             setApartment(apartment => ({...apartment, like_count: res}));
             await AxiosApi().post(baseURL + '/apartment/' + apartment.id + '/like')
@@ -438,10 +438,10 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                     <div>{apartment?.like_count}</div>
                                     <div>
                                         {
-                                         isLoggedIn?   <HeartIcon onClick={() => toggleLike()}
-                                                       className={(likedApartment == true ? 'text-red-800 fill-red-800' : 'text-green-800 fill-green-800') + ' cursor-pointer'}/>:
-                                             <HeartIcon
-                                                        className={(likedApartment == true ? 'text-red-800 fill-red-800' : 'text-green-800 fill-green-800') + ' cursor-pointer'}/>
+                                            isLoggedIn ? <HeartIcon onClick={() => toggleLike()}
+                                                                    className={(likedApartment == true ? 'text-red-800 fill-red-800' : 'text-green-800 fill-green-800') + ' cursor-pointer'}/> :
+                                                <HeartIcon
+                                                    className={(likedApartment == true ? 'text-red-800 fill-red-800' : 'text-green-800 fill-green-800') + ' cursor-pointer'}/>
                                         }
 
                                     </div>
