@@ -29,7 +29,13 @@ export const metadata: Metadata = {
         site: "@RentNowNG", // Twitter handle
         title: "Welcome to Rent Now",
         description: "Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria",
-        image: img,
+        images: [ {
+            url: img,
+            width: 800,
+            height: 600,
+            alt: "RentNow.ng",
+            type: "image/png",
+        }],
     },
     robots: {
         index: true,
