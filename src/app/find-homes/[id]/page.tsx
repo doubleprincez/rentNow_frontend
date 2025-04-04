@@ -6,7 +6,6 @@ import {baseURL} from "@/../next.config";
 import {Metadata} from "next";
 import {Apartment} from "@/types/apartment";
 import Head from "next/head";
-import {NextSeo} from "next-seo";
 
 export default async function Page({params}: any) {
 
@@ -25,7 +24,7 @@ export default async function Page({params}: any) {
             description: apartment?.description || "Explore this beautiful apartment available for rent.",
             images: [
                 {
-                    url: apartment.images && Object.values(apartment.images)[0]?.preview_url|| defaultImage, // Set a default image if not provided
+                    url: apartment.images && Object.values(apartment.images)[0]?.preview_url || defaultImage, // Set a default image if not provided
                     width: 800,
                     height: 600,
                     alt: apartment?.title || "Apartment Image",
@@ -53,12 +52,20 @@ export default async function Page({params}: any) {
 
     return (
         <>
-            <NextSeo
-                title={metadata.title}
-                description={metadata.description}
-                openGraph={metadata.openGraph}
-                twitter={metadata.twitter}
-            />
+            <Head>
+                <meta name="description" content={metadata?.description}/>
+                <meta property="og:title" content={metadata?.openGraph?.title}/>
+                <meta property="og:description" content={metadata?.openGraph?.description}/>
+                <meta property="og:url" content={metadata?.openGraph?.url}/>
+                <meta property="og:image" content={metadata?.openGraph?.images[0]?.url}/>
+                <meta property="og:image:width" content={String(metadata?.openGraph?.images[0]?.width)}/>
+                <meta property="og:image:height" content={String(metadata?.openGraph?.images[0]?.height)}/>
+                <meta name="twitter:card" content={metadata?.twitter?.card}/>
+                <meta name="twitter:title" content={metadata?.twitter?.title}/>
+                <meta name="twitter:description" content={metadata?.twitter?.description}/>
+                <meta name="twitter:image"
+                      content={metadata?.twitter?.images && metadata?.twitter?.images[0]?.url ?? ''}/>
+            </Head>
 
             <Suspense fallback={<div className="flex justify-center items-center min-h-screen">
                 <Loader2Icon className="animate-spin"/> &nbsp;Loading...
