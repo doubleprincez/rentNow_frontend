@@ -17,7 +17,7 @@ export default async function Page({params}: any) {
     const defaultImage = '/uploads/logo.png';
 
     // Dynamically update metadata based on fetched apartment data
-    const metadata: Metadata = {
+    const metadata: any = {
         title: apartment?.title || "Apartment Details",
         description: apartment?.description || "Explore this beautiful apartment available for rent.",
         openGraph: {

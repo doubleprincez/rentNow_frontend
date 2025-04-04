@@ -1,11 +1,10 @@
 import "./globals.css";
 import {Providers} from './providers';
-import {Metadata} from 'next';
 import {frontendURL} from "../../next.config";
 import Metas from "@/features/metas";
 
 const img = frontendURL + '/favicon.ico';
-export const metadata: Metadata = {
+export const metadata: any = {
     title: "Welcome to Rent Now",
     description: "Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria",
     siteName: "RentNow.ng",
@@ -29,8 +28,8 @@ export const metadata: Metadata = {
         site: "@RentNowNG", // Twitter handle
         title: "Welcome to Rent Now",
         description: "Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria",
-        images: [ {
-            url: img,
+        images: [{
+            url: frontendURL,
             width: 800,
             height: 600,
             alt: "RentNow.ng",
