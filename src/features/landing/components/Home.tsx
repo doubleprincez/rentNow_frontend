@@ -13,6 +13,8 @@ import House2 from '@/components/assets/house2.jpeg';
 import House3 from '@/components/assets/house4.jpeg';
 import House4 from '@/components/assets/house5.jpeg';
 
+import { useRouter } from 'next/navigation';
+
 const Home: React.FC = () => {
     const images = [
         House,
@@ -26,7 +28,8 @@ const Home: React.FC = () => {
         country: 'NGA'
     });
     const [searchResults, setSearchResults] = useState<Apartment[]>([]);
-    const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
+    // const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -37,6 +40,12 @@ const Home: React.FC = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [loadedImages, setLoadedImages] = useState<boolean[]>(new Array(images.length).fill(false));
     const [isReady, setIsReady] = useState(false);
+    const router = useRouter();
+
+
+    const handleApartmentClick = (apartment: Apartment) => {
+        router.push(`/find-homes/${apartment.id}`);
+    };
 
     // Modified fetchOptions to only get categories and states
     useEffect(() => {
@@ -166,7 +175,7 @@ const Home: React.FC = () => {
                     <span className="text-sm text-gray-500">{apartment.duration}</span>
                 </div>
                 <button
-                    onClick={() => setSelectedApartment(apartment)}
+                    onClick={() => handleApartmentClick(apartment)}
                     className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors"
                 >
                     View Details
@@ -350,66 +359,66 @@ const Home: React.FC = () => {
                         </DialogContent>
                     </Dialog>
 
-                    {selectedApartment && (
-                        <Dialog open={!!selectedApartment} onOpenChange={() => setSelectedApartment(null)}>
-                            <DialogContent className="max-w-2xl">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h2 className="text-xl font-semibold">{selectedApartment.title}</h2>
-                                    <button
-                                        onClick={() => setSelectedApartment(null)}
-                                        className="p-1 hover:bg-gray-100 rounded-full"
-                                    >
-                                        <X className="h-5 w-5"/>
-                                    </button>
-                                </div>
+                    {/*{selectedApartment && (*/}
+                    {/*    <Dialog open={!!selectedApartment} onOpenChange={() => setSelectedApartment(null)}>*/}
+                    {/*        <DialogContent className="max-w-2xl">*/}
+                    {/*            <div className="flex justify-between items-center mb-4">*/}
+                    {/*                <h2 className="text-xl font-semibold">{selectedApartment.title}</h2>*/}
+                    {/*                <button*/}
+                    {/*                    onClick={() => setSelectedApartment(null)}*/}
+                    {/*                    className="p-1 hover:bg-gray-100 rounded-full"*/}
+                    {/*                >*/}
+                    {/*                    <X className="h-5 w-5"/>*/}
+                    {/*                </button>*/}
+                    {/*            </div>*/}
 
-                                <div className="space-y-4">
-                                    <div className="aspect-video relative overflow-hidden rounded-lg">
-                                        <img
-                                            src={selectedApartment?.images && Object.values(selectedApartment.images)[0]?.preview_url || '/placeholder.jpg'}
-                                            alt={selectedApartment.title}
-                                            loading="lazy"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
+                    {/*            <div className="space-y-4">*/}
+                    {/*                <div className="aspect-video relative overflow-hidden rounded-lg">*/}
+                    {/*                    <img*/}
+                    {/*                        src={selectedApartment?.images && Object.values(selectedApartment.images)[0]?.preview_url || '/placeholder.jpg'}*/}
+                    {/*                        alt={selectedApartment.title}*/}
+                    {/*                        loading="lazy"*/}
+                    {/*                        className="w-full h-full object-cover"*/}
+                    {/*                    />*/}
+                    {/*                </div>*/}
 
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div>
-                                            <h3 className="font-semibold">Details</h3>
-                                            <p className="text-sm">Rooms: {selectedApartment.number_of_rooms}</p>
-                                            <p className="text-sm">Category: {selectedApartment.category}</p>
-                                            <p className="text-sm">Location: {`${selectedApartment.city_code}, ${selectedApartment.state_code}, ${selectedApartment.country_code}`}</p>
-                                        </div>
-                                        <div>
-                                            <h3 className="font-semibold">Pricing</h3>
-                                            <p className="text-sm">Amount: {selectedApartment.amount}</p>
-                                            <p className="text-sm">Security
-                                                Deposit: {selectedApartment.security_deposit}</p>
-                                            <p className="text-sm">Duration: {selectedApartment.duration}</p>
-                                        </div>
-                                    </div>
+                    {/*                <div className="grid grid-cols-2 gap-4">*/}
+                    {/*                    <div>*/}
+                    {/*                        <h3 className="font-semibold">Details</h3>*/}
+                    {/*                        <p className="text-sm">Rooms: {selectedApartment.number_of_rooms}</p>*/}
+                    {/*                        <p className="text-sm">Category: {selectedApartment.category}</p>*/}
+                    {/*                        <p className="text-sm">Location: {`${selectedApartment.city_code}, ${selectedApartment.state_code}, ${selectedApartment.country_code}`}</p>*/}
+                    {/*                    </div>*/}
+                    {/*                    <div>*/}
+                    {/*                        <h3 className="font-semibold">Pricing</h3>*/}
+                    {/*                        <p className="text-sm">Amount: {selectedApartment.amount}</p>*/}
+                    {/*                        <p className="text-sm">Security*/}
+                    {/*                            Deposit: {selectedApartment.security_deposit}</p>*/}
+                    {/*                        <p className="text-sm">Duration: {selectedApartment.duration}</p>*/}
+                    {/*                    </div>*/}
+                    {/*                </div>*/}
 
-                                    <div>
-                                        <h3 className="font-semibold">Description</h3>
-                                        <p className="text-sm">{selectedApartment.description}</p>
-                                    </div>
+                    {/*                <div>*/}
+                    {/*                    <h3 className="font-semibold">Description</h3>*/}
+                    {/*                    <p className="text-sm">{selectedApartment.description}</p>*/}
+                    {/*                </div>*/}
 
-                                    {selectedApartment.amenities && selectedApartment.amenities.length > 0 && (
-                                        <div>
-                                            <h3 className="font-semibold">Amenities</h3>
-                                            <div className="flex flex-wrap gap-2">
-                                                {selectedApartment.amenities.map((amenity, index) => (
-                                                    <span key={index} className="text-sm bg-gray-100 px-2 py-1 rounded">
-                                                        {amenity}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </DialogContent>
-                        </Dialog>
-                    )}
+                    {/*                {selectedApartment.amenities && selectedApartment.amenities.length > 0 && (*/}
+                    {/*                    <div>*/}
+                    {/*                        <h3 className="font-semibold">Amenities</h3>*/}
+                    {/*                        <div className="flex flex-wrap gap-2">*/}
+                    {/*                            {selectedApartment.amenities.map((amenity, index) => (*/}
+                    {/*                                <span key={index} className="text-sm bg-gray-100 px-2 py-1 rounded">*/}
+                    {/*                                    {amenity}*/}
+                    {/*                                </span>*/}
+                    {/*                            ))}*/}
+                    {/*                        </div>*/}
+                    {/*                    </div>*/}
+                    {/*                )}*/}
+                    {/*            </div>*/}
+                    {/*        </DialogContent>*/}
+                    {/*    </Dialog>*/}
+                    {/*)}*/}
 
                 </div>
             </div>
