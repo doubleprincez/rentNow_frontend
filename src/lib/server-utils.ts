@@ -13,8 +13,9 @@ export const getServerFormData = async (name: string) => {
     }
 }
 
-export function hasServerFormData(name: string) {
-    return !!cookies().get(name);
+export const hasServerFormData = async (name: string) =>{
+    const cookieStore = await cookies();
+    return !!cookieStore.get(name);
 }
 
 
