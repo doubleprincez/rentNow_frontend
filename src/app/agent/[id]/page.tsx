@@ -10,6 +10,7 @@ export default async function Page({params}:any) {
 
   return (
     <Suspense fallback={<div className="flex justify-center items-center min-h-screen">
+
       <Loader2Icon className="animate-spin"/>&nbsp;Loading...</div>}>
       <AgentProfile agentId={id}   />
     </Suspense>
