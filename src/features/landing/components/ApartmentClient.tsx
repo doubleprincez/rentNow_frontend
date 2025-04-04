@@ -432,7 +432,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                 <p className="text-gray-600">{apartment.description}</p>
                             </div>
                             <div className='flex justify-center space-x-2'>
-                                <div className='flex space-x-2'>{formatAmountNumber(apartment?.views_count)}<LucideEye/>
+                                <div className='flex space-x-2'>{apartment?.views_count}&nbsp;<LucideEye/>
                                 </div>
                                 <div className='flex justify-center space-x-2'>
                                     <div>{apartment?.like_count}</div>
