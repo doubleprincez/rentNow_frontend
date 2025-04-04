@@ -10,6 +10,7 @@ export default async function Page({params}: any) {
     const {id} = await params;
     const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
     const apartment = response.data.data;
+    const defaultImage =  '/uploads/logo.png';
 
     // Dynamically update metadata based on fetched apartment data
     const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default async function Page({params}: any) {
             description: apartment.description || "Explore this beautiful apartment available for rent.",
             images: [
                 {
-                    url: apartment.image || 'default-image-url.jpg', // Set a default image if not provided
+                    url: apartment.image || defaultImage, // Set a default image if not provided
                     width: 800,
                     height: 600,
                     alt: apartment.name || "Apartment Image",
@@ -35,7 +36,15 @@ export default async function Page({params}: any) {
             site: "@RentNowNG",
             title: apartment.name || "Apartment Details",
             description: apartment.description || "Explore this beautiful apartment available for rent.",
-            image: apartment.image || 'default-image-url.jpg', // Set a default image if not provided
+             images: [
+                {
+                    url: apartment.image || defaultImage, // Correctly use `images` here
+                    width: 800,
+                    height: 600,
+                    alt: apartment.name || "Apartment Image",
+                    type: 'image/jpeg',
+                },
+            ],
         },
     };
 
