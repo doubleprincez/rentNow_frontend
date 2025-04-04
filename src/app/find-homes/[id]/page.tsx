@@ -6,7 +6,6 @@ import {ApiSubscriptionResponse} from "@/types/subscription";
 import {baseURL} from "@/../next.config";
 
 export default async function Page({ params }: { params: { id: string } }) {
-
     const response = await AxiosApiServer().get<ApiSubscriptionResponse>(
         `${baseURL}/apartment/${params.id}`
     );
