@@ -6,6 +6,7 @@ import {useAlert} from '@/contexts/AlertContext';
 // import Dropzone from 'react-dropzone-uploader';
 import {baseURL} from "@/../next.config";
 import {useDropzone} from "react-dropzone";
+import {getFormData} from "@/lib/utils";
 
 
 interface Category {
@@ -84,7 +85,7 @@ const AddProperty: React.FC = () => {
 
     const getAuthToken = (): string | null => {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('agentToken');
+            return getFormData('agentToken');
         }
         return null;
     };

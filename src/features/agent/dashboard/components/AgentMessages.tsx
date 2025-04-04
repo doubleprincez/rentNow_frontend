@@ -13,6 +13,7 @@ import axios from 'axios';
 import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import {baseURL} from "@/../next.config";
+import {getFormData} from "@/lib/utils";
 
 const Messages = () => {
     const [activeTab, setActiveTab] = useState('agents');
@@ -46,7 +47,7 @@ const Messages = () => {
 
     const getAuthHeader = () => ({
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('agentToken')}`,
+            'Authorization': `Bearer ${getFormData('agentToken')}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
@@ -140,7 +141,7 @@ const Messages = () => {
     useEffect(() => {
         const getAdminData = async () => {
             try {
-                const token = localStorage.getItem('agentToken');
+                const token = getFormData('agentToken');
                 if (!token) {
                     toast({
                         title: "Error",

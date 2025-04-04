@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { redirect, useRouter } from 'next/navigation';
+import {getFormData, saveFormData} from "@/lib/utils";
 
 interface UserState {
     isLoggedIn: boolean;
@@ -34,8 +35,8 @@ const loadState = (): UserState => {
 
     if (typeof window !== 'undefined') {
         try {
-            const savedState = localStorage.getItem('userState');
-            const token = localStorage.getItem('token');
+            const savedState = getFormData('userState');
+            const token = getFormData('token');
             
             if (savedState) {
                 const parsedState = JSON.parse(savedState);
@@ -56,7 +57,7 @@ const loadState = (): UserState => {
             }
         } catch (error) {
             //console.error('Error loading state:', error);
-            //console.error('LocalStorage content:', localStorage.getItem('userState'));
+            //console.error('LocalStorage content:', getFormData('userState'));
         }
     }
     return initialState;
@@ -90,7 +91,7 @@ const userSlice = createSlice({
             state.accountType = action.payload.accountType;
             state.apartments = action.payload.apartments || [];
             state.rentedApartments = action.payload.rentedApartments || [];
-            state.token = localStorage.getItem('token') || undefined;
+            state.token = getFormData('token') || undefined;
 
             // Store in localStorage with explicit type preservation
             if (typeof window !== 'undefined') {
@@ -106,15 +107,15 @@ const userSlice = createSlice({
                     apartments: action.payload.apartments || [],
                     rentedApartments: action.payload.rentedApartments || []
                 };
-                localStorage.setItem('userState', JSON.stringify(stateToStore));
+                saveFormData('userState', JSON.stringify(stateToStore));
             }
         },
         updateSubscription: (state, action: PayloadAction<boolean>) => {
             state.isSubscribed = action.payload;
 
             if (typeof window !== 'undefined') {
-                const storedState = JSON.parse(localStorage.getItem('userState') || "{}");
-                localStorage.setItem('userState', JSON.stringify({ ...storedState, isSubscribed: action.payload }));
+                const storedState = JSON.parse(getFormData('userState') || "{}");
+                saveFormData('userState', JSON.stringify({ ...storedState, isSubscribed: action.payload }));
             }
         },
         logout: (state) => {

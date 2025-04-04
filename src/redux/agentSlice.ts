@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
+import {getFormData, saveFormData} from "@/lib/utils";
 
 interface AgentState {
     isLoggedIn: boolean;
@@ -85,7 +86,7 @@ const isClient = typeof window !== 'undefined';
 const getFromStorage = (key: string): string | null => {
     if (!isClient) return null;
     try {
-        return localStorage.getItem(key);
+        return getFormData(key);
     } catch (error) {
         console.error('Error accessing localStorage:', error);
         return null;
@@ -95,7 +96,7 @@ const getFromStorage = (key: string): string | null => {
 const setToStorage = (key: string, value: string): void => {
     if (!isClient) return;
     try {
-        localStorage.setItem(key, value);
+        saveFormData(key, value);
     } catch (error) {
         console.error('Error setting localStorage:', error);
     }

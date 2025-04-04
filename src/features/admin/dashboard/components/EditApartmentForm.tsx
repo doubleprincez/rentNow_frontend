@@ -6,6 +6,7 @@ import axios from 'axios';
 import {useAlert} from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
 import {useDropzone} from "react-dropzone";
+import {getFormData} from "@/lib/utils";
 
 interface Category {
     id: number;
@@ -147,7 +148,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
 
     const getAuthToken = (): string | null => {
         if (typeof window !== 'undefined') {
-            return localStorage.getItem('agentToken');
+            return getFormData('agentToken');
         }
         return null;
     };

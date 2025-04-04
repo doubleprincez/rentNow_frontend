@@ -6,12 +6,13 @@ import {redirect} from "next/navigation";
 import {useSelector} from "react-redux";
 import { number } from 'zod';
 import { ApiRentResponse } from '@/types/rent';
+import {getFormData} from "@/lib/utils";
 
 
 
 export const getUserRents = async (page: number = 1, search: string = '') => {
     try {
-        const token = localStorage.getItem('token');
+        const token = getFormData('token');
         if (!token) {
             throw new Error('No authentication token found');
         }

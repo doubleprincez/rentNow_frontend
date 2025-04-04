@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
+import {AxiosApi} from "@/lib/utils";
+import {ApiSubscriptionResponse} from "@/types/subscription";
 
 export async function GET() {
     try {
@@ -27,3 +29,17 @@ export async function GET() {
         );
     }
 }
+
+
+export const findApartment = async (apartmentId,account='user') => {
+    try {
+
+
+        const response = await AxiosApi(account).get<ApiSubscriptionResponse>(
+            baseURL + `/apartment/`+apartmentId );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

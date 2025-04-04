@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
+import {getFormData} from "@/lib/utils";
 
 export interface Apartment {
     id: number;
@@ -40,7 +41,7 @@ export interface ApiResponse {
 
 export const getAllApartments = async (page: number = 1, search: string = '') => {
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = getFormData('adminToken');
         if (!token) {
             throw new Error('No authentication token found');
         }
@@ -63,7 +64,7 @@ export const getAllApartments = async (page: number = 1, search: string = '') =>
 
 export const deleteApartment = async (id: number) => {
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = getFormData('adminToken');
         if (!token) {
             throw new Error('No authentication token found');
         }
@@ -85,7 +86,7 @@ export const deleteApartment = async (id: number) => {
 };
 export const updateApartment = async (id: number, data: object) => {
     try {
-        const token = localStorage.getItem('adminToken');
+        const token = getFormData('adminToken');
         if (!token) {
             throw new Error('No authentication token found');
         }

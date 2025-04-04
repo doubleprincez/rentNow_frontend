@@ -15,7 +15,7 @@ import { getUserConversations } from '../landing/api/chats';
 import { useSelector } from 'react-redux';
 import { User } from '../admin/dashboard/api/userApi';
 import { Button } from '@/components/ui/button';
-import { formatAmountNumber,formatDate } from '@/lib/utils';
+import {formatAmountNumber, formatDate, getFormData} from '@/lib/utils';
 import { router } from 'next/client';
 import { frontendURL } from '../../../next.config';
 
@@ -29,7 +29,7 @@ const UserChat = () => {
 
 
     const {isLoggedIn,isSubscribed} = useSelector((state: any) => state.user); 
-    const currentUser:any  = localStorage.getItem('userState');
+    const currentUser:any  = getFormData('userState');
     const [loading, setLoading] = useState(false); 
     const [selectedAgent,setSelectedAgent] = useState<User|any>({});
     const [selectedApartment,setSelectedApartment] = useState<Apartment>({})

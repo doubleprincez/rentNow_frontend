@@ -2,12 +2,13 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { login } from '@/redux/userSlice';
+import {getFormData} from "@/lib/utils";
 
 export const PersistLogin = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const savedState = localStorage.getItem('userState');
+        const savedState = getFormData('userState');
         if (savedState) {
             const userData = JSON.parse(savedState);
             if (userData.isLoggedIn) {

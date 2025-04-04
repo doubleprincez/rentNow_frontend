@@ -1,10 +1,11 @@
 import { ApiUserChatResponse } from "@/types/chats";
 import { baseURL } from "@/../next.config";
 import axios from "axios";
+import {getFormData} from "@/lib/utils";
 
 export const getUserConversations = async () => {
     try {
-        const token = localStorage.getItem('token');
+        const token = getFormData('token');
         if (!token) {
             throw new Error('No authentication token found');
         }

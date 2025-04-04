@@ -1,10 +1,11 @@
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
+import {getFormData} from "@/lib/utils";
 
 // Helper to get auth token
 const getAuthHeader = () => ({
     headers: {
-        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+        'Authorization': `Bearer ${getFormData('adminToken')}`,
         'Accept': 'application/json',
     }
 });

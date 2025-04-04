@@ -19,6 +19,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useAlert } from '@/contexts/AlertContext';
 import { Loader2 } from 'lucide-react';
 import {baseURL} from "@/../next.config";
+import {getFormData} from "@/lib/utils";
 
 interface Apartment {
   id: number;
@@ -60,7 +61,7 @@ const AdminApartments: React.FC = () => {
 
   const getAuthToken = (): string | null => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
+      return getFormData('token');
     }
     return null;
   };

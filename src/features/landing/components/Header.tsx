@@ -10,6 +10,7 @@ import {logout} from '@/redux/userSlice';
 import Image from 'next/image';
 import Logo from '@/components/assets/logo/logo.png'
 import accountRefresher from '@/redux/accountRefresher';
+import {getFormData} from "@/lib/utils";
 
 const Header = () => {
     const pathname = usePathname();
@@ -46,7 +47,7 @@ const toggleUserMenu = () => setIsUserMenu((prev) => !prev);
     };
 
     const getUserIdDisplay = () => {
-        const storedState = localStorage.getItem('userState');
+        const storedState = getFormData('userState');
         const parsedState = storedState ? JSON.parse(storedState) : null;
         const storedUserId = parsedState?.userId;
 

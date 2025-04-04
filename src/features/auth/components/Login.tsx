@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import { login } from "@/redux/userSlice";
 import { useAlert } from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
-import { deleteFormData, getFormData, hasFormData } from "@/lib/utils";
+import {deleteFormData, getFormData, hasFormData, saveFormData} from "@/lib/utils";
 
 interface LoginResponse {
     success: boolean;
@@ -139,7 +139,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                 throw new Error(data.message || 'Login failed');
             }
 
-            localStorage.setItem('token', data.token);
+            saveFormData('token', data.token);
 
             const nameParts = data.user.name.split(' ');
             const firstName = nameParts[0] || '';
@@ -173,7 +173,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
 
             // Verify the data was stored properly
             setTimeout(() => {
-                const storedState = localStorage.getItem('userState');
+                const storedState = getFormData('userState');
             }, 100);
 
         } catch (error: any) {
@@ -189,7 +189,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
     // Example function to fetch user data using the token
     const fetchUserData = async () => {
         try {
-            const token = localStorage.getItem('token');
+            const token = getFormData('token');
             if (!token) throw new Error('No token found');
     
             const response = await fetch(baseURL+'/auth/me', {

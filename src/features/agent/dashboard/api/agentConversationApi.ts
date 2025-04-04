@@ -1,8 +1,9 @@
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
+import {getFormData} from "@/lib/utils";
 
 export const getAuthHeader = () => {
-    const token = localStorage.getItem('token');
+    const token = getFormData('token');
     return {
         headers: {
             'Authorization': `Bearer ${token}`,

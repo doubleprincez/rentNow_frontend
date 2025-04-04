@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
 import { ApiRentResponse } from '@/types/rent';
-import { AxiosApi } from '@/lib/utils';
+import {AxiosApi, getFormData} from '@/lib/utils';
 
 
 // Types
@@ -34,7 +34,7 @@ export interface PaginatedResponse {
 
 // API functions
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('token'); 
+  const token = getFormData('token');
   return {
     Authorization: `Bearer ${token}`,
     Accept: 'application/json',
@@ -42,7 +42,7 @@ const getAuthHeaders = () => {
 };
 
 export const getUsers = async (page = 1, search = '', accountType: 'users' | 'agents' = 'users') => {
-  const token = localStorage.getItem('token');
+  const token = getFormData('token');
   if (!token) {
     throw new Error('No authentication token found');
   }

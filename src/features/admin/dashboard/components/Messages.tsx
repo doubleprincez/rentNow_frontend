@@ -14,6 +14,7 @@ import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import {baseURL} from "@/../next.config";
+import {getFormData} from "@/lib/utils";
 
 const Messages = () => {
     const [activeTab, setActiveTab] = useState('agents');
@@ -47,7 +48,7 @@ const Messages = () => {
 
     const getAuthHeader = () => ({
         headers: {
-            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+            'Authorization': `Bearer ${getFormData('adminToken')}`,
             'Accept': 'application/json',
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*',
@@ -138,7 +139,7 @@ const Messages = () => {
     useEffect(() => {
         const getAdminData = async () => {
             try {
-                const token = localStorage.getItem('adminToken');
+                const token = getFormData('adminToken');
                 if (!token) {
                     toast({
                         title: "Error",

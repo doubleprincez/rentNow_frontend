@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
+import {getFormData} from "@/lib/utils";
 
 // Types
 export interface User {
@@ -33,7 +34,7 @@ export interface PaginatedResponse {
 
 // API functions
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('adminToken');
+  const token = getFormData('adminToken');
   return {
     Authorization: `Bearer ${token}`,
     Accept: 'application/json',
