@@ -136,7 +136,7 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
         transition={{ duration: 1.5, ease: "easeInOut" }}
       >
         <Link href="/" className="text-[1.5em] font-semibold text-orange-500">
-          Rent<span className="text-green-500">Naija</span>
+          Rent<span className="text-green-500">Now</span>
         </Link>
 
         <div className="w-full font-bold">

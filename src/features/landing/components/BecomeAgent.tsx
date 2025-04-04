@@ -12,7 +12,7 @@ const BecomeAgent = () => {
                 <p className='text-gray-900 text-center text-[1.3em] md:text-[1.8em] font-semibold'>
                     Become a{" "} 
                     <span className="text-orange-500">
-                        Rent<span className="text-green-500">Naija</span>
+                        Rent<span className="text-green-500">Now</span>
                     </span>
                      {" "}Agent
                 </p>

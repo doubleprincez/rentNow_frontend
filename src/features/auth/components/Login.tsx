@@ -235,7 +235,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                     onSubmit={handleSubmit}
                 >
                     <Link href="/" className="text-[1.5em] font-semibold text-orange-500">
-                        Rent<span className="text-green-500">Naija</span>
+                        Rent<span className="text-green-500">Now</span>
                     </Link>
 
                     <div className="w-full font-bold">
@@ -277,7 +277,7 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
                                 <DialogContent className="bg-white rounded-md p-4">
                                     <DialogTitle>
                                         <div className="w-full text-center text-[1.2em] font-semibold text-orange-500">
-                                            Rent<span className="text-green-500">Naija</span>
+                                            Rent<span className="text-green-500">Now</span>
                                         </div>
                                     </DialogTitle>
                                     <ForgetPwd />
