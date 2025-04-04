@@ -16,15 +16,26 @@ const findApartment = async (apartmentId: string) => {
         throw error;
     }
 };
+export async function getServerSideProps({ params }: { params: { id: string } }) {
+    try {
+        const apartmentData = await findApartment(params.id);
+        return {
+            props: {
+                apartment: apartmentData.data,
+            },
+        };
+    } catch (error) {
+        return {
+            notFound: true, // Or handle error as needed
+        };
+    }
+}
 
-
-export default async function Page({params}: { params: { id: string } }) {
-    const response = await findApartment(params.id);
-
+export default function Page({ apartment }: { apartment: ApiSubscriptionResponse }) {
     return (
         <Suspense fallback={<div className="flex justify-center items-center min-h-screen">
-            <Loader2Icon className="animate-spin"/>&nbsp;Loading...</div>}>
-            <ApartmentClient prevApartment={response.data}/>
+            <Loader2Icon className="animate-spin" /> &nbsp;Loading...</div>}>
+            <ApartmentClient prevApartment={apartment} />
         </Suspense>
     );
 }
