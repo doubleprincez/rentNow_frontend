@@ -15,7 +15,7 @@ const Metas = ({metadata}: { metadata: any }) => {
             <meta name="twitter:title" content={metadata?.twitter?.title ?? ''}/>
             <meta name="twitter:description" content={metadata?.twitter?.description ?? ''}/>
             <meta name="twitter:image"
-                  content={metadata?.twitter?.images && metadata?.twitter?.images[0]?.url ?? ''}/>
+                  content={Object.keys(metadata?.twitter?.images).length > 0 ? metadata.twitter.images[0].url : ''}/>
         </Head>
     </>
 }
