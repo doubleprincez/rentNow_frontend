@@ -4,9 +4,11 @@ import {Loader2Icon} from 'lucide-react';
 import {AxiosApiServer} from "@/lib/server-utils";
 import {ApiSubscriptionResponse} from "@/types/subscription";
 import {baseURL} from "@/../next.config";
-export const findApartment = async (apartmentId: string, account = 'user') => {
+
+
+const findApartment = async (apartmentId: string) => {
     try {
-        const response = await AxiosApiServer(account).get<ApiSubscriptionResponse>(
+        const response = await AxiosApiServer().get<ApiSubscriptionResponse>(
             `${baseURL}/apartment/${apartmentId}`
         );
         return response.data;
@@ -14,6 +16,8 @@ export const findApartment = async (apartmentId: string, account = 'user') => {
         throw error;
     }
 };
+
+
 export default async function Page({params}: { params: { id: string } }) {
     const response = await findApartment(params.id);
 
