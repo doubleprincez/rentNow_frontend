@@ -10,23 +10,23 @@ export default async function Page({params}: any) {
 
     const {id} = await params;
     const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
-    const apartment:Apartment = response.data.data;
-    const defaultImage =  '/uploads/logo.png';
+    const apartment: Apartment = response.data.data;
+    const defaultImage = '/uploads/logo.png';
 
     // Dynamically update metadata based on fetched apartment data
     const metadata: Metadata = {
-        title: apartment.title || "Apartment Details",
-        description: apartment.description || "Explore this beautiful apartment available for rent.",
+        title: apartment?.title || "Apartment Details",
+        description: apartment?.description || "Explore this beautiful apartment available for rent.",
         openGraph: {
             url: `${baseURL}/apartment/${id}`,
-            title: apartment.title || "Apartment Details",
-            description: apartment.description || "Explore this beautiful apartment available for rent.",
+            title: apartment?.title || "Apartment Details",
+            description: apartment?.description || "Explore this beautiful apartment available for rent.",
             images: [
                 {
-                    url: apartment?.images[0]?.url ?? defaultImage, // Set a default image if not provided
+                    url: apartment?.images && apartment?.images[0]?.url ?? defaultImage, // Set a default image if not provided
                     width: 800,
                     height: 600,
-                    alt: apartment.title || "Apartment Image",
+                    alt: apartment?.title || "Apartment Image",
                     type: 'image/jpeg',
                 },
             ],
@@ -35,14 +35,14 @@ export default async function Page({params}: any) {
         twitter: {
             card: "summary_large_image",
             site: "@RentNowNG",
-            title: apartment.title || "Apartment Details",
-            description: apartment.description || "Explore this beautiful apartment available for rent.",
-             images: [
+            title: apartment?.title || "Apartment Details",
+            description: apartment?.description || "Explore this beautiful apartment available for rent.",
+            images: [
                 {
-                    url: apartment?.images[0]?.url ?? defaultImage, // Correctly use `images` here
+                    url: apartment?.images && apartment?.images[0]?.url ?? defaultImage, // Correctly use `images` here
                     width: 800,
                     height: 600,
-                    alt: apartment.title || "Apartment Image",
+                    alt: apartment?.title || "Apartment Image",
                     type: 'image/png',
                 },
             ],
