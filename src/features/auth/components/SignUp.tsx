@@ -253,7 +253,14 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
             {isLoading ? "Creating account..." : "Create account"}
           </button>
         </form>
-
+        <div className="w-full flex flex-col md:flex-row gap-2 px-2">
+                    <Link 
+                    href='/agents/auth/register'
+                    className="w-full bg-green-600 hover:bg-green-600/80 text-sm text-white font-semibold text-center px-4 py-2 rounded-md"
+                    >
+                        Sign up as Agent
+                    </Link>
+                </div>
         <div className="flex justify-center items-center gap-2 w-full">
           <div className="h-[1px] w-full bg-gray-400 mt-1"></div>
           <span className="text-gray-500 font-semibold text-[.9em]">or</span>
