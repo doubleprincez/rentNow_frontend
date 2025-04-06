@@ -130,10 +130,10 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
   return (
     <div className="w-full lg:w-[70%] mx-auto">
       <motion.div
-        className="relative flex flex-col gap-2 items-center justify-center w-full h-screen md:overflow-hidden overflow-y-scroll"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isPageVisible ? 1 : 0 }}
-        transition={{ duration: 1.5, ease: "easeInOut" }}
+          className="relative flex flex-col gap-2 items-center justify-center w-full h-screen md:overflow-hidden overflow-y-scroll"
+          initial={{opacity: 0}}
+          animate={{opacity: isPageVisible ? 1 : 0}}
+          transition={{duration: 1.5, ease: "easeInOut"}}
       >
         <Link href="/" className="text-[1.5em] font-semibold text-orange-500">
           Rent<span className="text-green-500">Now</span>
@@ -149,26 +149,26 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
               <div className="w-full flex flex-col gap-1">
                 <Label className="text-[.8em] font-bold">First Name</Label>
                 <Input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="First Name"
-                  className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
-                  required
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                    placeholder="First Name"
+                    className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
+                    required
                 />
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <Label className="text-[.8em] font-bold">Last Name</Label>
                 <Input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Last Name"
-                  className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
-                  required
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    placeholder="Last Name"
+                    className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
+                    required
                 />
               </div>
             </div>
@@ -176,26 +176,26 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
             <div className="w-full flex flex-col gap-1">
               <Label className="text-[.8em] font-bold">Phone Number</Label>
               <Input
-                type="tel"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                placeholder="Phone Number"
-                className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
-                required
+                  type="tel"
+                  name="phoneNumber"
+                  value={formData.phoneNumber}
+                  onChange={handleChange}
+                  placeholder="Phone Number"
+                  className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
+                  required
               />
             </div>
 
             <div className="w-full flex flex-col gap-1">
               <Label className="text-[.8em] font-bold">Email</Label>
               <Input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email"
-                className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
-                required
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
+                  required
               />
             </div>
 
@@ -203,26 +203,26 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
               <div className="w-full flex flex-col gap-1">
                 <Label className="text-[.8em] font-bold">Password</Label>
                 <Input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Password"
-                  className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
-                  required
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Password"
+                    className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
+                    required
                 />
               </div>
 
               <div className="w-full flex flex-col gap-1">
                 <Label className="text-[.8em] font-bold">Confirm Password</Label>
                 <Input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm Password"
-                  className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
-                  required
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm Password"
+                    className="border-[1px] placeholder:text-gray-400 text-[.8em] w-full py-1 outline-none focus-visible:border-main rounded-md"
+                    required
                 />
               </div>
             </div>
@@ -230,30 +230,39 @@ const SignUp: React.FC<{ isPageVisible: boolean }> = ({ isPageVisible }) => {
 
           <div>
             <p className="flex gap-2 items-center">
-                <Checkbox
-                    name="agreeTerms"
-                    checked={formData.agreeTerms}
-                    onCheckedChange={(checked: boolean) =>
-                        setFormData((prevState) => ({ ...prevState, agreeTerms: checked }))
-                    }
-                    className="border-[2px] border-black checked:bg-main"
-                />
+              <Checkbox
+                  name="agreeTerms"
+                  checked={formData.agreeTerms}
+                  onCheckedChange={(checked: boolean) =>
+                      setFormData((prevState) => ({...prevState, agreeTerms: checked}))
+                  }
+                  className="border-[2px] border-black checked:bg-main"
+              />
               <div className="flex gap-1">
                 <span className="text-[.7em] font-semibold">I agree to the </span>
-                <span className="text-[.7em] font-semibold underline cursor-pointer hover:text-[#224aa0]">terms & policy</span>
+                <span
+                    className="text-[.7em] font-semibold underline cursor-pointer hover:text-[#224aa0]">terms & policy</span>
               </div>
             </p>
           </div>
 
           <button
-            disabled={isLoading}
-            type="submit"
-            className="w-full py-2 rounded-md bg-main hover:bg-main/80 text-white bg-orange-500 font-semibold"
+              disabled={isLoading}
+              type="submit"
+              className="w-full py-2 rounded-md bg-main hover:bg-main/80 text-white bg-orange-500 font-semibold"
           >
             {isLoading ? "Creating account..." : "Create account"}
           </button>
         </form>
 
+        <div className="w-full flex flex-col md:flex-row gap-2 px-2">
+          <Link
+              href='/agents/auth/register'
+              className="w-full bg-green-600 hover:bg-green-600/80 text-sm text-white font-semibold text-center px-4 py-2 rounded-md"
+          >
+            Sign up as Agent
+          </Link>
+        </div>
         <div className="flex justify-center items-center gap-2 w-full">
           <div className="h-[1px] w-full bg-gray-400 mt-1"></div>
           <span className="text-gray-500 font-semibold text-[.9em]">or</span>

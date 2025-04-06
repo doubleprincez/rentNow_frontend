@@ -161,7 +161,7 @@ const Register: React.FC = () => {
             >
               <option value="">Select Agent Type</option>
               <option value="Agent">Agent</option>
-              <option value="Agency">Agency</option>
+              <option value="Caretaker">Caretaker</option>
               <option value="Company">Company</option>
               <option value="Landlord">Landlord</option>
             </select>
