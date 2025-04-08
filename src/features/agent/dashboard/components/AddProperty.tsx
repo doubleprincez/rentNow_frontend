@@ -6,7 +6,7 @@ import {useAlert} from '@/contexts/AlertContext';
 // import Dropzone from 'react-dropzone-uploader';
 import {baseURL} from "@/../next.config";
 import {useDropzone} from "react-dropzone";
-import {getFormData} from "@/lib/utils";
+import {AxiosApi, getFormData} from "@/lib/utils";
 
 
 interface Category {
@@ -44,7 +44,7 @@ const MAX_FILES = 5;
 
 ///////////////////////////////////////////////////////////////////////////////
 const AddProperty: React.FC = () => {
-    const { showAlert } = useAlert();
+    const {showAlert} = useAlert();
     const [step, setStep] = useState(1);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +57,7 @@ const AddProperty: React.FC = () => {
     const {
         register,
         handleSubmit,
-        formState: { errors },
+        formState: {errors},
         setValue,
         watch,
         reset,
@@ -93,16 +93,8 @@ const AddProperty: React.FC = () => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get<{ success: boolean; data: Category[] }>(
-                    baseURL + '/apartment-types',
-                    {
-                        headers: {
-                            'Authorization': `Bearer ${getAuthToken()}`,
-                            'Accept': 'application/json',
-                        },
-                        withCredentials: true
-                    }
-                );
+                const response = await AxiosApi('agent').get<{ success: boolean; data: Category[] }>(
+                    baseURL + '/apartment-types');
                 if (response.data.success) {
                     setCategories(response.data.data);
                 }
@@ -150,13 +142,13 @@ const AddProperty: React.FC = () => {
         setValue("videos", updatedFiles);
     };
 
-    const { getRootProps: getImageRootProps, getInputProps: getImageInputProps } = useDropzone({
-        accept: { "image/*": [] },
+    const {getRootProps: getImageRootProps, getInputProps: getImageInputProps} = useDropzone({
+        accept: {"image/*": []},
         onDrop: onDropImages,
     });
 
-    const { getRootProps: getVideoRootProps, getInputProps: getVideoInputProps } = useDropzone({
-        accept: { "video/*": [] },
+    const {getRootProps: getVideoRootProps, getInputProps: getVideoInputProps} = useDropzone({
+        accept: {"video/*": []},
         onDrop: onDropVideos,
     });
 
@@ -230,22 +222,8 @@ const AddProperty: React.FC = () => {
                 return;
             }
 
-            const response = await axios.post(
-                baseURL + '/apartment',
-                formData,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json',
-                    },
-                    withCredentials: true,
-                    // onUploadProgress: (progressEvent) => {
-                    //     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-                    //     progressRef.current = percentCompleted;
-                    //     setUploadProgress(percentCompleted);
-                    // },
-                }
-            );
+            const response = await AxiosApi('agent').post(
+                baseURL + '/apartment', formData);
 
             if (response.data.success) {
                 showAlert('Property successfully added!', 'success');
@@ -256,13 +234,13 @@ const AddProperty: React.FC = () => {
                 setStep(1);
             }
 
-            setUploadProgress(100);
+            // setUploadProgress(100);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
             }
         } finally {
-            setTimeout(() => setUploadProgress(null), 1500);
+            // setTimeout(() => setUploadProgress(null), 1500);
             setIsLoading(false);
         }
     };
@@ -343,7 +321,7 @@ const AddProperty: React.FC = () => {
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.currency_code &&
-                            <p className="text-red-500 text-sm">{errors.currency_code.message}</p>}
+                                <p className="text-red-500 text-sm">{errors.currency_code.message}</p>}
                         </div>
 
                         <div>
@@ -371,7 +349,7 @@ const AddProperty: React.FC = () => {
                                 <option value="year">Year</option>
                             </select>
                             {errors.duration_type &&
-                            <p className="text-red-500 text-sm">{errors.duration_type.message}</p>}
+                                <p className="text-red-500 text-sm">{errors.duration_type.message}</p>}
                         </div>
 
                         <div>
@@ -415,7 +393,7 @@ const AddProperty: React.FC = () => {
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.country_code &&
-                            <p className="text-red-500 text-sm">{errors.country_code.message}</p>}
+                                <p className="text-red-500 text-sm">{errors.country_code.message}</p>}
                         </div>
 
                         <div>

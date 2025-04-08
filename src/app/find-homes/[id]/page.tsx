@@ -3,11 +3,11 @@ import ApartmentClient from '@/features/landing/components/ApartmentClient';
 import {Loader2Icon} from 'lucide-react';
 import {AxiosApiServer} from "@/lib/server-utils";
 import {baseURL} from "@/../next.config";
-import {Metadata} from "next";
 import {Apartment} from "@/types/apartment";
-import Head from "next/head";
-import {metadata} from "@/app/layout";
 import Metas from "@/features/metas";
+// import Head from "next/head";
+// import {Metadata} from "next";
+// import {metadata} from "@/app/layout";
 
 export default async function Page({params}: any) {
 

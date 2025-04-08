@@ -223,13 +223,7 @@ const ManageProperty: React.FC = () => {
             </tbody>
           </table>
            <div className="flex items-center justify-center space-x-2 py-4">
-                          <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                              disabled={currentPage === 1}
-                          >
-                              <ChevronLeft className="h-4 w-4"/>
+             <Button variant="outline" size="sm" onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))} disabled={currentPage === 1} > <ChevronLeft className="h-4 w-4"/>
                           </Button>
                           <span className="text-sm">
                     Page {currentPage} of {totalPages}

@@ -13,8 +13,6 @@ import { DialogHeader } from "@/components/ui/dialog";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 
 
-
-
 const ManageRent =()=>{
 
         const [isLoading,setIsLoading] = useState(false);

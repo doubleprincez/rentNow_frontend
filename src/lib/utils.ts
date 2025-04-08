@@ -96,9 +96,14 @@ export function deleteFormData(name: string) {
 
 export const AxiosApi = (tokenFor = 'user') => {
     const instance = axios.create({
-        withCredentials: true, // Ensure cookies are sent with requests
+        withCredentials: true,
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization, X-Request-With'
         },
     });
 

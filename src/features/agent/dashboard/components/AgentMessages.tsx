@@ -1,17 +1,17 @@
 'use client'
-import React, { useState, useEffect, useRef } from 'react';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scrollArea";
-import { Search } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-import { conversationApi, Conversation } from '@/features/admin/dashboard/api/conversationApi';
-import { getUsers, User } from '../api/userApi';
+import React, {useEffect, useRef, useState} from 'react';
+import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Card, CardContent} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {ScrollArea} from "@/components/ui/scrollArea";
+import {Search} from 'lucide-react';
+import {useToast} from '@/components/ui/use-toast';
+import {Conversation, conversationApi} from '@/features/admin/dashboard/api/conversationApi';
+import {getUsers, User} from '../api/userApi';
 import axios from 'axios';
-import { RootState } from '@/redux/store';
-import { useSelector } from 'react-redux';
+import {RootState} from '@/redux/store';
+import {useSelector} from 'react-redux';
 import {baseURL} from "@/../next.config";
 import {getFormData} from "@/lib/utils";
 
@@ -26,8 +26,8 @@ const Messages = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [adminId, setAdminId] = useState<number | null>(null);
-    const { toast } = useToast();
-    const { userId, isLoggedIn } = useSelector((state: RootState) => state.admin);
+    const {toast} = useToast();
+    const {userId, isLoggedIn} = useSelector((state: RootState) => state.admin);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [messagePollingInterval, setMessagePollingInterval] = useState<NodeJS.Timeout | null>(null);
@@ -36,7 +36,7 @@ const Messages = () => {
     // Scroll to bottom function
     const scrollToBottom = () => {
         if (hasNewMessage) {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
             setHasNewMessage(false);
         }
     };
@@ -74,17 +74,17 @@ const Messages = () => {
                 const newMessages = response.data.data;
                 setMessages(response.data.data);
                 scrollToBottom();
-                
+
                 // Check if there are new messages
                 if (messages.length < newMessages.length) {
                     setHasNewMessage(true);
                 }
-                
+
                 // Sort messages by creation date in ascending order
-                const sortedMessages = newMessages.sort((a: any, b: any) => 
+                const sortedMessages = newMessages.sort((a: any, b: any) =>
                     new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
                 );
-                
+
                 setMessages(sortedMessages);
             }
         } catch (error) {
@@ -156,7 +156,7 @@ const Messages = () => {
                     `${baseURL}/admin/profile`,
                     getAuthHeader()
                 );
-                
+
                 if (response.data?.data?.id) {
                     setAdminId(response.data.data.id);
                 }
@@ -176,17 +176,17 @@ const Messages = () => {
         try {
             setIsLoading(true);
             const response = await getUsers(
-                currentPage, 
-                searchTerm, 
+                currentPage,
+                searchTerm,
                 activeTab === 'agents' ? 'agents' : 'users'
             );
 
-            const filteredUsers = response.data.filter(user => 
-                activeTab === 'agents' 
+            const filteredUsers = response.data.filter(user =>
+                activeTab === 'agents'
                     ? user.account.slug === 'agents'
                     : user.account.slug === 'users'
             );
-            
+
             setUsers(filteredUsers);
             setTotalPages(Math.ceil(response.total / response.per_page));
         } catch (error) {
@@ -206,8 +206,8 @@ const Messages = () => {
         try {
             setIsLoading(true);
             const conversations = await conversationApi.getAllConversations();
-            
-            const existingConversation = conversations.find(conv => 
+
+            const existingConversation = conversations.find(conv =>
                 conv.participants?.some(p => p.id === selectedUser.id)
             );
 
@@ -252,7 +252,7 @@ const Messages = () => {
 
         try {
             setIsLoading(true);
-            
+
             const messageParams = {
                 from_id: userId,
                 to_id: selectedUser.id,
@@ -260,7 +260,7 @@ const Messages = () => {
             };
 
             await conversationApi.sendMessage(selectedUser.id, messageParams);
-            
+
             // Set hasNewMessage to true before fetching updated messages
             setHasNewMessage(true);
             await fetchMessages();
@@ -306,7 +306,7 @@ const Messages = () => {
                         </small>
                     </div>
                 ))}
-                <div ref={messagesEndRef} />
+                <div ref={messagesEndRef}/>
             </div>
         </ScrollArea>
     );
@@ -324,7 +324,7 @@ const Messages = () => {
                     <Card className="col-span-1 h-full border-none">
                         <div className="p-4">
                             <div className="relative w-full mb-4">
-                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500"/>
                                 <Input
                                     placeholder="Search by name or email..."
                                     value={searchTerm}
@@ -389,7 +389,7 @@ const Messages = () => {
                                         <h3 className="font-medium">Chat with {selectedUser.name}</h3>
                                         <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
                                     </div>
-                                    
+
                                     {isLoading && messages.length === 0 ? (
                                         <div className="flex-1 flex items-center justify-center">
                                             Loading conversation...
@@ -405,7 +405,8 @@ const Messages = () => {
                                                     className="flex-1 border-2 border-black py-2 h-full"
                                                     disabled={isLoading || !userId}
                                                 />
-                                                <Button type="submit" disabled={isLoading || !userId} className='bg-orange-500 text-white hover:bg-orange-600'>
+                                                <Button type="submit" disabled={isLoading || !userId}
+                                                        className='bg-orange-500 text-white hover:bg-orange-600'>
                                                     Send
                                                 </Button>
                                             </form>
