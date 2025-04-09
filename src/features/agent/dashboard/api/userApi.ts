@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
-import {getFormData} from '@/lib/utils';
+import {AxiosApi, getFormData} from '@/lib/utils';
+import {ApiRentResponse} from "@/types/rent";
 
 
 // Types
@@ -104,17 +105,13 @@ export const deleteUser = async (id: number) => {
 };
 
 
-export const getAgentRents = async (page: number = 1, search: string = '') => {
-    try {
-        const
-            response = await fetch(baseURL + `/rented-apartments?page=${page}&search=${search}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
+export const getAgentRents = async (page: number = 1, search: string = '',token=null) => {
+  try {
+
+      const response = await AxiosApi('agent',token).get<ApiRentResponse>( baseURL + `/rented-apartments?page=${page}&search=${search}` );
+
+      return response.data;
+  } catch (error) {
+      throw error;
+  }
 };

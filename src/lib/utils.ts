@@ -93,7 +93,7 @@ export function deleteFormData(name: string) {
 }
 
 
-export const AxiosApi = (tokenFor = 'user') => {
+export const AxiosApi = (tokenFor = 'user', token = null) => {
     const instance = axios.create({
         withCredentials: true,
         headers: {
@@ -111,14 +111,18 @@ export const AxiosApi = (tokenFor = 'user') => {
 
     // Retrieve token dynamically
 
-    if (tokenFor == 'user') {
-        csrfTokenMeta = localStorage.getItem('token');
-    } else if (tokenFor == 'agent') {
-        csrfTokenMeta = localStorage.getItem('agentToken') ?? localStorage.getItem('token');
+    if (token) {
+        csrfTokenMeta = token;
     } else {
-        csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('token');
-    }
 
+        if (tokenFor == 'user') {
+            csrfTokenMeta = localStorage.getItem('token');
+        } else if (tokenFor == 'agent') {
+            csrfTokenMeta = localStorage.getItem('agentToken') ?? localStorage.getItem('token');
+        } else {
+            csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('token');
+        }
+    }
     if (csrfTokenMeta) {
         instance.defaults.headers.Authorization = `Bearer ${csrfTokenMeta}`;
     }

@@ -11,9 +11,11 @@ import { Button } from "@/components/ui/button";
 import { getAgentRents } from "../api/userApi";
 import { DialogHeader } from "@/components/ui/dialog";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
+import {useSelector} from "react-redux";
 
 
 const ManageRent =()=>{
+    const token = useSelector((state: any) => state.agent.token);
 
         const [isLoading,setIsLoading] = useState(false);
         const { showAlert } = useAlert();
@@ -32,7 +34,7 @@ const fetchRents = async()=>{
  
  try {
             
-            const response = await getAgentRents(currentPage, searchTerm);
+            const response = await getAgentRents(currentPage, searchTerm,token);
 
             if (response.success && response.data) {
                 setRents(response.data.data);
