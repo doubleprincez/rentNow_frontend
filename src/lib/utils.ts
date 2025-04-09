@@ -3,7 +3,6 @@ import {type ClassValue, clsx} from "clsx"
 import {formatDistanceToNow} from "date-fns";
 
 import {twMerge} from "tailwind-merge"
-import {getServerFormData} from "@/lib/server-utils";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
@@ -112,17 +111,17 @@ export const AxiosApi = (tokenFor = 'user') => {
 
     // Retrieve token dynamically
 
-        if (tokenFor == 'user') {
-            csrfTokenMeta = localStorage.getItem('token');
-        } else if (tokenFor == 'agent') {
-            csrfTokenMeta = localStorage.getItem('agentToken');
-        } else {
-            csrfTokenMeta = localStorage.getItem('adminToken');
-        }
+    if (tokenFor == 'user') {
+        csrfTokenMeta = localStorage.getItem('token');
+    } else if (tokenFor == 'agent') {
+        csrfTokenMeta = localStorage.getItem('agentToken') ?? localStorage.getItem('token');
+    } else {
+        csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('token');
+    }
 
-        if (csrfTokenMeta) {
-            instance.defaults.headers.Authorization = `Bearer ${csrfTokenMeta}`;
-        }
+    if (csrfTokenMeta) {
+        instance.defaults.headers.Authorization = `Bearer ${csrfTokenMeta}`;
+    }
 
     return instance;
 }
