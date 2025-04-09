@@ -39,9 +39,9 @@ const getAuthHeaders = () => {
         Accept: 'application/json',
     };
 };
+const token = getFormData('token');
 
 export const getUsers = async (page = 1, search = '', accountType: 'users' | 'agents' = 'users') => {
-    const token = getFormData('token');
     if (!token) {
         throw new Error('No authentication token found');
     }
