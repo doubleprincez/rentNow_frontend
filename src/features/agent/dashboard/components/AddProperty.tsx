@@ -1,11 +1,10 @@
 'use client'
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import axios from 'axios';
 import {useAlert} from '@/contexts/AlertContext';
 // import Dropzone from 'react-dropzone-uploader';
 import {baseURL} from "@/../next.config";
-import {useDropzone} from "react-dropzone";
 import {AxiosApi} from "@/lib/utils";
 import {useSelector} from "react-redux";
 
@@ -49,22 +48,12 @@ const AddProperty: React.FC = () => {
     const [step, setStep] = useState(1);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
-    const progressRef = useRef<number>(0);
-    const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+    const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
     const token = useSelector((state: any) => state.agent.token);
 
-    const {
-        register,
-        handleSubmit,
-        formState: {errors},
-        setValue,
-        watch,
-        reset,
-        trigger
-    } = useForm<PropertyFormData>({
+    const {register, handleSubmit, formState: {errors}, setValue, watch, reset, trigger} = useForm<PropertyFormData>({
         defaultValues: {
             amenities: [],
             currency_code: '₦',
@@ -104,50 +93,6 @@ const AddProperty: React.FC = () => {
         fetchCategories();
     }, []);
 
-    const onDropImages = useCallback(
-        (acceptedFiles: File[]) => {
-            setUploadedImages(prevImages => {
-                const newFiles = [...prevImages, ...acceptedFiles].slice(0, MAX_FILES);
-                setValue("images", newFiles);
-                return newFiles;
-            });
-        },
-        [setValue]
-    );
-
-    const onDropVideos = useCallback(
-        (acceptedFiles: File[]) => {
-            setUploadedVideos(prevVideos => {
-                const newFiles = [...prevVideos, ...acceptedFiles].slice(0, MAX_FILES);
-                setValue("videos", newFiles);
-                return newFiles;
-            });
-        },
-        [setValue]
-    );
-
-    const removeImage = (index: number) => {
-        const updatedFiles = uploadedImages.filter((_, i) => i !== index);
-        setUploadedImages(updatedFiles);
-        setValue("images", updatedFiles);
-    };
-
-    const removeVideo = (index: number) => {
-        const updatedFiles = uploadedVideos.filter((_, i) => i !== index);
-        setUploadedVideos(updatedFiles);
-        setValue("videos", updatedFiles);
-    };
-
-    const {getRootProps: getImageRootProps, getInputProps: getImageInputProps} = useDropzone({
-        accept: {"image/*": []},
-        onDrop: onDropImages,
-    });
-
-    const {getRootProps: getVideoRootProps, getInputProps: getVideoInputProps} = useDropzone({
-        accept: {"video/*": []},
-        onDrop: onDropVideos,
-    });
-
     const validateStep = async (): Promise<boolean> => {
         let fieldsToValidate: Array<keyof PropertyFormData> = [];
         switch (step) {
@@ -176,6 +121,58 @@ const AddProperty: React.FC = () => {
         }
     };
 
+    // handle images
+    const handleDropImages = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const droppedFiles = Array.from(e.dataTransfer.files).filter(file =>
+            file.type.startsWith("image/")
+        );
+
+        const totalFiles = [...uploadedImages, ...droppedFiles].slice(0, MAX_FILES);
+        setUploadedImages(totalFiles);
+    };
+
+    // handle videos and files dropping
+    const handleDropVideos = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const droppedFiles = Array.from(e.dataTransfer.files).filter(file =>
+            file.type.startsWith("video/")
+        );
+
+        const totalFiles = [...uploadedVideos, ...droppedFiles].slice(0, MAX_FILES);
+        setUploadedVideos(totalFiles);
+    };
+
+    // Handle File Removed
+    const handleRemoveImage = (index: number) => {
+        const updated = uploadedImages.filter((_, i) => i !== index);
+        setUploadedImages(updated);
+    };
+    const handleRemoveVideo = (index: number) => {
+        const updated = uploadedVideos.filter((_, i) => i !== index);
+        setUploadedVideos(updated);
+    };
+
+    // Handle File Input
+
+    const handleImageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFiles = Array.from(e.target.files || []).filter(file =>
+            file.type.startsWith("image/")
+        );
+
+        const totalFiles = [...uploadedImages, ...selectedFiles].slice(0, MAX_FILES);
+        setUploadedImages(totalFiles);
+    };
+    const handleVideoInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFiles = Array.from(e.target.files || []).filter(file =>
+            file.type.startsWith("video/")
+        );
+
+        const totalFiles = [...uploadedVideos, ...selectedFiles].slice(0, MAX_FILES);
+        setUploadedVideos(totalFiles);
+    };
+
+
     const prevStep = (): void => {
         setStep(current => Math.max(current - 1, 1));
     };
@@ -203,8 +200,7 @@ const AddProperty: React.FC = () => {
                 }
             }
         });
-
-        uploadedImages.forEach(file => formData.append("images[]", file));
+        uploadedImages.forEach(image => formData.append("images[]", image));
         uploadedVideos.forEach(file => formData.append("videos[]", file));
 
         formData.append('published', 'false');
@@ -217,15 +213,13 @@ const AddProperty: React.FC = () => {
                 return;
             }
 
-            const response = await AxiosApi('agent', token).post(
+            const response = await AxiosApi('agent', token, {'Content-Type': 'multipart/form-data'}).post(
                 baseURL + '/apartment', formData);
 
             if (response.data.success) {
                 showAlert('Property successfully added!', 'success');
                 reset();
                 setSelectedAmenities([]);
-                setUploadedImages([]);
-                setUploadedVideos([]);
                 setStep(1);
             }
 
@@ -415,21 +409,28 @@ const AddProperty: React.FC = () => {
                     <div className="space-y-6">
                         <div>
                             <label className="block  text-sm font-semibold mb-2 text-white  ">Images (At least 1
-                                required,
-                                max 5, each &lt;30MB)</label>
+                                required,Max: {MAX_FILES})</label>
                             {/* <div className="grid grid-cols-2 md:grid-cols-5 gap-4"> */}
                             <div className={"text-white"}>
-                                <div  {...getImageRootProps()}
-                                      style={{
-                                          border: "2px dashed #ccc",
-                                          padding: "20px",
-                                          cursor: uploadedImages.length >= MAX_FILES ? "not-allowed" : "pointer",
-                                          opacity: uploadedImages.length >= MAX_FILES ? 0.5 : 1,
-                                          marginBottom: "10px",
-                                      }}>
-                                    <input {...getImageInputProps()} />
-                                    <p>{uploadedImages.length >= MAX_FILES ? "Max limit reached" : "Drag & drop images here, or click to select"}</p>
-
+                                <div
+                                    onDrop={handleDropImages}
+                                    onDragOver={(e) => e.preventDefault()}
+                                    style={{
+                                        border: "2px dashed #ccc",
+                                        padding: "20px",
+                                        marginBottom: "10px",
+                                        opacity: uploadedImages.length >= MAX_FILES ? 0.5 : 1,
+                                        cursor: uploadedImages.length >= MAX_FILES ? "not-allowed" : "pointer"
+                                    }}
+                                >
+                                    <p>{uploadedImages.length >= MAX_FILES ? "Maximum image limit reached" : "Drag & drop images here, or click to select"}</p>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleImageInput}
+                                        disabled={uploadedImages.length >= MAX_FILES}
+                                    />
                                 </div>
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
                                     {uploadedImages && uploadedImages.map((file, index) => (
@@ -442,7 +443,7 @@ const AddProperty: React.FC = () => {
                                                 style={{borderRadius: "5px", objectFit: "cover"}}
                                             />
                                             <button
-                                                onClick={() => removeImage(index)}
+                                                onClick={() => handleRemoveImage(index)} type={"button"}
                                                 style={{
                                                     position: "absolute",
                                                     top: 0,
@@ -465,18 +466,28 @@ const AddProperty: React.FC = () => {
 
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Videos (At least 1 required,
-                                max 5, each &lt;80MB)</label>
+                                Max: {MAX_FILES})</label>
                             <div className={"text-white"}>
-                                <div {...getVideoRootProps()}
-                                     style={{
-                                         border: "2px dashed #ccc",
-                                         padding: "20px",
-                                         cursor: uploadedVideos.length >= MAX_FILES ? "not-allowed" : "pointer",
-                                         opacity: uploadedVideos.length >= MAX_FILES ? 0.5 : 1,
-                                         marginBottom: "10px",
-                                     }}>
-                                    <input {...getVideoInputProps()} />
-                                    <p>{uploadedVideos.length >= MAX_FILES ? "Max limit reached" : "Drag & drop videos here, or click to select"}</p>
+
+                                <div
+                                    onDrop={handleDropVideos}
+                                    onDragOver={(e) => e.preventDefault()}
+                                    style={{
+                                        border: "2px dashed #ccc",
+                                        padding: "20px",
+                                        marginBottom: "10px",
+                                        opacity: uploadedVideos.length >= MAX_FILES ? 0.5 : 1,
+                                        cursor: uploadedVideos.length >= MAX_FILES ? "not-allowed" : "pointer"
+                                    }}
+                                >
+                                    <p>{uploadedVideos.length >= MAX_FILES ? "Maximum video limit reached" : "Drag & drop videos here, or click to select"}</p>
+                                    <input
+                                        type="file"
+                                        accept="video/*"
+                                        multiple
+                                        onChange={handleVideoInput}
+                                        disabled={uploadedVideos.length >= MAX_FILES}
+                                    />
                                 </div>
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
 
@@ -490,7 +501,7 @@ const AddProperty: React.FC = () => {
                                                 style={{borderRadius: "5px", objectFit: "cover"}}
                                             />
                                             <button
-                                                onClick={() => removeVideo(index)}
+                                                onClick={() => handleRemoveVideo(index)} type={"button"}
                                                 style={{
                                                     position: "absolute",
                                                     top: 0,
@@ -558,5 +569,63 @@ const AddProperty: React.FC = () => {
 export default AddProperty;
 
 
+/**
+ * Out
+ *
+ *     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
+ *     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
+ *
+ *     const onDropImages = useCallback(
+ *         (acceptedFiles: File[]) => {
+ *             setUploadedImages(prevImages => {
+ *                 const newFiles = [...prevImages, ...acceptedFiles].slice(0, MAX_FILES);
+ *                 setValue("images", newFiles);
+ *                 return newFiles;
+ *             });
+ *         },
+ *         [setValue]
+ *     );
+ *
+ *     const onDropVideos = useCallback(
+ *         (acceptedFiles: File[]) => {
+ *             setUploadedVideos(prevVideos => {
+ *                 const newFiles = [...prevVideos, ...acceptedFiles].slice(0, MAX_FILES);
+ *                 setValue("videos", newFiles);
+ *                 return newFiles;
+ *             });
+ *         },
+ *         [setValue]
+ *     );
+ *
+ *     const removeImage = (index: number) => {
+ *         const updatedFiles = uploadedImages.filter((_, i) => i !== index);
+ *         setUploadedImages(updatedFiles);
+ *         setValue("images", updatedFiles);
+ *     };
+ *
+ *     const removeVideo = (index: number) => {
+ *         const updatedFiles = uploadedVideos.filter((_, i) => i !== index);
+ *         setUploadedVideos(updatedFiles);
+ *         setValue("videos", updatedFiles);
+ *     };
+ *
+ *     const {getRootProps: getImageRootProps, getInputProps: getImageInputProps} = useDropzone({
+ *         accept: {"image/*": []},
+ *         onDrop: onDropImages,
+ *     });
+ *
+ *     const {getRootProps: getVideoRootProps, getInputProps: getVideoInputProps} = useDropzone({
+ *         accept: {"video/*": []},
+ *         onDrop: onDropVideos,
+ *     });
+ *
+ *         uploadedImages.forEach(file => formData.append("images[]", file));
+ *         uploadedVideos.forEach(file => formData.append("videos[]", file));
+ *
+ *
+ *
+ *                 setUploadedImages([]);
+ *                 setUploadedVideos([]);
+ */
 
 

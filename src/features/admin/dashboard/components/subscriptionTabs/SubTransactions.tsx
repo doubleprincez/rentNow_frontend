@@ -163,7 +163,7 @@ const AdminTransaction = ({ transaction,closeSelected }: { transaction: Transact
     const updateTransactionStatus = async (newStatus: string) => {
         setLoading(true);
         try {
-            await AxiosApi('admin').post(baseURL+`/transaction/verify`, { user_id:transaction.user_id,reference:transaction.reference, plan_id:transaction.payable.plan_id,status: newStatus });
+            await AxiosApi('admin',null,{'Content-Type': 'multipart/form-data'}).post(baseURL+`/transaction/verify`, { user_id:transaction.user_id,reference:transaction.reference, plan_id:transaction.payable.plan_id,status: newStatus });
             setStatus(newStatus);
             showAlert(`Transaction ${newStatus} successfully!`, "success");
         } catch (error) {

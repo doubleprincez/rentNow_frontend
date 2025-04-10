@@ -266,7 +266,8 @@ const PlanForm = ({ isOpen, onClose, onSave, initialData }: any) => {
             .finally(()=>{   fetchPlans(); setLoading(()=>false);});
      
         }else{
-            await AxiosApi('admin').post(baseURL+`/plan`,plan)
+            await AxiosApi('admin')
+                .post(baseURL+`/plan`,plan,{'Content-Type': 'multipart/form-data'})
             .then((response)=> { 
               showAlert("Plan Created","success"); 
              
