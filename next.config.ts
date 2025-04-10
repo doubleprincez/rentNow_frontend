@@ -7,7 +7,7 @@ import type {NextConfig} from "next";
 
 // ONLINE
 export const frontendURL = 'https://rentnow.ng';
-export const backendUrl = 'https://app.rentnow.ng';
+export const backendUrl = 'https://app.rent9ja.com.ng';
 
 
 export const baseURL = backendUrl+'/api';
