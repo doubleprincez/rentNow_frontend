@@ -480,7 +480,6 @@ const AddProperty: React.FC = () => {
                                 </div>
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
 
-
                                     {uploadedVideos.map((file, index) => (
                                         <div key={index} style={{position: "relative", minHeight: "90px"}}>
                                             <video
