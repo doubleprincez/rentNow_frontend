@@ -6,7 +6,8 @@ import {useAlert} from '@/contexts/AlertContext';
 // import Dropzone from 'react-dropzone-uploader';
 import {baseURL} from "@/../next.config";
 import {useDropzone} from "react-dropzone";
-import {AxiosApi, getFormData} from "@/lib/utils";
+import {AxiosApi} from "@/lib/utils";
+import {useSelector} from "react-redux";
 
 
 interface Category {
@@ -53,6 +54,7 @@ const AddProperty: React.FC = () => {
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
     const progressRef = useRef<number>(0);
     const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+    const token = useSelector((state: any) => state.agent.token);
 
     const {
         register,
@@ -83,12 +85,6 @@ const AddProperty: React.FC = () => {
         });
     };
 
-    const getAuthToken = (): string | null => {
-        if (typeof window !== 'undefined') {
-            return getFormData('agentToken');
-        }
-        return null;
-    };
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -215,14 +211,13 @@ const AddProperty: React.FC = () => {
         formData.append('can_rate', 'false');
 
         try {
-            const token = getAuthToken();
             if (!token) {
                 showAlert('Please login to add a property', 'error');
                 setIsLoading(false);
                 return;
             }
 
-            const response = await AxiosApi('agent').post(
+            const response = await AxiosApi('agent', token).post(
                 baseURL + '/apartment', formData);
 
             if (response.data.success) {
