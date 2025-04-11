@@ -108,7 +108,7 @@ const ManageProperty: React.FC = () => {
 
   const getFirstImageUrl = (property: Property) => {
     const images = Object.values(property.images);
-    return images.length > 0 ? images[0].original_url : '/placeholder-image.jpg';
+    return images.length > 0 ? images[0].original_url : 'https://i.pinimg.com/736x/64/a9/b9/64a9b94b462683645955394d8ac618fb.jpg';
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
