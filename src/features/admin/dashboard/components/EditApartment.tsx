@@ -31,7 +31,8 @@ const EditApartment: React.FC = () => {
             })
 
             .finally(() => {
-                setPageState('loaded');setLoading(false);
+                setPageState('loaded');
+                setLoading(false);
             })
         ;
     }

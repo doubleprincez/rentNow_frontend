@@ -13,7 +13,7 @@ export interface Apartment {
     amount: string;
     duration: string;
     state_code: string;
-    published: boolean ;
+    published: boolean;
     can_rate: boolean;
     city_code: string;
     images: Record<string, {
@@ -39,11 +39,12 @@ export interface ApiResponse {
     data: PaginationData;
 }
 
-export const getAllApartments = async (page: number = 1, search: string = '') => {
+export const getAllApartments = async (page: number = 1, search: string = '', adminToken = null) => {
     try {
-        const token = getFormData('adminToken');
-        if (!token) {
-            throw new Error('No authentication token found');
+        let token = adminToken;
+
+        if (token == '') {
+            token = getFormData('adminToken');
         }
 
         const response = await axios.get<ApiResponse>(

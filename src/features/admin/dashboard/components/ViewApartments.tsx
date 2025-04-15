@@ -24,6 +24,7 @@ import {Search, ChevronLeft, ChevronRight,   Pencil} from 'lucide-react';
 import {updateApartment} from "../api/get-all-apartments";
 import Link from "next/link";
 import { DialogDescription } from '@radix-ui/react-dialog';
+import {RootState} from "@/redux/store";
 
 const ViewApartment = () => {
     const [apartments, setApartments] = useState<Apartment[]>([]);
@@ -34,11 +35,12 @@ const ViewApartment = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
     const isLoggedIn = useSelector((state: any) => state.admin.isLoggedIn);
+    const token = useSelector((state: RootState) => state.admin.token);
 
     const fetchApartments = async () => {
         try {
             setLoading(true);
-            const response = await getAllApartments(currentPage, searchTerm);
+            const response = await getAllApartments(currentPage, searchTerm,token);
 
             if (response.success && response.data) {
                 setApartments(response.data.data);

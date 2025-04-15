@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { backendUrl, baseURL } from "@/../next.config"; 
 import { Loader2, Loader2Icon, PencilIcon } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
  
 interface PaginationData{
     current_page: number,
@@ -28,12 +30,13 @@ const SubTransactions = () => {
     const [loading, setLoading] = useState(false);
     const [transactions, setTransactions] = useState<TransactionHistory[]>([]);
     const [selectedTransaction,setSelectedTransaction] = useState<TransactionHistory>();
+    const token = useSelector((state: RootState) => state.admin.token);
 
         const fetchTransactions = async () => {
             if(loading) return;
             setLoading(()=>true);
             try {
-                const response = await AxiosApi('admin').get<ApiResponse>(baseURL+"/admin/transactions");
+                const response = await AxiosApi('admin',token).get<ApiResponse>(baseURL+"/admin/transactions");
                 setTransactions(response.data.data.data); // Ensure backend returns the expected data
             } catch (error:any) {
                 showAlert(
