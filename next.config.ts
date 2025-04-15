@@ -2,12 +2,12 @@ import type {NextConfig} from "next";
 
 
 // LOCAL
-export const frontendURL = 'http://localhost:3000';
-export const backendUrl = 'http://localhost:8000';
+// export const frontendURL = 'http://localhost:3000';
+// export const backendUrl = 'http://localhost:8000';
 
 // ONLINE
-// export const frontendURL = 'https://rentnow.ng';
-// export const backendUrl = 'https://app.rentnow.ng';
+export const frontendURL = 'https://rentnow.ng';
+export const backendUrl = 'https://app.rentnow.ng';
 
 
 export const baseURL = backendUrl+'/api';
