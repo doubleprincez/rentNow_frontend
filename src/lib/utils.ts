@@ -93,7 +93,7 @@ export function deleteFormData(name: string) {
 }
 
 
-export const AxiosApi = (tokenFor = 'user', initialToken = null, customHeaders = {}) => {
+export const AxiosApi = (tokenFor: string = 'user', initialToken: string | null | undefined = null, customHeaders = {}) => {
     let csrfTokenMeta;
     if (initialToken) {
         csrfTokenMeta = initialToken;
@@ -114,7 +114,7 @@ export const AxiosApi = (tokenFor = 'user', initialToken = null, customHeaders =
             ...{
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json',
-                'Authorization':`Bearer ${csrfTokenMeta}`,
+                'Authorization': `Bearer ${csrfTokenMeta}`,
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',

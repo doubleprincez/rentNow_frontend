@@ -39,7 +39,7 @@ export interface ApiResponse {
     data: PaginationData;
 }
 
-export const getAllApartments = async (page: number = 1, search: string = '', adminToken = null) => {
+export const getAllApartments = async (page: number = 1, search: string = '', adminToken: string | null | undefined = null) => {
     try {
         let token = adminToken;
 
