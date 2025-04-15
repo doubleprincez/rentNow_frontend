@@ -2,10 +2,11 @@
 
 import {useParams} from "next/navigation";
 import React, {useEffect, useState} from "react";
-import axios from "axios";
-import {Loader} from "lucide-react";
 import {baseURL} from "@/../next.config";
 import EditApartmentForm, {PropertyFormData} from "./EditApartmentForm";
+import {AxiosApi} from "@/lib/utils";
+import {useSelector} from "react-redux";
+import {RootState} from "@/redux/store";
 
 
 const EditApartment: React.FC = () => {
@@ -14,7 +15,9 @@ const EditApartment: React.FC = () => {
 
     const [apartment, setApartment] = useState<PropertyFormData>();
     const [pageState, setPageState] = useState('loading');
-    const [loading,setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const token = useSelector((state: RootState) => state.admin.token);
+
 
     useEffect(() => {
         fetchApartment();
@@ -22,10 +25,11 @@ const EditApartment: React.FC = () => {
     }, [id]);
 
     const fetchApartment = async () => {
-        if(loading) return;
+        if (loading) return;
         setLoading(true);
         setPageState('loading');
-        await axios.get(baseURL + '/apartment/' + id+'?raw=true')
+        await AxiosApi('admin', token)
+            .get(baseURL + '/apartment/' + id + '?raw=true')
             .then((res: any) => {
                 setApartment(res.data.data);
             })
@@ -41,7 +45,8 @@ const EditApartment: React.FC = () => {
         {
             pageState == 'loading' ?
                 <div className={"text-3xl mx-auto w-full text-center py-8 "}><span>Loading...</span></div> :
-                apartment ? <EditApartmentForm property={apartment}/> : <p className={"text-3xl mx-auto w-full text-center py-8 "}>Loading Failed</p>
+                apartment ? <EditApartmentForm property={apartment}/> :
+                    <p className={"text-3xl mx-auto w-full text-center py-8 "}>Loading Failed</p>
         }
 
     </div>

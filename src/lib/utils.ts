@@ -93,13 +93,28 @@ export function deleteFormData(name: string) {
 }
 
 
-export const AxiosApi = (tokenFor = 'user', token = null, customHeaders = {}) => {
+export const AxiosApi = (tokenFor = 'user', initialToken = null, customHeaders = {}) => {
+    let csrfTokenMeta;
+    if (initialToken) {
+        csrfTokenMeta = initialToken;
+    } else {
+        if (tokenFor === 'user') {
+            csrfTokenMeta = localStorage.getItem('token');
+        } else if (tokenFor === 'agent') {
+            csrfTokenMeta = localStorage.getItem('agentToken') ?? localStorage.getItem('token');
+        } else {
+            csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('token');
+        }
+    }
+
+
     const instance = axios.create({
         withCredentials: true,
         headers: {
             ...{
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json',
+                'Authorization':`Bearer ${csrfTokenMeta}`,
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -108,26 +123,30 @@ export const AxiosApi = (tokenFor = 'user', token = null, customHeaders = {}) =>
         },
     });
 
+    instance.interceptors.request.use(
+        (config) => {
+            let csrfTokenMeta;
+            if (initialToken) {
+                csrfTokenMeta = initialToken;
+            } else {
+                if (tokenFor === 'user') {
+                    csrfTokenMeta = localStorage.getItem('token');
+                } else if (tokenFor === 'agent') {
+                    csrfTokenMeta = localStorage.getItem('agentToken') ?? localStorage.getItem('token');
+                } else {
+                    csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('token');
+                }
+            }
 
-    let csrfTokenMeta;
-
-    // Retrieve token dynamically
-
-    if (token) {
-        csrfTokenMeta = token;
-    } else {
-
-        if (tokenFor == 'user') {
-            csrfTokenMeta = localStorage.getItem('token');
-        } else if (tokenFor == 'agent') {
-            csrfTokenMeta = localStorage.getItem('agentToken') ?? localStorage.getItem('token');
-        } else {
-            csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('token');
+            if (csrfTokenMeta) {
+                config.headers.Authorization = `Bearer ${csrfTokenMeta}`;
+            }
+            return config;
+        },
+        (error) => {
+            return Promise.reject(error);
         }
-    }
-    if (csrfTokenMeta) {
-        instance.defaults.headers.Authorization = `Bearer ${csrfTokenMeta}`;
-    }
+    );
 
     return instance;
 }
