@@ -204,7 +204,7 @@ export default function ViewAgents() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
+                          <AlertDialogAction class={"text-red-800"}
                             onClick={() => handleDelete(agent.id)}
                           >
                             Delete

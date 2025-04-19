@@ -3,17 +3,17 @@
 import React, {useEffect, useState} from "react";
 import {motion} from 'framer-motion';
 import {fadeIn} from '@/lib/variants';
-import {HomeIcon, Star, Target, X} from "lucide-react";
+import {Star, Target} from "lucide-react";
 import {Dialog, DialogContent} from "@/components/ui/dialog";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {backendUrl, baseURL, frontendURL} from "@/../next.config";
+import {baseURL} from "@/../next.config";
 import type {Apartment, ApiResponse} from '@/types/apartment';
 import House from '@/components/assets/house1.jpeg';
 import House2 from '@/components/assets/house2.jpeg';
 import House3 from '@/components/assets/house4.jpeg';
 import House4 from '@/components/assets/house5.jpeg';
 
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 
 const Home: React.FC = () => {
     const images = [
@@ -169,10 +169,22 @@ const Home: React.FC = () => {
             </div>
             <div className="flex flex-col gap-2">
                 <h3 className="font-semibold text-lg">{apartment.title}</h3>
+
+                {
+                    apartment.category && <div className="flex items-center gap-2 text-xs font-bold">
+                        {/*<Boxes className="text-orange-500"/>*/}
+                        <span className="text-gray-600">Category: {apartment.category}</span>
+                    </div>
+                }
                 <p className="text-sm text-gray-600">{apartment.description}</p>
                 <div className="flex justify-between items-center">
                     <span className="text-orange-500 font-semibold">{apartment.amount}</span>
                     <span className="text-sm text-gray-500">{apartment.duration}</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                    Location
+                    <span
+                        className="text-gray-600">{`${apartment.city_code}, ${apartment.state_code}`}</span>
                 </div>
                 <button
                     onClick={() => handleApartmentClick(apartment)}
@@ -335,12 +347,12 @@ const Home: React.FC = () => {
                         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="text-xl font-semibold">Search Results</h2>
-                                <button
-                                    onClick={() => setIsDialogOpen(false)}
-                                    className="p-1 hover:bg-gray-100 rounded-full"
-                                >
-                                    <X className="h-5 w-5"/>
-                                </button>
+                                {/*<button*/}
+                                {/*    onClick={() => setIsDialogOpen(false)}*/}
+                                {/*    className="p-1 hover:bg-gray-100 rounded-full"*/}
+                                {/*>*/}
+                                {/*    <X className="h-5 w-5"/>*/}
+                                {/*</button>*/}
                             </div>
 
                             {error && (

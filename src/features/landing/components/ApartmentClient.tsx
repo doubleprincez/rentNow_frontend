@@ -253,7 +253,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                             <div className="flex items-center gap-2">
                                 <MapPin className="text-orange-500"/>
                                 <span
-                                    className="text-gray-600">{`${apartment.city_code}, ${apartment.state_code}, ${apartment.country_code}`}</span>
+                                    className="text-gray-600">{`${apartment.city_code}, ${apartment.state_code}`}</span>
                             </div>
 
                             <div className="flex items-center gap-2">
