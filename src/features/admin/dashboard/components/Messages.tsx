@@ -75,17 +75,17 @@ const Messages = () => {
                 const newMessages = response.data.data;
                 setMessages(response.data.data);
                 scrollToBottom();
-                
+
                 // Check if there are new messages
                 if (messages.length < newMessages.length) {
                     setHasNewMessage(true);
                 }
-                
+
                 // Sort messages by creation date in ascending order
-                const sortedMessages = newMessages.sort((a: any, b: any) => 
+                const sortedMessages = newMessages.sort((a: any, b: any) =>
                     new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
                 );
-                
+
                 setMessages(sortedMessages);
             }
         } catch (error) {
@@ -98,13 +98,13 @@ const Messages = () => {
         if (selectedUser?.id) {
             fetchMessages();
 
-            const interval = setInterval(fetchMessages, 3000);
-            setMessagePollingInterval(interval);
-
+            // const interval = setInterval(fetchMessages, 3000);
+            // setMessagePollingInterval(interval);
+            // fetchMessages
             return () => {
-                if (messagePollingInterval) {
-                    clearInterval(messagePollingInterval);
-                }
+                // if (messagePollingInterval) {
+                    // clearInterval(messagePollingInterval);
+                // }
             };
         }
     }, [selectedUser]);
@@ -123,10 +123,10 @@ const Messages = () => {
 
     // Fetch users when tab, page, or search changes
     useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            loadUsers();
-        }, 500);
-        return () => clearTimeout(timeoutId);
+        loadUsers();
+        // const timeoutId = setTimeout(() => {
+        // }, 500);
+        // return () => clearTimeout(timeoutId);
     }, [activeTab, currentPage, searchTerm]);
 
     // Load conversation when user is selected
@@ -136,55 +136,55 @@ const Messages = () => {
         }
     }, [selectedUser]);
 
-    useEffect(() => {
-        const getAdminData = async () => {
-            try {
-                const token = getFormData('adminToken');
-                if (!token) {
-                    toast({
-                        title: "Error",
-                        description: "Not authenticated",
-                        variant: "destructive",
-                    });
-                    return;
-                }
-
-                // Get admin profile to get the correct ID
-                const response = await axios.get(
-                    `${baseURL}/admin/profile`,
-                    getAuthHeader()
-                );
-                
-                if (response.data?.data?.id) {
-                    setAdminId(response.data.data.id);
-                }
-            } catch (error) {
-                toast({
-                    title: "Error",
-                    description: "Failed to get admin profile",
-                    variant: "destructive",
-                });
-            }
-        };
-
-        getAdminData();
-    }, []);
+    // useEffect(() => {
+    //     const getAdminData = async () => {
+    //         try {
+    //             const token = getFormData('adminToken');
+    //             if (!token) {
+    //                 toast({
+    //                     title: "Error",
+    //                     description: "Not authenticated",
+    //                     variant: "destructive",
+    //                 });
+    //                 return;
+    //             }
+    //
+    //             // Get admin profile to get the correct ID
+    //             const response = await axios.get(
+    //                 `${baseURL}/admin/profile`,
+    //                 getAuthHeader()
+    //             );
+    //
+    //             if (response.data?.data?.id) {
+    //                 setAdminId(response.data.data.id);
+    //             }
+    //         } catch (error) {
+    //             toast({
+    //                 title: "Error",
+    //                 description: "Failed to get admin profile",
+    //                 variant: "destructive",
+    //             });
+    //         }
+    //     };
+    //
+    //     getAdminData();
+    // }, []);
 
     const loadUsers = async () => {
         try {
             setIsLoading(true);
             const response = await getUsers(
-                currentPage, 
-                searchTerm, 
+                currentPage,
+                searchTerm,
                 activeTab === 'agents' ? 'agents' : 'users'
             );
 
-            const filteredUsers = response.data.filter(user => 
-                activeTab === 'agents' 
+            const filteredUsers = response.data.filter(user =>
+                activeTab === 'agents'
                     ? user?.account?.slug === 'agents'
                     : user?.account?.slug === 'users'
             );
-            
+
             setUsers(filteredUsers);
             setTotalPages(Math.ceil(response.total / response.per_page));
         } catch (error) {
@@ -204,8 +204,8 @@ const Messages = () => {
         try {
             setIsLoading(true);
             const conversations = await conversationApi.getAllConversations();
-            
-            const existingConversation = conversations.find(conv => 
+
+            const existingConversation = conversations.find(conv =>
                 conv.participants?.some(p => p.id === selectedUser.id)
             );
 
@@ -213,12 +213,12 @@ const Messages = () => {
                 const conversation = await conversationApi.getConversation(existingConversation.id);
                 setCurrentConversation(conversation);
             } else {
-                const newConversation = await conversationApi.createConversation({
-                    from_id: userId, // Use admin ID from Redux state
-                    to_id: selectedUser.id,
-                    message: 'Hello! How can I help you today?'
-                });
-                setCurrentConversation(newConversation);
+                // const newConversation = await conversationApi.createConversation({
+                //     from_id: userId, // Use admin ID from Redux state
+                //     to_id: selectedUser.id,
+                //     message: 'Hello! How can I help you today?'
+                // });
+                // setCurrentConversation(newConversation);
             }
         } catch (error) {
             toast({
@@ -250,7 +250,7 @@ const Messages = () => {
 
         try {
             setIsLoading(true);
-            
+
             const messageParams = {
                 from_id: userId,
                 to_id: selectedUser.id,
@@ -258,7 +258,7 @@ const Messages = () => {
             };
 
             await conversationApi.sendMessage(selectedUser.id, messageParams);
-            
+
             // Set hasNewMessage to true before fetching updated messages
             setHasNewMessage(true);
             await fetchMessages();
@@ -316,7 +316,7 @@ const Messages = () => {
                     <TabsTrigger value="agents">Agents</TabsTrigger>
                     <TabsTrigger value="users">Users</TabsTrigger>
                 </TabsList>
-                
+
                 {/* -----WEB CHAT---- */}
                 <div className="hidden md:grid grid-cols-3 gap-4 h-[calc(100vh-170px)] overflow-hidden">
                     {/* Users List */}
@@ -388,7 +388,7 @@ const Messages = () => {
                                         <h3 className="font-medium">Chat with {selectedUser.name}</h3>
                                         <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
                                     </div>
-                                    
+
                                     {isLoading && messages.length === 0 ? (
                                         <div className="flex-1 flex items-center justify-center">
                                             Loading conversation...
@@ -496,7 +496,7 @@ const Messages = () => {
                                                 <h3 className="font-medium">Chat with {selectedUser.name}</h3>
                                                 <p className="text-sm text-muted-foreground">{selectedUser.email}</p>
                                             </div>
-                                            
+
                                             {isLoading && messages.length === 0 ? (
                                                 <div className="flex-1 flex items-center justify-center">
                                                     Loading conversation...

@@ -5,13 +5,16 @@ import Link from 'next/link';
 import { BookOpenText, Building2Icon, CirclePlus, CircleUser, Globe, Home, Mail } from 'lucide-react';
 import Image from 'next/image';
 import Logo from '@/components/assets/logo/logo.png'
-import { useDispatch } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import { logout } from '@/redux/agentSlice';
+import {RootState} from "@/redux/store";
 
 const Sidenav = () => {
     const pathname = usePathname();
     const dispatch = useDispatch();
     const router = useRouter();
+
+    const agent = useSelector((state: RootState) => state.agent);
 
     const links = [
         {
@@ -52,7 +55,7 @@ const Sidenav = () => {
     ]
 
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(logout(agent));
         router.push('/agents/auth/login');
     };
 

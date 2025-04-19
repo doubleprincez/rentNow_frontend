@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
-import {getFormData, saveFormData} from "@/lib/utils";
+import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
 
 interface AgentState {
     isLoggedIn: boolean;
@@ -106,6 +106,7 @@ const removeFromStorage = (key: string): void => {
     if (!isClient) return;
     try {
         localStorage.removeItem(key);
+        deleteFormData(key);
     } catch (error) {
         console.error('Error removing from localStorage:', error);
     }

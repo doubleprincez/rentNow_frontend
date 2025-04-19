@@ -1,13 +1,14 @@
 'use client';
 
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import axios from 'axios';
 import {useAlert} from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
-import {useDropzone} from "react-dropzone";
-import {getFormData} from "@/lib/utils";
+import {AxiosApi} from "@/lib/utils";
 import {AVAILABLE_AMENITIES} from "@/types/apartment";
+import {useSelector} from "react-redux";
+import {useRouter} from "next/navigation";
 
 interface Category {
     id: number;
@@ -15,7 +16,7 @@ interface Category {
     slug: string;
 }
 
-export  interface PropertyFormData {
+export interface PropertyFormData {
     id: number;
     category_id: number;
     title: string;
@@ -38,7 +39,6 @@ export  interface PropertyFormData {
 }
 
 
-
 const MAX_FILES = 5;
 
 interface EditApartmentFormProps {
@@ -55,6 +55,8 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
 
+    const token = useSelector((state: any) => state.admin.token);
+
     const {
         register,
         handleSubmit,
@@ -63,92 +65,33 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
         watch,
         reset,
         trigger
-    } = useForm<PropertyFormData>({
-        defaultValues: property
-    });
-
-    // useEffect(() => {
-    //     if (property) {
-    //         reset(property, {keepDefaultValues: true}); // Reset form values to match the new property data
-    //         if (property.amenities) {
-    //             setSelectedAmenities(property.amenities);
-    //         }
-    //     }
-    // }, [property, step, reset]);
-
+    } = useForm<PropertyFormData>();
 
     useEffect(() => {
-
-        fetchCategories().then(r => r);
-        if (property.amenities) {
-            setSelectedAmenities(property.amenities);
+        if (property) {
+            reset({
+                ...property,
+                category_id: property.category_id || undefined,
+                title: property.title || '',
+                description: property.description || '',
+                number_of_rooms: property.number_of_rooms || null,
+                amount: property.amount || 0,
+                currency_code: property.currency_code || '₦',
+                security_deposit: property.security_deposit || null,
+                security_deposit_currency_code: property.security_deposit_currency_code || null,
+                duration: property.duration || 0,
+                duration_type: property.duration_type || 'day',
+                amenities: property.amenities || [],
+                country_code: property.country_code || 'NG',
+                state_code: property.state_code || '',
+                city_code: property.city_code || '',
+                published: property.published || false,
+                can_rate: property.can_rate || false,
+                images: property.images || null,
+                videos: property.videos || null,
+            });
         }
-
-        async function fetchMedia() {
-            try {
-
-                const images = property.images; // Extract media from response
-                const videos = property.videos; // Extract media from response
-
-                // Convert image URLs to File objects
-                if (images) {
-                    const imageFiles = await Promise.all(
-                        images.map(async (url) =>url)
-                    );
-                    setUploadedImages(imageFiles);
-                }
-
-                // Convert video URLs to File objects
-                if (videos) {
-                    const videoFiles = await Promise.all(
-                        videos.map(async (url) => url)
-                    );
-                    setUploadedVideos(videoFiles);
-                }
-            } catch (error) {
-                console.error("Error fetching media:", error);
-            }
-        }
-
-        if (property.id) {
-            fetchMedia().then(r => r);
-        }
-    }, []);
-
-    async function urlToFile(url: string) {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        return new File([blob], url.split("/").pop() || "file", {type: blob.type});
-    }
-
-    const fetchCategories = async () => {
-        try {
-            const response = await axios.get<{ success: boolean; data: Category[] }>(
-                baseURL + '/apartment-types',
-                {
-                    headers: {
-                        'Authorization': `Bearer ${getAuthToken()}`,
-                        'Accept': 'application/json',
-                    },
-                    withCredentials: true
-                }
-            );
-            if (response.data.success) {
-                setCategories(response.data.data);
-            }
-        } catch (error) {
-            if (axios.isAxiosError(error) && error.response?.status === 401) {
-                showAlert('Please login to continue', 'error');
-            }
-        }
-    };
-
-    const getAuthToken = (): string | null => {
-        if (typeof window !== 'undefined') {
-            return getFormData('agentToken');
-        }
-        return null;
-    };
+    }, [property, reset]);
 
     const handleAmenityToggle = (amenity: string) => {
         setSelectedAmenities(prev => {
@@ -160,49 +103,28 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
         });
     };
 
-    const onDropImages = useCallback(
-        (acceptedFiles: File[]) => {
-            setUploadedImages(prevImages => {
-                const newFiles = [...prevImages, ...acceptedFiles].slice(0, MAX_FILES);
-                setValue("images", newFiles);
-                return newFiles;
-            });
-        },
-        [setValue]
-    );
+const router = useRouter();
 
-    const onDropVideos = useCallback(
-        (acceptedFiles: File[]) => {
-            setUploadedVideos(prevVideos => {
-                const newFiles = [...prevVideos, ...acceptedFiles].slice(0, MAX_FILES);
-                setValue("videos", newFiles);
-                return newFiles;
-            });
-        },
-        [setValue]
-    );
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await AxiosApi('agent').get<{ success: boolean; data: Category[] }>(
+                    baseURL + '/apartment-types');
+                if (response.data.success) {
+                    setCategories(response.data.data);
+                    if (property && property.category_id && response.data.data.some(cat => cat.id === property.category_id)) {
+                        setValue('category_id', property.category_id);
+                    }
+                }
+            } catch (error) {
+                if (axios.isAxiosError(error) && error.response?.status === 401) {
+                    showAlert('Please login to continue', 'error');
+                }
+            }
+        };
 
-    const removeImage = (index: number) => {
-        const updatedFiles = uploadedImages.filter((_, i) => i !== index);
-        setUploadedImages(updatedFiles);
-        setValue("images", updatedFiles);
-    };
-
-    const removeVideo = (index: number) => {
-        const updatedFiles = uploadedVideos.filter((_, i) => i !== index);
-        setUploadedVideos(updatedFiles);
-        setValue("videos", updatedFiles);
-    };
-
-    const {getRootProps: getImageRootProps, getInputProps: getImageInputProps} = useDropzone({
-        accept: {"image/*": []},
-        onDrop: onDropImages,
-    });
-
-    const {getRootProps: getVideoRootProps, getInputProps: getVideoInputProps} = useDropzone({
-        accept: {"video/*": []},
-        onDrop: onDropVideos,
-    });
+        fetchCategories();
+    }, [setCategories, setValue, property]);
 
     const validateStep = async (): Promise<boolean> => {
         let fieldsToValidate: Array<keyof PropertyFormData> = [];
@@ -220,18 +142,77 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                 fieldsToValidate = ['country_code', 'state_code', 'city_code'];
                 break;
             case 5:
-                fieldsToValidate = ['images', 'videos'];
-                break;
+                return uploadedImages.length > 0 && uploadedVideos.length > 0;
         }
         return await trigger(fieldsToValidate);
     };
 
+    useEffect(() => {
+
+        const subscription = watch((value) => value);
+        return () => subscription.unsubscribe(); // Clean up the subscription
+
+    }, [watch, step]);
+
+
     const nextStep = async (): Promise<void> => {
-        // const isValid = await validateStep();
-        // if (isValid) {
-        setStep(current => Math.min(current + 1, 5));
-        // }
+        const isValid = await validateStep();
+        if (isValid) {
+            setStep(current => Math.min(current + 1, 5));
+        }
     };
+
+    // handle images
+    const handleDropImages = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const droppedFiles = Array.from(e.dataTransfer.files).filter(file =>
+            file.type.startsWith("image/")
+        );
+
+        const totalFiles = [...uploadedImages, ...droppedFiles].slice(0, MAX_FILES);
+        setUploadedImages(totalFiles);
+    };
+
+    // handle videos and files dropping
+    const handleDropVideos = (e: React.DragEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        const droppedFiles = Array.from(e.dataTransfer.files).filter(file =>
+            file.type.startsWith("video/")
+        );
+
+        const totalFiles = [...uploadedVideos, ...droppedFiles].slice(0, MAX_FILES);
+        setUploadedVideos(totalFiles);
+    };
+
+    // Handle File Removed
+    const handleRemoveImage = (index: number) => {
+        const updated = uploadedImages.filter((_, i) => i !== index);
+        setUploadedImages(updated);
+    };
+    const handleRemoveVideo = (index: number) => {
+        const updated = uploadedVideos.filter((_, i) => i !== index);
+        setUploadedVideos(updated);
+    };
+
+    // Handle File Input
+
+    const handleImageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFiles = Array.from(e.target.files || []).filter(file =>
+            file.type.startsWith("image/")
+        );
+
+        const totalFiles = [...uploadedImages, ...selectedFiles].slice(0, MAX_FILES);
+        setUploadedImages(totalFiles);
+    };
+    const handleVideoInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFiles = Array.from(e.target.files || []).filter(file =>
+            file.type.startsWith("video/")
+        );
+
+        const totalFiles = [...uploadedVideos, ...selectedFiles].slice(0, MAX_FILES);
+        setUploadedVideos(totalFiles);
+    };
+
 
     const prevStep = (): void => {
         setStep(current => Math.max(current - 1, 1));
@@ -239,6 +220,12 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
 
     const onSubmit = async (data: PropertyFormData) => {
         if (step !== 5) return;
+
+        if (!uploadedImages.length || !uploadedVideos.length) {
+            showAlert('Please upload at least one image and one video', 'info');
+            setIsLoading(false);
+            return;
+        }
 
         if (isLoading) return;
         setIsLoading(true);
@@ -254,61 +241,47 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                 }
             }
         });
+        uploadedImages.forEach(image => formData.append("images[]", image));
+        uploadedVideos.forEach(file => formData.append("videos[]", file));
 
-        if (uploadedImages) {
-            uploadedImages.forEach(file => formData.append("images[]", file));
-        }
-        if (uploadedVideos) {
-            uploadedVideos.forEach(file => formData.append("videos[]", file));
-        }
+        formData.append('published', 'false');
+        formData.append('can_rate', 'false');
 
         try {
-            const token = getAuthToken();
             if (!token) {
                 showAlert('Please login to add a property', 'error');
                 setIsLoading(false);
                 return;
             }
 
-            const response = await axios.put(
-                baseURL + '/apartment/' + property.id,
-                formData,
-                {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json',
-                        "Content-Type": "application/json"
-                    },
-                    withCredentials: true,
-
-                }
-            );
+            const response = await AxiosApi('agent', token, {'Content-Type': 'multipart/form-data'}).put(
+                baseURL + '/apartment/'+property.id, formData);
 
             if (response.data.success) {
-                showAlert('Property successfully updated!', 'success');
-                reset(response.data.data);
-
-
+                showAlert('Property successfully Updated!', 'success');
+                // reset();
+                // setSelectedAmenities([]);
                 // setStep(1);
+                router.push('/admin/dashboard/view-apartments');
+
             }
 
+            // setUploadProgress(100);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
             }
         } finally {
+            // setTimeout(() => setUploadProgress(null), 1500);
             setIsLoading(false);
         }
     };
-
-
     return (
         <div className="w-full flex flex-col px-2 md:px-6 py-2 md:py-6 gap-2 md:gap-4">
             <div className="flex justify-between items-center">
-                <h1 className="text-black/80 text-[1.5rem] font-semibold">Edit Property: </h1>
+                <h1 className="text-black/80 text-[1.5rem] font-semibold">Update Property</h1>
                 <span className="text-orange-500 font-medium">Step {step} / 5</span>
             </div>
-            <div className={"-mt-3"}>  {property?.title} </div>
 
             <form onSubmit={handleSubmit(onSubmit)}
                   className="w-full flex flex-col gap-6 bg-black/80 rounded-xl shadow-md shadow-orange-600 p-4">
@@ -318,12 +291,15 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Property Category</label>
                             <select
-                                {...register('category_id')}
+                                {...register('category_id', {
+                                    required: 'Category is required',
+                                    setValueAs: (value) => (value ? parseInt(value, 10) : undefined),
+                                })}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
                             >
                                 <option value="">Select Category</option>
                                 {categories.map((category) => (
-                                    <option key={category.id} value={category.id}>
+                                    <option key={category.id} value={category.id.toString()}>
                                         {category.title}
                                     </option>
                                 ))}
@@ -334,7 +310,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Title</label>
                             <input
-                                {...register('title',)}
+                                {...register('title', {required: 'Title is required'})}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
@@ -357,24 +333,6 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                                 rows={4}
                             />
                         </div>
-                        <div className={"flex justify-start"}><input type={"checkbox"}
-                                                                     {...register('published')}
-                                                                     className=" border border-gray-300 rounded-lg px-4 py-2 rounded"
-
-                        />
-                            <label
-                                className="block text-sm font-semibold mb-2 px-2 text-white  pt-2">{"Publish"}</label>
-
-                        </div>
-                        <div className={"flex justify-start"}><input type={"checkbox"}
-                                                                     {...register('can_rate')}
-                                                                     className=" border border-gray-300 rounded-lg px-4 py-2 rounded"
-
-                        />
-                            <label
-                                className="block text-sm font-semibold mb-2 text-white px-2 pt-2">{"Allow Rating"}</label>
-
-                        </div>
                     </div>
                 )}
 
@@ -384,7 +342,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                             <label className="block text-sm font-semibold mb-2 text-white">Amount</label>
                             <input
                                 type="number"
-                                {...register('amount')}
+                                {...register('amount', {required: 'Amount is required'})}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.amount && <p className="text-red-500 text-sm">{errors.amount.message}</p>}
@@ -393,12 +351,12 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                         <div className={"hidden"}>
                             <label className="block text-sm font-semibold mb-2 text-white">Currency Code</label>
                             <input
-                                {...register('currency_code')}
+                                {...register('currency_code', {required: 'Currency code is required'})}
                                 defaultValue="₦"
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.currency_code &&
-                            <p className="text-red-500 text-sm">{errors.currency_code.message}</p>}
+                                <p className="text-red-500 text-sm">{errors.currency_code.message}</p>}
                         </div>
 
                         <div>
@@ -417,7 +375,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Duration Type</label>
                             <select
-                                {...register('duration_type')}
+                                {...register('duration_type', {required: 'Duration type is required'})}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
                             >
                                 <option value="day">Day</option>
@@ -426,14 +384,14 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                                 <option value="year">Year</option>
                             </select>
                             {errors.duration_type &&
-                            <p className="text-red-500 text-sm">{errors.duration_type.message}</p>}
+                                <p className="text-red-500 text-sm">{errors.duration_type.message}</p>}
                         </div>
 
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Rent Duration</label>
                             <input
                                 type="number"
-                                {...register('duration')}
+                                {...register('duration', {required: 'Duration is required'})}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
                             />
                             {errors.duration && <p className="text-red-500 text-sm">{errors.duration.message}</p>}
@@ -465,18 +423,18 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                         <div className='hidden'>
                             <label className="block text-sm font-semibold mb-2 text-white">Country</label>
                             <input
-                                {...register('country_code')}
+                                {...register('country_code', {required: 'Country code is required'})}
                                 defaultValue="NG"
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.country_code &&
-                            <p className="text-red-500 text-sm">{errors.country_code.message}</p>}
+                                <p className="text-red-500 text-sm">{errors.country_code.message}</p>}
                         </div>
 
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">State</label>
                             <input
-                                {...register('state_code')}
+                                {...register('state_code', {required: 'State is required'})}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.state_code && <p className="text-red-500 text-sm">{errors.state_code.message}</p>}
@@ -485,7 +443,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">City</label>
                             <input
-                                {...register('city_code')}
+                                {...register('city_code', {required: 'City is required'})}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
                             {errors.city_code && <p className="text-red-500 text-sm">{errors.city_code.message}</p>}
@@ -497,21 +455,28 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                     <div className="space-y-6">
                         <div>
                             <label className="block  text-sm font-semibold mb-2 text-white  ">Images (At least 1
-                                required,
-                                max 5, each &lt;30MB)</label>
+                                required,Max: {MAX_FILES})</label>
                             {/* <div className="grid grid-cols-2 md:grid-cols-5 gap-4"> */}
                             <div className={"text-white"}>
-                                <div  {...getImageRootProps()}
-                                      style={{
-                                          border: "2px dashed #ccc",
-                                          padding: "20px",
-                                          cursor: uploadedImages.length >= MAX_FILES ? "not-allowed" : "pointer",
-                                          opacity: uploadedImages.length >= MAX_FILES ? 0.5 : 1,
-                                          marginBottom: "10px",
-                                      }}>
-                                    <input {...getImageInputProps()} />
-                                    <p>{uploadedImages.length >= MAX_FILES ? "Max limit reached" : "Drag & drop images here, or click to select"}</p>
-
+                                <div
+                                    onDrop={handleDropImages}
+                                    onDragOver={(e) => e.preventDefault()}
+                                    style={{
+                                        border: "2px dashed #ccc",
+                                        padding: "20px",
+                                        marginBottom: "10px",
+                                        opacity: uploadedImages.length >= MAX_FILES ? 0.5 : 1,
+                                        cursor: uploadedImages.length >= MAX_FILES ? "not-allowed" : "pointer"
+                                    }}
+                                >
+                                    <p>{uploadedImages.length >= MAX_FILES ? "Maximum image limit reached" : "Drag & drop images here, or click to select"}</p>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        onChange={handleImageInput}
+                                        disabled={uploadedImages.length >= MAX_FILES}
+                                    />
                                 </div>
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
                                     {uploadedImages && uploadedImages.map((file, index) => (
@@ -524,7 +489,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                                                 style={{borderRadius: "5px", objectFit: "cover"}}
                                             />
                                             <button
-                                                onClick={() => removeImage(index)}
+                                                onClick={() => handleRemoveImage(index)} type={"button"}
                                                 style={{
                                                     position: "absolute",
                                                     top: 0,
@@ -547,21 +512,30 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
 
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Videos (At least 1 required,
-                                max 5, each &lt;80MB)</label>
+                                Max: {MAX_FILES})</label>
                             <div className={"text-white"}>
-                                <div {...getVideoRootProps()}
-                                     style={{
-                                         border: "2px dashed #ccc",
-                                         padding: "20px",
-                                         cursor: uploadedVideos.length >= MAX_FILES ? "not-allowed" : "pointer",
-                                         opacity: uploadedVideos.length >= MAX_FILES ? 0.5 : 1,
-                                         marginBottom: "10px",
-                                     }}>
-                                    <input {...getVideoInputProps()} />
-                                    <p>{uploadedVideos.length >= MAX_FILES ? "Max limit reached" : "Drag & drop videos here, or click to select"}</p>
+
+                                <div
+                                    onDrop={handleDropVideos}
+                                    onDragOver={(e) => e.preventDefault()}
+                                    style={{
+                                        border: "2px dashed #ccc",
+                                        padding: "20px",
+                                        marginBottom: "10px",
+                                        opacity: uploadedVideos.length >= MAX_FILES ? 0.5 : 1,
+                                        cursor: uploadedVideos.length >= MAX_FILES ? "not-allowed" : "pointer"
+                                    }}
+                                >
+                                    <p>{uploadedVideos.length >= MAX_FILES ? "Maximum video limit reached" : "Drag & drop videos here, or click to select"}</p>
+                                    <input
+                                        type="file"
+                                        accept="video/*"
+                                        multiple
+                                        onChange={handleVideoInput}
+                                        disabled={uploadedVideos.length >= MAX_FILES}
+                                    />
                                 </div>
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
-
 
                                     {uploadedVideos.map((file, index) => (
                                         <div key={index} style={{position: "relative", minHeight: "90px"}}>
@@ -573,7 +547,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                                                 style={{borderRadius: "5px", objectFit: "cover"}}
                                             />
                                             <button
-                                                onClick={() => removeVideo(index)}
+                                                onClick={() => handleRemoveVideo(index)} type={"button"}
                                                 style={{
                                                     position: "absolute",
                                                     top: 0,
@@ -622,21 +596,16 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                             disabled={isLoading}
                             className="ml-auto px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50"
                         >
-                            {isLoading ? 'Updating...' : 'Update Property'}
+                            {isLoading ? 'Submitting...' : 'Submit Property'}
                         </button>
                     )}
                 </div>
             </form>
 
-            {/*{uploadProgress !== null && (*/}
-            {/*    <div style={{marginTop: "10px"}}>*/}
-            {/*        <progress value={uploadProgress} max={100} style={{width: "100%"}}/>*/}
-            {/*        <p>{uploadProgress}%</p>*/}
-            {/*    </div>*/}
-            {/*)}*/}
         </div>
     );
 };
+
 
 export default EditApartmentForm;
 

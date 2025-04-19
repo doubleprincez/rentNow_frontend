@@ -1,29 +1,15 @@
 'use client'
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
-import {getAllApartments, deleteApartment, type Apartment} from '../api/get-all-apartments';
-import {Search, ChevronLeft, ChevronRight,   Pencil} from 'lucide-react';
-import {updateApartment} from "../api/get-all-apartments";
+import {Dialog, DialogContent, DialogHeader, DialogTrigger,} from '@/components/ui/dialog';
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
+import {type Apartment, deleteApartment, getAllApartments, updateApartment} from '../api/get-all-apartments';
+import {ChevronLeft, ChevronRight, Pencil, Search} from 'lucide-react';
 import Link from "next/link";
-import { DialogDescription } from '@radix-ui/react-dialog';
+import {DialogDescription} from '@radix-ui/react-dialog';
 import {RootState} from "@/redux/store";
 
 const ViewApartment = () => {
@@ -40,7 +26,7 @@ const ViewApartment = () => {
     const fetchApartments = async () => {
         try {
             setLoading(true);
-            const response = await getAllApartments(currentPage, searchTerm,token);
+            const response = await getAllApartments(currentPage, searchTerm, token);
 
             if (response.success && response.data) {
                 setApartments(response.data.data);
@@ -144,12 +130,12 @@ const ViewApartment = () => {
                             </TableRow>
                         ) : !Array.isArray(apartments) || apartments.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center">
+                                <TableCell colSpan={6} className="text-center">
                                     No apartments found
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            apartments.map((apartment) => (
+                            Object.values(apartments).map((apartment) => (
                                 <TableRow key={apartment.id}>
                                     <TableCell>
                                         <div className='w-14 h-14 rounded-md overflow-hidden'>
@@ -172,7 +158,7 @@ const ViewApartment = () => {
                                             </DialogTrigger>
                                             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                                                 <DialogHeader>
-                                                <DialogDescription>{apartment.title} </DialogDescription>
+                                                    <DialogDescription>{apartment.title} </DialogDescription>
                                                     {/* <DialogTitle>{apartment.title}</DialogTitle> */}
                                                 </DialogHeader>
                                                 <div className="grid gap-4 py-4">
@@ -207,8 +193,9 @@ const ViewApartment = () => {
                                     <TableCell>{`${apartment.city_code}, ${apartment.state_code}`}</TableCell>
                                     <TableCell>{apartment.amount}</TableCell>
                                     <TableCell className={'flex '}>
-                                        <Link  className={"mt-1"} href={"/admin/dashboard/edit-apartment/"+apartment.id}>
-                                            <Pencil />
+                                        <Link className={"mt-1"}
+                                              href={"/admin/dashboard/edit-apartment/" + apartment.id}>
+                                            <Pencil/>
                                         </Link>
                                         <Button
                                             variant="destructive"
@@ -219,7 +206,7 @@ const ViewApartment = () => {
                                             Delete
                                         </Button>
                                         {
-                                             !apartment.published ? <Button
+                                            !apartment.published ? <Button
                                                 variant="outline"
                                                 size="sm"
                                                 className='bg-green-500 text-white px-4 py-1 mx-3 rounded-md'
