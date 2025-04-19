@@ -7,6 +7,7 @@ import {useAlert} from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
 import {useDropzone} from "react-dropzone";
 import {getFormData} from "@/lib/utils";
+import {AVAILABLE_AMENITIES} from "@/types/apartment";
 
 interface Category {
     id: number;
@@ -36,11 +37,7 @@ export  interface PropertyFormData {
     videos: File[] | null;
 }
 
-const AVAILABLE_AMENITIES = [
-    'WiFi', 'Parking', 'Air Conditioning', 'Swimming Pool', 'Gym',
-    'Security', 'Furnished', 'Balcony', 'Garden', 'Pet Friendly',
-    'Elevator', 'CCTV', 'Generator', 'Water Supply', 'Kitchen'
-];
+
 
 const MAX_FILES = 5;
 

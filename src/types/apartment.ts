@@ -1,4 +1,3 @@
-
 export interface Image {
     name: string;
     file_name: string;
@@ -9,9 +8,9 @@ export interface Image {
     custom_properties: any[];
     extension: string;
     size: string;
-  }
-  
-  export interface Video {
+}
+
+export interface Video {
     name: string;
     file_name: string;
     uuid: string;
@@ -21,13 +20,13 @@ export interface Image {
     custom_properties: any[];
     extension: string;
     size: string;
-  }
-  
-  export interface Apartment {
+}
+
+export interface Apartment {
     agent_type?: string;
     agent_id?: number;
-    agent_phone?:number|string;
-    agent_email?:string;
+    agent_phone?: number | string;
+    agent_email?: string;
     id?: number;
     agent?: string;
     my_apartment?: boolean;
@@ -35,7 +34,7 @@ export interface Image {
     business_address?: string;
     business_email?: string;
     business_logo?: string;
-    business_phone?:string|number;
+    business_phone?: string | number;
     category_id?: string;
     category?: string;
     title?: string;
@@ -43,7 +42,7 @@ export interface Image {
     number_of_rooms?: string;
     amount?: string;
     security_deposit?: string;
-    security_deposit_currency_code?:string;
+    security_deposit_currency_code?: string;
     duration?: string;
     amenities?: any[];
     country_code?: string;
@@ -56,48 +55,74 @@ export interface Image {
     videos?: { [key: string]: Video };
     thumbnail?: null | string;
     views_count?: number;
-    like_apartment?:boolean;
-    like_count?:number;
-  }
-  
-  export interface PaginationLink {
+    like_apartment?: boolean;
+    like_count?: number;
+}
+
+
+export const AVAILABLE_AMENITIES = [
+    // 'WiFi',
+    // 'Air Conditioning',
+    // 'Swimming Pool',
+    // 'Gym',
+    'New House',
+    'Old House',
+    'Prepaid Meter',
+    'POP',
+    'Upstairs',
+    'Downstairs',
+    'Tiles',
+    'Security',
+    'Parking',
+    'Furnished',
+    'Balcony',
+    // 'Garden',
+    'Pet Friendly',
+    // 'Elevator',
+    'CCTV',
+    // 'Generator',
+    'Water Supply',
+    'Kitchen'
+];
+
+export interface PaginationLink {
     url: string | null;
     label: string;
     active: boolean;
-  }
-  
-  export interface ApiResponse {
+}
+
+export interface ApiResponse {
     success: boolean;
     message: string;
     data: {
-      current_page: number;
-      data: Apartment[];
-      first_page_url: string;
-      from: number;
-      last_page: number;
-      last_page_url: string;
-      links: PaginationLink[];
-      next_page_url: string | null;
-      path: string;
-      per_page: number;
-      prev_page_url: string | null;
-      to: number;
-      total: number;
+        current_page: number;
+        data: Apartment[];
+        first_page_url: string;
+        from: number;
+        last_page: number;
+        last_page_url: string;
+        links: PaginationLink[];
+        next_page_url: string | null;
+        path: string;
+        per_page: number;
+        prev_page_url: string | null;
+        to: number;
+        total: number;
     };
-  }
-  
-  
-  export interface FindHomesProps {
+}
+
+
+export interface FindHomesProps {
     initialData?: ApiResponse;
-  }
-  
-  export interface ApartmentCardProps {
+}
+
+export interface ApartmentCardProps {
     apartment: Apartment;
     onClick: (apartment: Apartment) => void;
-  }
-  
-  export interface CategoryTabProps {
+}
+
+export interface CategoryTabProps {
     category: string;
     apartments: Apartment[];
     onApartmentClick: (apartment: Apartment) => void;
-  }
+}

@@ -7,6 +7,7 @@ import {useAlert} from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
 import {AxiosApi} from "@/lib/utils";
 import {useSelector} from "react-redux";
+import {AVAILABLE_AMENITIES} from "@/types/apartment";
 
 
 interface Category {
@@ -34,11 +35,6 @@ interface PropertyFormData {
     videos: File[] | null;
 }
 
-const AVAILABLE_AMENITIES = [
-    'WiFi', 'Parking', 'Air Conditioning', 'Swimming Pool', 'Gym',
-    'Security', 'Furnished', 'Balcony', 'Garden', 'Pet Friendly',
-    'Elevator', 'CCTV', 'Generator', 'Water Supply', 'Kitchen'
-];
 
 const MAX_FILES = 5;
 
