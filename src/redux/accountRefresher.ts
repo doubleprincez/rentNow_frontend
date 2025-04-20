@@ -65,10 +65,10 @@ const accountRefresher = (account = 'user') => {
             await dispatch(logoutAdmin()).unwrap();
             router.push('/admin/login');
         } else if (account == 'agent') {
-            await dispatch(logoutAgent()).wrap();
+            await dispatch(logoutAgent());
             router.push('/agents/auth/login');
         } else {
-            await dispatch(logout()).wrap();
+            await dispatch(logout());
             return router.push('/');
         }
 
