@@ -49,7 +49,7 @@ interface EditApartmentFormProps {
     property: PropertyFormData;
 }
 
-interface ExistingImage {
+type ExistingImage = {
     custom_properties: any[];
     extension: string;
     file_name: string;
@@ -61,7 +61,7 @@ interface ExistingImage {
     uuid: string;
 }
 
-interface ExistingVideo {
+type ExistingVideo = {
     custom_properties: any[];
     extension: string;
     file_name: string;
@@ -80,8 +80,8 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-    const [existingImages, setExistingImages] = useState<ExistingImage[]>();
-    const [existingVideos, setExistingVideos] = useState<ExistingVideo[]>();
+    const [existingImages, setExistingImages] = useState<ExistingImage[] | []>([]);
+    const [existingVideos, setExistingVideos] = useState<ExistingVideo[] | []>([]);
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
 
@@ -95,7 +95,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
         watch,
         reset,
         trigger
-    } = useForm<PropertyFormData>(property);
+    } = useForm<PropertyFormData>();
 
     useEffect(() => {
         if (property) {
@@ -120,17 +120,23 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
 
             setSelectedAmenities(property.amenities || []);
             if (property && property.images) {
-                // Flatten the image object into an array of image objects
-                const flattenedImages: ExistingImage[] = Object.values(property.images).flatMap(imageArray => imageArray);
-
+                const flattenedImages = Object.values(property.images).flatMap(
+                    (imageArray: any) => {
+                        return imageArray;
+                    }
+                );
                 setExistingImages(flattenedImages);
-
+            } else {
+                setExistingImages([]);
             }
             if (property && property.videos) {
-                // Assuming a similar structure for videos, adjust accordingly
-                const flattenedVideos: ExistingVideo[] = Object.values(property.videos).flatMap(videoArray => videoArray);
+                // Flatten the image object into an array of ExistingImage objects
+                const flattenedVideos = Object.values(property.videos).flatMap(
+                    (videoArray: any) => videoArray // Directly return the inner array
+                );
                 setExistingVideos(flattenedVideos);
-
+            } else {
+                setExistingVideos([]);
             }
         }
     }, [property, reset]);
@@ -213,7 +219,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
             file.type.startsWith("image/")
         );
 
-        const totalFiles = [...existingImages, ...uploadedImages, ...droppedFiles].slice(0, MAX_FILES);
+        const totalFiles = [...uploadedImages, ...droppedFiles].slice(0, MAX_FILES);
         setUploadedImages(totalFiles);
     };
 
@@ -224,7 +230,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
             file.type.startsWith("video/")
         );
 
-        const totalFiles = [...uploadedVideos, ...droppedFiles].slice(0, MAX_FILES);
+        const totalFiles = [...droppedFiles].slice(0, MAX_FILES);
         setUploadedVideos(totalFiles);
     };
 
@@ -233,7 +239,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
         if (isLoading) return;
         setIsLoading(true);
         const imageToRemove = existingImages[index];
-        if (imageToRemove?.uuid) {
+        if (imageToRemove && imageToRemove?.uuid) {
             // Immediately call the API to delete the image
             const isDeleted = await deleteExistingImage(imageToRemove.uuid, token);
             if (isDeleted) {
@@ -257,7 +263,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
         if (isLoading) return;
         setIsLoading(true);
         const videoToRemove = existingVideos[index];
-        if (videoToRemove?.uuid) {
+        if (videoToRemove && videoToRemove?.uuid) {
             // Immediately call the API to delete the image
             const isDeleted = await deleteExistingVideos(videoToRemove.uuid, token);
             if (isDeleted) {

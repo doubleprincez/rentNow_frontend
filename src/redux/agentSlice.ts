@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
 import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
+import {logoutAdmin} from "@/redux/adminSlice";
 
 interface AgentState {
     isLoggedIn: boolean;
@@ -187,6 +188,37 @@ export const loginAgent = createAsyncThunk(
     }
 );
 
+
+
+export const logoutAgent = createAsyncThunk(
+    'agent/logout',
+    async (_, { rejectWithValue }) => {
+        try {
+            const token = getFromStorage('agentToken');
+            if (token) {
+                await axios.post(
+                    baseURL+'/logout',
+                    {},
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json',
+                        },
+                    }
+                );
+            }
+            removeFromStorage('agentToken');
+            removeFromStorage('agentState');
+            return null;
+        } catch (error) {
+            // Even if the logout API fails, we still want to clear local state
+            removeFromStorage('agentToken');
+            removeFromStorage('agentState');
+            return null;
+        }
+    }
+);
+
 const agentSlice = createSlice({
     name: 'agent',
     initialState: loadInitialState(),
@@ -226,9 +258,13 @@ const agentSlice = createSlice({
                 state.isLoading = false;
                 state.error = action.payload as string;
                 state.isLoggedIn = false;
-            });
+            })
+            .addCase(logoutAgent.fulfilled, (state) => {
+            Object.assign(state, initialState);
+        });
     }
 });
+
 
 export const { logout, initializeFromStorage } = agentSlice.actions;
 export default agentSlice.reducer;

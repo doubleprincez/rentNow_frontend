@@ -1,28 +1,30 @@
 'use client';
 
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '@/redux/store';
+import {useSelector} from 'react-redux';
+import {RootState} from '@/redux/store';
 import {login, logout} from "./userSlice";
 import {useEffect, useState} from "react";
 import {AxiosApi} from "@/lib/utils";
 import {baseURL} from '@/../next.config';
 import {logoutAdmin} from './adminSlice';
 import {useRouter} from 'next/navigation';
+import {useAppDispatch} from "@/redux/hook";
+import {logoutAgent} from "@/redux/agentSlice";
 
 
 const accountRefresher = (account = 'user') => {
-    const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useAppDispatch();
     const router = useRouter();
-    let isLoggedin, token: any;
+    let userLoggedIn, token: any;
 
     if (account == 'admin') {
-        isLoggedin = useSelector((state: RootState) => state.admin.isLoggedIn);
+        userLoggedIn = useSelector((state: RootState) => state.admin.isLoggedIn);
         token = useSelector((state: RootState) => state.admin.token);
     } else if (account == 'agent') {
-        isLoggedin = useSelector((state: RootState) => state.agent.isLoggedIn);
+        userLoggedIn = useSelector((state: RootState) => state.agent.isLoggedIn);
         token = useSelector((state: RootState) => state.agent.token);
     } else {
-        isLoggedin = useSelector((state: RootState) => state.user.isLoggedIn);
+        userLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
         token = useSelector((state: RootState) => state.user.token);
     }
     const [counter, setCounter] = useState(0);
@@ -63,10 +65,10 @@ const accountRefresher = (account = 'user') => {
             await dispatch(logoutAdmin()).unwrap();
             router.push('/admin/login');
         } else if (account == 'agent') {
-            await dispatch(logout());
+            await dispatch(logoutAgent()).wrap();
             router.push('/agents/auth/login');
         } else {
-            await dispatch(logout());
+            await dispatch(logout()).wrap();
             return router.push('/');
         }
 
@@ -74,14 +76,14 @@ const accountRefresher = (account = 'user') => {
 
 
     useEffect(() => {
-        if (isLoggedin) {
+        if (userLoggedIn) {
             fetchUserData(); // Initial fetch
             const interval = setInterval(fetchUserData, 10 * 60 * 1000); // Refresh every 10 minutes
             return () => clearInterval(interval);
         }
         return () => {
         }
-    }, [dispatch, isLoggedin]);
+    }, [dispatch, userLoggedIn]);
 
 
 }

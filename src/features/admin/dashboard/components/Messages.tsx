@@ -60,35 +60,36 @@ const Messages = () => {
 
     // Function to fetch messages
     const fetchMessages = async () => {
-        if (!selectedUser?.id || !userId) return;
-        try {
-            const response = await axios.get(
-                `${baseURL}/conversation/${selectedUser.id}`,
-                {
-                    ...getAuthHeader(),
-                    withCredentials: true
-                }
-            );
-
-            if (response.data.success && response.data.data) {
-                const newMessages = response.data.data;
-                setMessages(response.data.data);
-                scrollToBottom();
-
-                // Check if there are new messages
-                if (messages.length < newMessages.length) {
-                    setHasNewMessage(true);
-                }
-
-                // Sort messages by creation date in ascending order
-                const sortedMessages = newMessages.sort((a: any, b: any) =>
-                    new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        if (selectedUser?.id) {
+            try {
+                const response = await axios.get(
+                    `${baseURL}/conversation/${selectedUser.id}`,
+                    {
+                        ...getAuthHeader(),
+                        withCredentials: true
+                    }
                 );
 
-                setMessages(sortedMessages);
+                if (response.data.success && response.data.data) {
+                    const newMessages = response.data.data;
+                    setMessages(response.data.data);
+                    scrollToBottom();
+
+                    // Check if there are new messages
+                    if (messages.length < newMessages.length) {
+                        setHasNewMessage(true);
+                    }
+
+                    // Sort messages by creation date in ascending order
+                    const sortedMessages = newMessages.sort((a: any, b: any) =>
+                        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                    );
+
+                    setMessages(sortedMessages);
+                }
+            } catch (error) {
+                //console.error('Error fetching messages:', error);
             }
-        } catch (error) {
-            //console.error('Error fetching messages:', error);
         }
     };
 
@@ -107,7 +108,6 @@ const Messages = () => {
             };
         }
     }, [selectedUser]);
-
 
 
     // Fetch users when tab, page, or search changes
@@ -145,15 +145,16 @@ const Messages = () => {
     };
 
     const loadConversations = async () => {
-
         const conversations = await conversationApi.getAllConversations();
+        if (selectedUser?.id) {
 
-        const existingConversation = conversations.find(conv =>
-            conv.participants?.some(p => p.id === selectedUser.id)
-        );
-        if (existingConversation) {
-            const conversation = await conversationApi.getConversation(existingConversation.id);
-            setCurrentConversation(conversation);
+            const existingConversation = conversations.find(conv =>
+                conv.participants?.some(p => p.id === selectedUser.id)
+            );
+            if (existingConversation) {
+                const conversation = await conversationApi.getConversation(existingConversation.id);
+                setCurrentConversation(conversation);
+            }
         }
     }
     const loadOrCreateConversation = async () => {
@@ -163,12 +164,12 @@ const Messages = () => {
             if (isLoading == true) return;
             setIsLoading(true);
 
-                // const newConversation = await conversationApi.createConversation({
-                //     from_id: userId, // Use admin ID from Redux state
-                //     to_id: selectedUser.id,
-                //     message: 'Hello! How can I help you today?'
-                // });
-                // setCurrentConversation(newConversation);
+            // const newConversation = await conversationApi.createConversation({
+            //     from_id: userId, // Use admin ID from Redux state
+            //     to_id: selectedUser.id,
+            //     message: 'Hello! How can I help you today?'
+            // });
+            // setCurrentConversation(newConversation);
 
         } catch (error) {
             toast({
@@ -293,7 +294,7 @@ const Messages = () => {
                                 ) : (
                                     users.map((user) => (
                                         <div
-                                            key={'user'+user.id}
+                                            key={'user' + user.id}
                                             onClick={() => handleUserSelect(user)}
                                             className={`p-2 cursor-pointer rounded-lg mb-2 ${
                                                 selectedUser?.id === user.id
@@ -398,7 +399,7 @@ const Messages = () => {
                                         <div className="text-center py-4">No users found</div>
                                     ) : (
                                         users.map((user) => (
-                                            <DialogTrigger key={'dialog'+user.id}>
+                                            <DialogTrigger key={'dialog' + user.id}>
                                                 <div
 
                                                     onClick={() => handleUserSelect(user)}
@@ -439,7 +440,7 @@ const Messages = () => {
                         </Card>
 
                         {/* WEB----- Chat Area */}
-                        <DialogContent className='p-0' aria-describedby={selectedUser?selectedUser.name:'#'}>
+                        <DialogContent className='p-0' aria-describedby={selectedUser ? selectedUser.name : '#'}>
                             <Card className="p-1 border-none">
                                 <CardContent className="p-4 h-[500px] flex flex-col">
                                     {selectedUser && (

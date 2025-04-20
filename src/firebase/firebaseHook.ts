@@ -2,9 +2,10 @@ import { useEffect } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useDispatch } from "react-redux"; 
 import { updateSubscription } from "@/redux/userSlice";
+import {useAppDispatch} from "@/redux/hook";
 
 const useSubscriptionListener = (userId: number | null) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (!userId) return;

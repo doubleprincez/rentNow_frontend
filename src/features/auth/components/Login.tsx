@@ -17,6 +17,7 @@ import { login } from "@/redux/userSlice";
 import { useAlert } from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
 import {deleteFormData, getFormData, hasFormData, saveFormData} from "@/lib/utils";
+import {useAppDispatch} from "@/redux/hook";
 
 interface LoginResponse {
     success: boolean;
@@ -62,8 +63,8 @@ const Login = ({ isPageVisible }: { isPageVisible: boolean }) => {
         account_id:1
     }); 
     const [showPassword, setShowPassword] = useState(false);
-    const router = useRouter(); 
-    const dispatch = useDispatch();
+    const router = useRouter();
+    const dispatch = useAppDispatch();
 
     const nextUrl = getFormData('intended_url');
 

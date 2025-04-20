@@ -4,15 +4,16 @@ import { Menu, UserCircle2, X, LogOut } from 'lucide-react';
 import Logo from '@/components/assets/logo/logo.png';
 import Image from 'next/image';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '@/redux/store';
+import {  RootState } from '@/redux/store';
 import { logoutAdmin } from '@/redux/adminSlice';
 import { useRouter } from 'next/navigation';
 import { useAlert } from '@/contexts/AlertContext';
 import accountRefresher from '@/redux/accountRefresher';
+import {useAppDispatch} from "@/redux/hook";
 
 const DashHead = () => {
     const [isMenu, setIsMenu] = React.useState(false);
-    const dispatch = useDispatch<AppDispatch>();
+    const dispatch = useAppDispatch();
     const router = useRouter();
     const { showAlert } = useAlert();
     const { firstName, lastName } = useSelector((state: RootState) => state.admin);

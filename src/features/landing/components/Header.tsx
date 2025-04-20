@@ -11,12 +11,13 @@ import Image from 'next/image';
 import Logo from '@/components/assets/logo/logo.png'
 import accountRefresher from '@/redux/accountRefresher';
 import {getFormData} from "@/lib/utils";
+import {useAppDispatch} from "@/redux/hook";
 
 const Header = () => {
     const pathname = usePathname();
     const [isMenu, setIsMenu] = useState(false);
     const [isUserMenu, setIsUserMenu] = useState(false);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const user = useSelector((state: RootState) => state.user);
     const router = useRouter();
 
@@ -43,7 +44,8 @@ const toggleUserMenu = () => setIsUserMenu((prev) => !prev);
     }, [user.isLoggedIn, user.accountType]);
     
     const handleLogout = () => {
-        dispatch(logout());  return router.push('/');
+        dispatch(logout()).unwrap();
+        return router.push('/');
     };
 
     const getUserIdDisplay = () => {
