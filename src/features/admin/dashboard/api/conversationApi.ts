@@ -103,8 +103,8 @@ export const conversationApi = {
 
     // Send a message by creating a new conversation or updating existing one
     sendMessage: async (conversationId: number | null, params: CreateMessageParams) => {
-        const response = await axios.put<ApiResponse<Conversation>>(
-            `${baseURL}/conversation${conversationId ? `/${conversationId}` : ''}`,
+        const response = await axios.post<ApiResponse<Conversation>>(
+            `${baseURL}/conversation`,
             params,
             getAuthHeader()
         );

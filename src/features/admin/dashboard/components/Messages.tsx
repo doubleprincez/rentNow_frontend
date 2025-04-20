@@ -1,20 +1,21 @@
 'use client'
-import React, { useState, useEffect, useRef } from 'react';
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scrollArea";
-import { Search } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-import { conversationApi, Conversation } from '../api/conversationApi';
-import { getUsers, User } from '../api/userApi';
+import React, {useEffect, useRef, useState} from 'react';
+import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Card, CardContent} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {ScrollArea} from "@/components/ui/scrollArea";
+import {Search} from 'lucide-react';
+import {useToast} from '@/components/ui/use-toast';
+import {Conversation, conversationApi} from '../api/conversationApi';
+import {getUsers, User} from '../api/userApi';
 import axios from 'axios';
-import { RootState } from '@/redux/store';
-import { useSelector } from 'react-redux';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import {RootState} from '@/redux/store';
+import {useSelector} from 'react-redux';
+import {Dialog, DialogContent, DialogTrigger} from '@/components/ui/dialog';
 import {baseURL} from "@/../next.config";
 import {getFormData} from "@/lib/utils";
+import {DialogTitle} from "@radix-ui/react-dialog";
 
 const Messages = () => {
     const [activeTab, setActiveTab] = useState('agents');
@@ -26,9 +27,8 @@ const Messages = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
-    const [adminId, setAdminId] = useState<number | null>(null);
-    const { toast } = useToast();
-    const { userId, isLoggedIn } = useSelector((state: RootState) => state.admin);
+    const {toast} = useToast();
+    const {userId, isLoggedIn} = useSelector((state: RootState) => state.admin);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [messagePollingInterval, setMessagePollingInterval] = useState<NodeJS.Timeout | null>(null);
@@ -37,7 +37,7 @@ const Messages = () => {
     // Scroll to bottom function
     const scrollToBottom = () => {
         if (hasNewMessage) {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            messagesEndRef.current?.scrollIntoView({behavior: "smooth"});
             setHasNewMessage(false);
         }
     };
@@ -61,7 +61,6 @@ const Messages = () => {
     // Function to fetch messages
     const fetchMessages = async () => {
         if (!selectedUser?.id || !userId) return;
-
         try {
             const response = await axios.get(
                 `${baseURL}/conversation/${selectedUser.id}`,
@@ -103,72 +102,19 @@ const Messages = () => {
             // fetchMessages
             return () => {
                 // if (messagePollingInterval) {
-                    // clearInterval(messagePollingInterval);
+                // clearInterval(messagePollingInterval);
                 // }
             };
         }
     }, [selectedUser]);
 
-    useEffect(() => {
-        if (!isLoggedIn || !userId) {
-            toast({
-                title: "Error",
-                description: "You must be logged in as an admin to use the messaging system",
-                variant: "destructive",
-            });
-            // You might want to redirect to login page here
-        }
-    }, [isLoggedIn, userId]);
 
 
     // Fetch users when tab, page, or search changes
     useEffect(() => {
         loadUsers();
-        // const timeoutId = setTimeout(() => {
-        // }, 500);
-        // return () => clearTimeout(timeoutId);
     }, [activeTab, currentPage, searchTerm]);
 
-    // Load conversation when user is selected
-    useEffect(() => {
-        if (selectedUser) {
-            loadOrCreateConversation();
-        }
-    }, [selectedUser]);
-
-    // useEffect(() => {
-    //     const getAdminData = async () => {
-    //         try {
-    //             const token = getFormData('adminToken');
-    //             if (!token) {
-    //                 toast({
-    //                     title: "Error",
-    //                     description: "Not authenticated",
-    //                     variant: "destructive",
-    //                 });
-    //                 return;
-    //             }
-    //
-    //             // Get admin profile to get the correct ID
-    //             const response = await axios.get(
-    //                 `${baseURL}/admin/profile`,
-    //                 getAuthHeader()
-    //             );
-    //
-    //             if (response.data?.data?.id) {
-    //                 setAdminId(response.data.data.id);
-    //             }
-    //         } catch (error) {
-    //             toast({
-    //                 title: "Error",
-    //                 description: "Failed to get admin profile",
-    //                 variant: "destructive",
-    //             });
-    //         }
-    //     };
-    //
-    //     getAdminData();
-    // }, []);
 
     const loadUsers = async () => {
         try {
@@ -198,28 +144,32 @@ const Messages = () => {
         }
     };
 
+    const loadConversations = async () => {
+
+        const conversations = await conversationApi.getAllConversations();
+
+        const existingConversation = conversations.find(conv =>
+            conv.participants?.some(p => p.id === selectedUser.id)
+        );
+        if (existingConversation) {
+            const conversation = await conversationApi.getConversation(existingConversation.id);
+            setCurrentConversation(conversation);
+        }
+    }
     const loadOrCreateConversation = async () => {
         if (!selectedUser || !userId) return;
 
         try {
+            if (isLoading == true) return;
             setIsLoading(true);
-            const conversations = await conversationApi.getAllConversations();
 
-            const existingConversation = conversations.find(conv =>
-                conv.participants?.some(p => p.id === selectedUser.id)
-            );
-
-            if (existingConversation) {
-                const conversation = await conversationApi.getConversation(existingConversation.id);
-                setCurrentConversation(conversation);
-            } else {
                 // const newConversation = await conversationApi.createConversation({
                 //     from_id: userId, // Use admin ID from Redux state
                 //     to_id: selectedUser.id,
                 //     message: 'Hello! How can I help you today?'
                 // });
                 // setCurrentConversation(newConversation);
-            }
+
         } catch (error) {
             toast({
                 title: "Error",
@@ -291,11 +241,11 @@ const Messages = () => {
             <div className="space-y-2 p-4">
                 {messages.map((message) => (
                     <div
-                        key={message.id}
+                        key={'message' + message.id}
                         className={`max-w-[80%] ${
                             message.from_id === userId
-                                ? 'ml-0 bg-gray-300'
-                                : 'ml-0 bg-white'
+                                ? 'ml-auto bg-gray-300' // Sent messages are aligned to the right
+                                : 'mr-auto bg-white'   // Received messages are aligned to the left
                         } rounded-lg p-3 border shadow-sm`}
                     >
                         <p>{message.message}</p>
@@ -303,8 +253,9 @@ const Messages = () => {
                             {formatDate(message.created_at)}
                         </small>
                     </div>
+
                 ))}
-                <div ref={messagesEndRef} />
+                <div ref={messagesEndRef}/>
             </div>
         </ScrollArea>
     );
@@ -323,7 +274,7 @@ const Messages = () => {
                     <Card className="col-span-1 h-full border-none">
                         <div className="p-4">
                             <div className="relative w-full mb-4">
-                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500"/>
                                 <Input
                                     placeholder="Search by name or email..."
                                     value={searchTerm}
@@ -342,7 +293,7 @@ const Messages = () => {
                                 ) : (
                                     users.map((user) => (
                                         <div
-                                            key={user.id}
+                                            key={'user'+user.id}
                                             onClick={() => handleUserSelect(user)}
                                             className={`p-2 cursor-pointer rounded-lg mb-2 ${
                                                 selectedUser?.id === user.id
@@ -404,7 +355,8 @@ const Messages = () => {
                                                     className="flex-1 border-2 border-black py-2 h-full bg-white text-black"
                                                     disabled={isLoading || !userId}
                                                 />
-                                                <Button type="submit" disabled={isLoading || !userId} className='bg-orange-500 text-white hover:bg-orange-600'>
+                                                <Button type="submit" disabled={isLoading || !userId}
+                                                        className='bg-orange-500 text-white hover:bg-orange-600'>
                                                     Send
                                                 </Button>
                                             </form>
@@ -426,9 +378,9 @@ const Messages = () => {
                     <div className="md:hidden grid grid-cols-3 gap-4 h-[calc(100vh-170px)] overflow-hidden">
                         {/* Users List */}
                         <Card className="col-span-3 h-full border-none">
-                            <div className="p-4">
+                            <DialogTitle className="p-4">
                                 <div className="relative w-full mb-4">
-                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
+                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500"/>
                                     <Input
                                         placeholder="Search by name or email..."
                                         value={searchTerm}
@@ -436,7 +388,7 @@ const Messages = () => {
                                         className="pl-8 bg-white text-black"
                                     />
                                 </div>
-                            </div>
+                            </DialogTitle>
 
                             <ScrollArea className="h-[calc(100vh-300px)]">
                                 <div className="px-4">
@@ -446,9 +398,9 @@ const Messages = () => {
                                         <div className="text-center py-4">No users found</div>
                                     ) : (
                                         users.map((user) => (
-                                            <DialogTrigger>
+                                            <DialogTrigger key={'dialog'+user.id}>
                                                 <div
-                                                    key={user.id}
+
                                                     onClick={() => handleUserSelect(user)}
                                                     className={`p-2 cursor-pointer rounded-lg mb-2 ${
                                                         selectedUser?.id === user.id
@@ -487,7 +439,7 @@ const Messages = () => {
                         </Card>
 
                         {/* WEB----- Chat Area */}
-                        <DialogContent className='p-0'>
+                        <DialogContent className='p-0' aria-describedby={selectedUser?selectedUser.name:'#'}>
                             <Card className="p-1 border-none">
                                 <CardContent className="p-4 h-[500px] flex flex-col">
                                     {selectedUser && (
@@ -512,7 +464,8 @@ const Messages = () => {
                                                             className="flex-1 border-2 border-black py-2 h-full bg-white text-black"
                                                             disabled={isLoading || !userId}
                                                         />
-                                                        <Button type="submit" disabled={isLoading || !userId} className='bg-orange-500 text-white hover:bg-orange-600'>
+                                                        <Button type="submit" disabled={isLoading || !userId}
+                                                                className='bg-orange-500 text-white hover:bg-orange-600'>
                                                             Send
                                                         </Button>
                                                     </form>

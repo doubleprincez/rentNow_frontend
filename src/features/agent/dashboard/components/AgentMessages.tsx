@@ -293,11 +293,11 @@ const Messages = () => {
             <div className="space-y-2 p-4">
                 {messages.map((message) => (
                     <div
-                        key={message.id}
+                        key={'message' + message.id}
                         className={`max-w-[80%] ${
                             message.from_id === userId
-                                ? 'ml-0 bg-gray-300'
-                                : 'ml-0 bg-white'
+                                ? 'ml-auto bg-gray-300' // Sent messages are aligned to the right
+                                : 'mr-auto bg-white'   // Received messages are aligned to the left
                         } rounded-lg p-3 border shadow-sm`}
                     >
                         <p>{message.message}</p>
