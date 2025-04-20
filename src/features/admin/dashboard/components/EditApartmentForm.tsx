@@ -5,10 +5,11 @@ import {useForm} from 'react-hook-form';
 import axios from 'axios';
 import {useAlert} from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
-import {AxiosApi} from "@/lib/utils";
+import {AxiosApi, stringToNumber} from "@/lib/utils";
 import {AVAILABLE_AMENITIES} from "@/types/apartment";
 import {useSelector} from "react-redux";
 import {useRouter} from "next/navigation";
+import {deleteExistingImage, deleteExistingVideos} from "@/features/admin/dashboard/api/adminDashboardService";
 
 interface Category {
     id: number;
@@ -36,6 +37,9 @@ export interface PropertyFormData {
     can_rate: boolean;
     images: File[] | null;
     videos: File[] | null;
+
+    existing_images: string[] | null;
+    existing_Videos: string[] | null;
 }
 
 
@@ -45,6 +49,30 @@ interface EditApartmentFormProps {
     property: PropertyFormData;
 }
 
+interface ExistingImage {
+    custom_properties: any[];
+    extension: string;
+    file_name: string;
+    name: string;
+    order: number;
+    original_url: string;
+    preview_url: string;
+    size: number;
+    uuid: string;
+}
+
+interface ExistingVideo {
+    custom_properties: any[];
+    extension: string;
+    file_name: string;
+    name: string;
+    order: number;
+    original_url: string;
+    preview_url: string;
+    size: number;
+    uuid: string;
+}
+
 const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
 
     const {showAlert} = useAlert();
@@ -52,6 +80,8 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+    const [existingImages, setExistingImages] = useState<ExistingImage[]>();
+    const [existingVideos, setExistingVideos] = useState<ExistingVideo[]>();
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
 
@@ -65,7 +95,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
         watch,
         reset,
         trigger
-    } = useForm<PropertyFormData>();
+    } = useForm<PropertyFormData>(property);
 
     useEffect(() => {
         if (property) {
@@ -74,22 +104,34 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                 category_id: property.category_id || undefined,
                 title: property.title || '',
                 description: property.description || '',
-                number_of_rooms: property.number_of_rooms || null,
-                amount: property.amount || 0,
+                number_of_rooms: property.number_of_rooms,
+                amount: stringToNumber(property.amount),
                 currency_code: property.currency_code || '₦',
-                security_deposit: property.security_deposit || null,
+                security_deposit: stringToNumber(property.security_deposit),
                 security_deposit_currency_code: property.security_deposit_currency_code || null,
-                duration: property.duration || 0,
+                duration: stringToNumber(property.duration || 0),
                 duration_type: property.duration_type || 'day',
-                amenities: property.amenities || [],
                 country_code: property.country_code || 'NG',
                 state_code: property.state_code || '',
                 city_code: property.city_code || '',
                 published: property.published || false,
                 can_rate: property.can_rate || false,
-                images: property.images || null,
-                videos: property.videos || null,
             });
+
+            setSelectedAmenities(property.amenities || []);
+            if (property && property.images) {
+                // Flatten the image object into an array of image objects
+                const flattenedImages: ExistingImage[] = Object.values(property.images).flatMap(imageArray => imageArray);
+
+                setExistingImages(flattenedImages);
+
+            }
+            if (property && property.videos) {
+                // Assuming a similar structure for videos, adjust accordingly
+                const flattenedVideos: ExistingVideo[] = Object.values(property.videos).flatMap(videoArray => videoArray);
+                setExistingVideos(flattenedVideos);
+
+            }
         }
     }, [property, reset]);
 
@@ -103,7 +145,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
         });
     };
 
-const router = useRouter();
+    const router = useRouter();
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -142,7 +184,9 @@ const router = useRouter();
                 fieldsToValidate = ['country_code', 'state_code', 'city_code'];
                 break;
             case 5:
-                return uploadedImages.length > 0 && uploadedVideos.length > 0;
+                return (uploadedImages.length > 0 && uploadedVideos.length > 0)
+                    || (existingImages.length > 0 && existingVideos.length > 0)
+                    ;
         }
         return await trigger(fieldsToValidate);
     };
@@ -169,7 +213,7 @@ const router = useRouter();
             file.type.startsWith("image/")
         );
 
-        const totalFiles = [...uploadedImages, ...droppedFiles].slice(0, MAX_FILES);
+        const totalFiles = [...existingImages, ...uploadedImages, ...droppedFiles].slice(0, MAX_FILES);
         setUploadedImages(totalFiles);
     };
 
@@ -184,15 +228,66 @@ const router = useRouter();
         setUploadedVideos(totalFiles);
     };
 
+    // Handle EXISTING File Removed
+    const handleRemoveExistingImage = async (index: number) => {
+        if (isLoading) return;
+        setIsLoading(true);
+        const imageToRemove = existingImages[index];
+        if (imageToRemove?.uuid) {
+            // Immediately call the API to delete the image
+            const isDeleted = await deleteExistingImage(imageToRemove.uuid, token);
+            if (isDeleted) {
+                // If the backend deletion was successful, update the local state
+                const updated = existingImages.filter((_, i) => i !== index);
+                setExistingImages(updated);
+                // Optionally, you might want to update the 'deletedExistingImageUUIDs' state as well,
+                // in case the user submits the form later and your backend needs to know
+                // which images were already deleted.
+                // setDeletedExistingImageUUIDs(prev => [...prev, imageToRemove.uuid]);
+            } else {
+                // Handle the case where the backend deletion failed (e.g., show an error message)
+                showAlert('Failed to delete image. Please try again.', 'error');
+            }
+            setIsLoading(false);
+        }
+
+    }
+    const handleRemoveExistingVideo = async (index: number) => {
+
+        if (isLoading) return;
+        setIsLoading(true);
+        const videoToRemove = existingVideos[index];
+        if (videoToRemove?.uuid) {
+            // Immediately call the API to delete the image
+            const isDeleted = await deleteExistingVideos(videoToRemove.uuid, token);
+            if (isDeleted) {
+                // If the backend deletion was successful, update the local state
+                const updated = existingVideos.filter((_, i) => i !== index);
+                setExistingVideos(updated);
+                // Optionally, you might want to update the 'deletedExistingImageUUIDs' state as well,
+                // in case the user submits the form later and your backend needs to know
+                // which images were already deleted.
+                // setDeletedExistingImageUUIDs(prev => [...prev, imageToRemove.uuid]);
+            } else {
+                // Handle the case where the backend deletion failed (e.g., show an error message)
+                showAlert('Failed to delete image. Please try again.', 'error');
+
+            }
+            setIsLoading(false);
+        }
+    }
+
+
     // Handle File Removed
     const handleRemoveImage = (index: number) => {
         const updated = uploadedImages.filter((_, i) => i !== index);
         setUploadedImages(updated);
-    };
+    }
+
     const handleRemoveVideo = (index: number) => {
         const updated = uploadedVideos.filter((_, i) => i !== index);
         setUploadedVideos(updated);
-    };
+    }
 
     // Handle File Input
 
@@ -221,7 +316,15 @@ const router = useRouter();
     const onSubmit = async (data: PropertyFormData) => {
         if (step !== 5) return;
 
-        if (!uploadedImages.length || !uploadedVideos.length) {
+        //
+        const atLeastOneVideo = uploadedVideos.length > 0 || existingVideos.length > 0;
+        const atLeastOneImage = uploadedImages.length > 0 || existingImages.length;
+
+        const firstCheck = (uploadedImages.length > 0 && uploadedVideos.length > 0)
+            || (existingImages.length > 0 && existingVideos.length > 0);
+        const secondCheck = atLeastOneImage && atLeastOneVideo;
+
+        if (!(firstCheck || secondCheck)) {
             showAlert('Please upload at least one image and one video', 'info');
             setIsLoading(false);
             return;
@@ -255,7 +358,7 @@ const router = useRouter();
             }
 
             const response = await AxiosApi('agent', token, {'Content-Type': 'multipart/form-data'}).put(
-                baseURL + '/apartment/'+property.id, formData);
+                baseURL + '/apartment/' + property.id, formData);
 
             if (response.data.success) {
                 showAlert('Property successfully Updated!', 'success');
@@ -289,7 +392,8 @@ const router = useRouter();
                 {step === 1 && (
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-semibold mb-2 text-white">Property Category</label>
+                            <label className="block text-sm font-semibold mb-2 text-white">Property
+                                Category</label>
                             <select
                                 {...register('category_id', {
                                     required: 'Category is required',
@@ -304,7 +408,8 @@ const router = useRouter();
                                     </option>
                                 ))}
                             </select>
-                            {errors.category_id && <p className="text-red-500 text-sm">{errors.category_id.message}</p>}
+                            {errors.category_id &&
+                                <p className="text-red-500 text-sm">{errors.category_id.message}</p>}
                         </div>
 
                         <div>
@@ -317,7 +422,8 @@ const router = useRouter();
                         </div>
 
                         <div>
-                            <label className="block text-sm font-semibold mb-2 text-white">Number of Rooms</label>
+                            <label className="block text-sm font-semibold mb-2 text-white">Number of
+                                Rooms</label>
                             <input
                                 type="number"
                                 {...register('number_of_rooms')}
@@ -339,7 +445,8 @@ const router = useRouter();
                 {step === 2 && (
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-semibold mb-2 text-white">Amount</label>
+                            <label className="block text-sm font-semibold mb-2 text-white">Amount
+                                ({watch('currency_code')})</label>
                             <input
                                 type="number"
                                 {...register('amount', {required: 'Amount is required'})}
@@ -360,7 +467,8 @@ const router = useRouter();
                         </div>
 
                         <div>
-                            <label className="block text-sm font-semibold mb-2 text-white">Security Deposit</label>
+                            <label className="block text-sm font-semibold mb-2 text-white">Security Deposit
+                                ({watch('currency_code')})</label>
                             <input
                                 type="number"
                                 {...register('security_deposit')}
@@ -394,7 +502,8 @@ const router = useRouter();
                                 {...register('duration', {required: 'Duration is required'})}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
                             />
-                            {errors.duration && <p className="text-red-500 text-sm">{errors.duration.message}</p>}
+                            {errors.duration &&
+                                <p className="text-red-500 text-sm">{errors.duration.message}</p>}
                         </div>
 
                         <div>
@@ -437,7 +546,8 @@ const router = useRouter();
                                 {...register('state_code', {required: 'State is required'})}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
-                            {errors.state_code && <p className="text-red-500 text-sm">{errors.state_code.message}</p>}
+                            {errors.state_code &&
+                                <p className="text-red-500 text-sm">{errors.state_code.message}</p>}
                         </div>
 
                         <div>
@@ -446,7 +556,8 @@ const router = useRouter();
                                 {...register('city_code', {required: 'City is required'})}
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
                             />
-                            {errors.city_code && <p className="text-red-500 text-sm">{errors.city_code.message}</p>}
+                            {errors.city_code &&
+                                <p className="text-red-500 text-sm">{errors.city_code.message}</p>}
                         </div>
                     </div>
                 )}
@@ -458,16 +569,13 @@ const router = useRouter();
                                 required,Max: {MAX_FILES})</label>
                             {/* <div className="grid grid-cols-2 md:grid-cols-5 gap-4"> */}
                             <div className={"text-white"}>
-                                <div
-                                    onDrop={handleDropImages}
-                                    onDragOver={(e) => e.preventDefault()}
-                                    style={{
-                                        border: "2px dashed #ccc",
-                                        padding: "20px",
-                                        marginBottom: "10px",
-                                        opacity: uploadedImages.length >= MAX_FILES ? 0.5 : 1,
-                                        cursor: uploadedImages.length >= MAX_FILES ? "not-allowed" : "pointer"
-                                    }}
+                                <div onDrop={handleDropImages} onDragOver={(e) => e.preventDefault()} style={{
+                                    border: "2px dashed #ccc",
+                                    padding: "20px",
+                                    marginBottom: "10px",
+                                    opacity: uploadedImages.length >= MAX_FILES ? 0.5 : 1,
+                                    cursor: uploadedImages.length >= MAX_FILES ? "not-allowed" : "pointer"
+                                }}
                                 >
                                     <p>{uploadedImages.length >= MAX_FILES ? "Maximum image limit reached" : "Drag & drop images here, or click to select"}</p>
                                     <input
@@ -479,6 +587,35 @@ const router = useRouter();
                                     />
                                 </div>
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
+                                    {Object.keys(existingImages).length > 0 &&
+                                        existingImages.map((file, index) => (
+                                            <div key={index} style={{position: "relative"}}>
+                                                <img
+                                                    src={file.preview_url || file.original_url} // Use preview if available
+                                                    alt={file.name || "preview"}
+                                                    width={100}
+                                                    height={100}
+                                                    style={{borderRadius: "5px", objectFit: "cover"}}
+                                                />
+                                                <button
+                                                    onClick={() => handleRemoveExistingImage(index)}
+                                                    type={"button"}
+                                                    style={{
+                                                        position: "absolute",
+                                                        top: 0,
+                                                        right: 0,
+                                                        background: "red",
+                                                        color: "white",
+                                                        border: "none",
+                                                        cursor: "pointer",
+                                                        padding: "2px 6px",
+                                                        borderRadius: "50%",
+                                                    }}
+                                                >
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        ))}
                                     {uploadedImages && uploadedImages.map((file, index) => (
                                         <div key={index} style={{position: "relative"}}>
                                             <img
@@ -511,7 +648,8 @@ const router = useRouter();
                         </div>
 
                         <div>
-                            <label className="block text-sm font-semibold mb-2 text-white">Videos (At least 1 required,
+                            <label className="block text-sm font-semibold mb-2 text-white">Videos (At least 1
+                                required,
                                 Max: {MAX_FILES})</label>
                             <div className={"text-white"}>
 
@@ -537,6 +675,33 @@ const router = useRouter();
                                 </div>
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
 
+                                    {Object.keys(existingVideos).length > 0 && existingVideos.map((file, index) => (
+                                        <div key={index} style={{position: "relative", minHeight: "90px"}}>
+                                            <video
+                                                src={file.preview_url || file.original_url} // Use preview if available
+                                                width={120}
+                                                height={80}
+                                                controls
+                                                style={{borderRadius: "5px", objectFit: "cover"}}
+                                            />
+                                            <button
+                                                onClick={() => handleRemoveExistingVideo(index)} type={"button"}
+                                                style={{
+                                                    position: "absolute",
+                                                    top: 0,
+                                                    right: 0,
+                                                    background: "red",
+                                                    color: "white",
+                                                    border: "none",
+                                                    cursor: "pointer",
+                                                    padding: "2px 6px",
+                                                    borderRadius: "50%",
+                                                }}
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))}
                                     {uploadedVideos.map((file, index) => (
                                         <div key={index} style={{position: "relative", minHeight: "90px"}}>
                                             <video

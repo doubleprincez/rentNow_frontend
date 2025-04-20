@@ -15,6 +15,17 @@ export const formatAmountNumber = (num: number | string | null | undefined) => {
     return 0;
 };
 
+export const stringToNumber = (value: string | number | null | undefined): number | undefined => {
+    if (typeof value === 'number') {
+        return value;
+    }
+    if (!value) {
+        return undefined; // Or 0, depending on your desired behavior for null/undefined
+    }
+    const cleanedValue = value.replace(/[^\d.]/g, ''); // Remove non-numeric characters except '.'
+    const parsedNumber = parseFloat(cleanedValue);
+    return isNaN(parsedNumber) ? undefined : parsedNumber; // Return undefined if parsing fails
+}
 
 export const setColor = (status: string) => {
     if (status == "success") {
@@ -28,6 +39,7 @@ export const setColor = (status: string) => {
     }
     return " text-gray-700";
 }
+
 
 export const formatDate = (timestamp: any) => {
     return formatDistanceToNow(new Date(timestamp), {addSuffix: true});
@@ -58,12 +70,11 @@ export const getCircularReplacer = () => {
     }
 }
 
-/////////////////////////// COOKIE ////////////////////////////////////////////
-
-
+///////////////////////////////// COOKIE ///////////////////////////
 export function isServer() {
     return typeof window === 'undefined';
 }
+
 
 export function hasFormData(name: string) {
     const cookies = document.cookie.split("; ");
