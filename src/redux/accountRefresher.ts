@@ -15,18 +15,44 @@ import {logoutAgent} from "@/redux/agentSlice";
 const accountRefresher = (account = 'user') => {
     const dispatch = useAppDispatch();
     const router = useRouter();
-    let userLoggedIn, token: any;
+    let loggedIn, adminLoggedIn, agentLoggedIn, userLoggedIn, token, token1, token2, token3: any;
 
-    if (account == 'admin') {
-        userLoggedIn = useSelector((state: RootState) => state.admin.isLoggedIn);
-        token = useSelector((state: RootState) => state.admin.token);
-    } else if (account == 'agent') {
-        userLoggedIn = useSelector((state: RootState) => state.agent.isLoggedIn);
-        token = useSelector((state: RootState) => state.agent.token);
-    } else {
-        userLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
-        token = useSelector((state: RootState) => state.user.token);
+
+    adminLoggedIn = useSelector((state: RootState) => state.admin.isLoggedIn);
+    token1 = useSelector((state: RootState) => state.admin.token);
+
+    agentLoggedIn = useSelector((state: RootState) => state.agent.isLoggedIn);
+    token2 = useSelector((state: RootState) => state.agent.token);
+
+    userLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+    token3 = useSelector((state: RootState) => state.user.token);
+
+
+
+    if(token3){
+        loggedIn =userLoggedIn;
+        token = token3;
     }
+    if(token2){
+        loggedIn = agentLoggedIn;
+        token = token2;
+    }
+    if(token1){
+        loggedIn = adminLoggedIn;
+        token = token1;
+    }
+
+    // if (account == 'admin') {
+    //     userLoggedIn = useSelector((state: RootState) => state.admin.isLoggedIn);
+    //     token = useSelector((state: RootState) => state.admin.token);
+    // } else if (account == 'agent') {
+    //     userLoggedIn = useSelector((state: RootState) => state.agent.isLoggedIn);
+    //     token = useSelector((state: RootState) => state.agent.token);
+    // } else {
+    //     userLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+    //     token = useSelector((state: RootState) => state.user.token);
+    // }
+
     const [counter, setCounter] = useState(0);
 
     const fetchUserData = async () => {
@@ -76,14 +102,14 @@ const accountRefresher = (account = 'user') => {
 
 
     useEffect(() => {
-        if (userLoggedIn) {
+        if (loggedIn) {
             fetchUserData(); // Initial fetch
             const interval = setInterval(fetchUserData, 10 * 60 * 1000); // Refresh every 10 minutes
             return () => clearInterval(interval);
         }
         return () => {
         }
-    }, [dispatch, userLoggedIn]);
+    }, [dispatch, loggedIn]);
 
 
 }

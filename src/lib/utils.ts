@@ -105,19 +105,8 @@ export function deleteFormData(name: string) {
 
 
 export const AxiosApi = (tokenFor: string = 'user', initialToken: string | null | undefined = null, customHeaders = {}) => {
-    let csrfTokenMeta;
-    if (initialToken) {
-        csrfTokenMeta = initialToken;
-    } else {
-        if (tokenFor === 'user') {
-            csrfTokenMeta = localStorage.getItem('token');
-        } else if (tokenFor === 'agent') {
-            csrfTokenMeta = localStorage.getItem('agentToken') ?? localStorage.getItem('token');
-        } else {
-            csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('token');
-        }
-    }
 
+    const csrfTokenMeta = getToken(user, tokenFor, initialToken);
 
     const instance = axios.create({
         withCredentials: true,
@@ -136,22 +125,8 @@ export const AxiosApi = (tokenFor: string = 'user', initialToken: string | null 
 
     instance.interceptors.request.use(
         (config) => {
-            let csrfTokenMeta;
-            if (initialToken) {
-                csrfTokenMeta = initialToken;
-            } else {
-                if (tokenFor === 'user') {
-                    csrfTokenMeta = localStorage.getItem('token');
-                } else if (tokenFor === 'agent') {
-                    csrfTokenMeta = localStorage.getItem('agentToken') ?? localStorage.getItem('token');
-                } else {
-                    csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('token');
-                }
-            }
+            config.headers.Authorization = `Bearer ${csrfTokenMeta}`;
 
-            if (csrfTokenMeta) {
-                config.headers.Authorization = `Bearer ${csrfTokenMeta}`;
-            }
             return config;
         },
         (error) => {
@@ -160,4 +135,26 @@ export const AxiosApi = (tokenFor: string = 'user', initialToken: string | null 
     );
 
     return instance;
+}
+
+const getToken = (user: any, tokenFor = 'user', initialToken: string) => {
+    let csrfTokenMeta;
+
+    if (initialToken) {
+        csrfTokenMeta = initialToken;
+    } else {
+        csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('agentToken') ?? localStorage.getItem('token');
+        if (tokenFor === 'user' && hasFormData('token')) {
+            csrfTokenMeta = getFormData('token');
+        }
+
+        if (tokenFor === 'agent' && hasFormData('agentToken')) {
+            csrfTokenMeta = getFormData('agentToken');
+        }
+
+        if (tokenFor === 'admin' && hasFormData('agentToken')) {
+            csrfTokenMeta = getFormData('adminToken');
+        }
+    }
+    return csrfTokenMeta;
 }

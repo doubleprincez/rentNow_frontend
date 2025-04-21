@@ -106,7 +106,6 @@ const setToStorage = (key: string, value: string): void => {
 const removeFromStorage = (key: string): void => {
     if (!isClient) return;
     try {
-        localStorage.removeItem(key);
         deleteFormData(key);
     } catch (error) {
         console.error('Error removing from localStorage:', error);

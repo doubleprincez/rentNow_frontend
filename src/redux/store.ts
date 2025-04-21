@@ -16,10 +16,10 @@ const persistedUserReducer = persistReducer(persistConfig, userReducer);
 
 export const store = configureStore({
   reducer: {
-    user: persistedUserReducer,
-    agent: agentReducer,
     admin: adminReducer,
+    agent: agentReducer,
     dashboard: dashboardSlice,
+    user: persistedUserReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

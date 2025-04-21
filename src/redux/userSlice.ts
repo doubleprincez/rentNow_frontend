@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { redirect, useRouter } from 'next/navigation';
-import {getFormData, saveFormData} from "@/lib/utils";
+import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
 
 interface UserState {
     isLoggedIn: boolean;
@@ -121,8 +121,8 @@ const userSlice = createSlice({
         logout: (state) => {
             Object.assign(state, initialState);
             if (typeof window !== 'undefined') {
-                localStorage.removeItem('userState');
-                localStorage.removeItem('token');
+                deleteFormData('userState');
+                deleteFormData('token');
             } 
         }
     }
