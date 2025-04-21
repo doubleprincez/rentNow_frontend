@@ -106,7 +106,7 @@ export function deleteFormData(name: string) {
 
 export const AxiosApi = (tokenFor: string = 'user', initialToken: string | null | undefined = null, customHeaders = {}) => {
 
-    const csrfTokenMeta = getToken(user, tokenFor, initialToken);
+    const csrfTokenMeta = getToken( tokenFor, initialToken);
 
     const instance = axios.create({
         withCredentials: true,
@@ -137,7 +137,7 @@ export const AxiosApi = (tokenFor: string = 'user', initialToken: string | null 
     return instance;
 }
 
-const getToken = (user: any, tokenFor = 'user', initialToken: string) => {
+const getToken = (  tokenFor = 'user', initialToken: string) => {
     let csrfTokenMeta;
 
     if (initialToken) {
