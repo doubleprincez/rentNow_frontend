@@ -7,7 +7,7 @@ import type {NextConfig} from "next";
 
 // ONLINE
 export const frontendURL = 'https://rentnow.ng';
-export const backendUrl = 'https://app.rentnow.ng'; //
+export const backendUrl = 'https://app.rentnow.ng';
 
 export const MAILCHIMP_API_KEY="9f9e0b3216195985c0d179ad071dc65a"
 export const MAILCHIMP_AUDIENCE_ID="c7f48b07e2"
