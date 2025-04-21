@@ -4,6 +4,7 @@ import Head from "next/head";
 const Metas = ({metadata}: { metadata: any }) => {
     return <>
         <Head>
+
             <meta name="description" content={metadata?.description ?? ''}/>
             <meta property="og:title" content={metadata?.openGraph?.title ?? ''}/>
             <meta property="og:description" content={metadata?.openGraph?.description ?? ''}/>
