@@ -276,18 +276,19 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
 
                             <div className="flex items-center gap-2">
                                 <List className="text-orange-500"/>
-                                <span
-                                    className="text-gray-600">Amenities: {
-                                    apartment.amenities?.length
-                                        ?  JSON.parse(apartment.amenities).join(', ')
+                                <span className="text-gray-600">
+  Amenities: {
+                                    Array.isArray(apartment.amenities) && apartment.amenities.length
+                                        ? apartment.amenities.join(', ')
                                         : 'None listed'
-                                }</span>
+                                }
+</span>
                             </div>
 
                             {
                                 apartment?.agent_type == 'agent' ? <>
                                     {
-                                        apartment.agent && <div className="flex items-center gap-2">
+                                    apartment.agent && <div className="flex items-center gap-2">
                                             <User className="text-orange-500"/>
                                             <span
                                                 className="text-gray-600">{String(apartment.agent_type).toLocaleUpperCase()}: {apartment.agent}</span>
