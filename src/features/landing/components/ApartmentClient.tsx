@@ -277,7 +277,11 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                             <div className="flex items-center gap-2">
                                 <List className="text-orange-500"/>
                                 <span
-                                    className="text-gray-600">Amenities: {apartment.amenities?.length ? Array(apartment.amenities).join(', ') : 'None listed'}</span>
+                                    className="text-gray-600">Amenities: {
+                                    apartment.amenities?.length
+                                        ?  JSON.parse(apartment.amenities).join(', ')
+                                        : 'None listed'
+                                }</span>
                             </div>
 
                             {
