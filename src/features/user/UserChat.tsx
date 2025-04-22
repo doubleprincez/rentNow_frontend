@@ -28,7 +28,7 @@ const UserChat = () => {
     // http://localhost:8000/api/conversations
 
 
-    const {isLoggedIn,isSubscribed} = useSelector((state: any) => state.user); 
+    const {isLoggedIn,isSubscribed,token} = useSelector((state: any) => state.user);
     const currentUser:any  = getFormData('userState');
     const [loading, setLoading] = useState(false); 
     const [selectedAgent,setSelectedAgent] = useState<User|any>({});
@@ -41,7 +41,7 @@ const UserChat = () => {
         try {
             if(loading) return ;
             setLoading(true);
-            const response = await getUserConversations();
+            const response = await getUserConversations(token??'');
 
             if (response.success && response.data) {
                 setConversations(response.data); 

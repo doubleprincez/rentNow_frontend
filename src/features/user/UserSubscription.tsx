@@ -19,7 +19,7 @@ import {useSelector} from "react-redux";
 import {baseURL} from "@/../next.config";
 import {getUserSubscriptions} from "@/features/landing/api/subscriptions";
 import { SubscriptionInterface, TransactionHistory } from '@/types/subscription';
-import { AxiosApi, formatAmountNumber, simpleDateFormat } from '@/lib/utils';
+import { simpleDateFormat } from '@/lib/utils';
 import PendingInvoice from './PendingInvoice';
 
 

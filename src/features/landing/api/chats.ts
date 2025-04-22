@@ -3,9 +3,9 @@ import { baseURL } from "@/../next.config";
 import axios from "axios";
 import {getFormData} from "@/lib/utils";
 
-export const getUserConversations = async () => {
+export const getUserConversations = async (setToken='') => {
     try {
-        const token = getFormData('token');
+        const token = setToken??getFormData('token');
         if (!token) {
             throw new Error('No authentication token found');
         }
