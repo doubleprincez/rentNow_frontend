@@ -172,7 +172,7 @@ const AdminTransaction = ({transaction, closeSelected}: { transaction: Transacti
         try {
             await AxiosApi('admin', '', {'Content-Type': 'multipart/form-data'}).post(baseURL + `/transaction/verify`, {
                 user_id: transaction.user_id,
-                reference: transaction.reference,
+                ref: transaction.reference,
                 plan_id: transaction.payable.plan_id,
                 status: newStatus
             });
