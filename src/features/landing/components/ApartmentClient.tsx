@@ -285,9 +285,6 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                 }
 </span>
                             </div>
-                            <Script>
-                                console.log('Amenities:', apartment.amenities, typeof apartment.amenities)
-                            </Script>
 
                             {
                                 apartment?.agent_type == 'agent' ? <>

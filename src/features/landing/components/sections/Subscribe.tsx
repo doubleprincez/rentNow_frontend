@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import {baseURL, frontendURL} from "@/../next.config";
 import { Button } from "@/components/ui/button";
 
-interface CheckoutI {
+interface  CheckoutI {
     plans?:PlansInterface[]
 }
 
@@ -99,8 +99,8 @@ const PlanSelection =()=>{
     return  <div>
         <h3 className="text-2xl font-bold text-center">Subscription Selection</h3>
             <div className="grid md:grid-cols-2"> {
-           plans  &&  Object.keys(plans).length>0 && 
-            plans?.map((pl:PlansInterface,index:number)=><div key={index} className="relative text-gray-300" id="pricing">
+           plans  &&  Object.keys(plans).length>0 &&
+                plans?.map((pl:PlansInterface,index:number)=><div key={index} className="relative text-gray-300" id="pricing">
                 <div aria-hidden="true" className="absolute inset-0 h-max w-full m-auto grid grid-cols-2 -space-x-52 opacity-20">
             <div className="blur-[106px] min-h-56 bg-gradient-to-br to-purple-400 from-blue-700"></div>
             <div className="blur-[106px] min-h-32 bg-gradient-to-r from-cyan-400 to-indigo-600"></div>
@@ -116,7 +116,10 @@ const PlanSelection =()=>{
                     <p className="text-lg sm:text-xl text-center mb-6 mt-4">
                         <span className="text-3xl sm:text-4xl font-bold text-white">{pl.currency}{formatAmountNumber(pl?.price)}</span>  / {pl?.invoice_interval}
                     </p>
-                    <p className="text-center mb-6">{Object.values(pl?.description)}</p>
+                        <script>
+                            console.log({pl?.description});
+                        </script>
+                    {/*<p className="text-center mb-6">{Object.values(pl?.description)}</p>*/}
                     <div>
                         <ul className="space-y-4 mb-4">
                             {
@@ -157,7 +160,7 @@ const SelectPaymentMethod = ()=>{
                 <div className={"flex flex-wrap space-x-2 md:space-x-8  justify-start md:justify-between"}>
                 
                     {
-                        gateways.map((way:any,i:number)=><div><button key={i} className={" px-2 py-2 md:py-4 md:px-3  cursor-pointer "+way.className} 
+                        gateways.map((way:any,i:number)=><div key={i} ><button className={" px-2 py-2 md:py-4 md:px-3  cursor-pointer "+way.className}
                         onClick={()=>selectedPaymentMethodIs(way.slug,way.active)} 
                          >
                             <h5 className="text-lg flex space-x-4">{way.icon} {"  "+(way.title)}</h5>

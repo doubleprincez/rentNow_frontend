@@ -48,7 +48,7 @@ const BankTransfer  =({plan,onCompleted}:BankTransferI)=>{
 const fetchReference=async()=>{
     if(loadingRef) return;
     setLoadingRef(true);
-    await AxiosApi().post(baseURL+'/transaction/generateKey')
+    await AxiosApi('user','',{},true).post(baseURL+'/transaction/generateKey')
     .then((res:any)=>{ setReference(res.data.data.transaction_reference)})
         .finally(()=>setLoadingRef(false));
 
@@ -72,14 +72,13 @@ const generateSubscription =async()=>{
         return redirect('auth/login?next=subscribe');
     }
     if(!reference && counter < 4){
-        console.log('this is working');
         setCounter(()=>counter+1);
         fetchReference().then(r=>generateSubscription()).then(r=>setCounter(0));
     }
 // generate new subscription if no current one
 if(reference){
      
-   await AxiosApi().post(baseURL+'/transaction/initiate',{
+   await AxiosApi('user','',{},true).post(baseURL+'/transaction/initiate',{
     plan_id:plan?.id,
     reference:reference,
     gateway:'bank_transfer',

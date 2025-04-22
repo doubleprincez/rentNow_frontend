@@ -104,9 +104,8 @@ export function deleteFormData(name: string) {
 }
 
 
-export const AxiosApi = (tokenFor: string = 'user', initialToken: string |  undefined = '', customHeaders = {}) => {
-
-    const csrfTokenMeta = getToken(tokenFor, initialToken);
+export const AxiosApi = (tokenFor: string = 'user', initialToken: string | undefined = '', customHeaders = {}, strictType = false) => {
+    const csrfTokenMeta = getToken(tokenFor, initialToken, strictType);
 
     const instance = axios.create({
         withCredentials: true,
@@ -135,23 +134,35 @@ export const AxiosApi = (tokenFor: string = 'user', initialToken: string |  unde
     return instance;
 }
 
-const getToken = (tokenFor = 'user', initialToken: string) => {
+const getToken = (tokenFor = 'user', initialToken: string, strictType = false) => {
     let csrfTokenMeta;
 
     if (initialToken) {
         csrfTokenMeta = initialToken;
     } else {
-        csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('agentToken') ?? localStorage.getItem('token');
+        if (strictType) {
+            if (tokenFor == 'admin') {
+                csrfTokenMeta = localStorage.getItem('adminToken')
+            } else if (tokenFor == 'agent') {
+                csrfTokenMeta = localStorage.getItem('agentToken')
+            } else {
+                csrfTokenMeta = localStorage.getItem('token');
+            }
+
+        } else {
+            csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('agentToken') ?? localStorage.getItem('token');
+        }
+
         if (tokenFor === 'user' && hasFormData('token')) {
-            csrfTokenMeta = getFormData('token');
+            csrfTokenMeta = csrfTokenMeta ?? getFormData('token');
         }
 
         if (tokenFor === 'agent' && hasFormData('agentToken')) {
-            csrfTokenMeta = getFormData('agentToken');
+            csrfTokenMeta = csrfTokenMeta ?? getFormData('agentToken');
         }
 
-        if (tokenFor === 'admin' && hasFormData('agentToken')) {
-            csrfTokenMeta = getFormData('adminToken');
+        if (tokenFor === 'admin' && hasFormData('adminToken')) {
+            csrfTokenMeta = csrfTokenMeta ?? getFormData('adminToken');
         }
     }
     return csrfTokenMeta;

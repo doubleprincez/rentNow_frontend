@@ -12,14 +12,13 @@ import {Loader} from "lucide-react";
 const Page = async () => {
     const response = await fetch(baseURL + '/plans');
     const json = await response.json();
-    const data: PlansInterface[] = json.data;
+    const data: PlansInterface[] = json.data.data;
 
     return <>
         <div>
             <Header/>
             <Suspense fallback={<div className="flex justify-center items-center min-h-screen"><Loader
                 className="animate-spin"/>&nbsp;Loading...</div>}>
-
                 {data && <Subscribe plans={data}/>}
             </Suspense>
             <Footer/>
