@@ -72,7 +72,7 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
 
             await AxiosApi('user', user.token ?? '', {}, true).post(baseURL + '/transaction/initiate', {
                 plan_id: plan?.id,
-                reference: reference,
+                ref: reference,
                 gateway: 'bank_transfer',
                 amount: plan?.price,
                 currency: plan?.currency,
