@@ -43,12 +43,10 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
                 setReference(res.data.data.transaction_reference)
             })
             .finally(() => setLoadingRef(false));
-
     }
 // check current state and return the response
     useEffect(() => {
         fetchReference();
-
     }, []);
 
     const [counter, setCounter] = useState(0);
@@ -81,8 +79,8 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
                 .then(response => {
                     showAlert("Transaction Invoice Generated Successful", "success");
                     // return subscription
-                    if (response.data.data.transaction.callback_url) {
-                        router.push(response.data.data.transaction.callback_url);
+                    if (response.data.data.transaction.reference) {
+                        router.push(frontendURL + '/invoice/' + response.data.data.transaction.reference);
                     }
 
                     //    if(response?.invoice){
