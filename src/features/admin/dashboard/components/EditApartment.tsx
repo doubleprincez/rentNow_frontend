@@ -21,14 +21,13 @@ const EditApartment: React.FC = () => {
 
     useEffect(() => {
         fetchApartment();
-
     }, [id]);
 
     const fetchApartment = async () => {
         if (loading) return;
         setLoading(true);
         setPageState('loading');
-        await AxiosApi('admin', token)
+        await AxiosApi('admin', token ?? '')
             .get(baseURL + '/apartment/' + id + '?raw=true')
             .then((res: any) => {
                 setApartment(res.data.data);

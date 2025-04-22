@@ -22,7 +22,6 @@ const SubPlans = () => {
 
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
-
             <PlanList/>
         </div>
     );
@@ -276,7 +275,7 @@ const PlanList = () => {
                 });
 
         } else {
-            await AxiosApi('admin', null, {'Content-Type': 'multipart/form-data'})
+            await AxiosApi('admin', '', {'Content-Type': 'multipart/form-data'})
                 .post(baseURL + `/plan`, plan)
                 .then((response) => {
                     showAlert("Plan Created", "success");

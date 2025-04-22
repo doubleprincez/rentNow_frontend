@@ -15,29 +15,34 @@ import {logoutAgent} from "@/redux/agentSlice";
 const accountRefresher = (account = 'user') => {
     const dispatch = useAppDispatch();
     const router = useRouter();
-    let loggedIn, adminLoggedIn, agentLoggedIn, userLoggedIn, token, token1, token2, token3: any;
-
+    let loggedIn: boolean = false;
+    let adminLoggedIn: boolean =false;
+    let agentLoggedIn: boolean = false;
+    let userLoggedIn: boolean = false;
+    let token: string = '';
+    let token1: string = '';
+    let token2: string = '';
+    let token3: string = '';
 
     adminLoggedIn = useSelector((state: RootState) => state.admin.isLoggedIn);
-    token1 = useSelector((state: RootState) => state.admin.token);
+    token1 = useSelector((state: RootState) => state.admin.token??'');
 
     agentLoggedIn = useSelector((state: RootState) => state.agent.isLoggedIn);
-    token2 = useSelector((state: RootState) => state.agent.token);
+    token2 = useSelector((state: RootState) => state.agent.token??'');
 
     userLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
-    token3 = useSelector((state: RootState) => state.user.token);
+    token3 = useSelector((state: RootState) => state.user.token??'');
 
 
-
-    if(token3){
-        loggedIn =userLoggedIn;
+    if (token3) {
+        loggedIn = userLoggedIn;
         token = token3;
     }
-    if(token2){
+    if (token2) {
         loggedIn = agentLoggedIn;
         token = token2;
     }
-    if(token1){
+    if (token1) {
         loggedIn = adminLoggedIn;
         token = token1;
     }

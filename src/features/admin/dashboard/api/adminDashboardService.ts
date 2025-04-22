@@ -56,7 +56,7 @@ export const fetchDashboardData = async (token: string): Promise<DashboardData> 
     }
 };
 
-export const deleteExistingImage = async (uuid: any, token = null) => {
+export const deleteExistingImage = async (uuid: any, token = '') => {
     try {
         const response = await AxiosApi('admin', token).delete(baseURL + `/delete-media/${uuid}`); // Replace with your actual API endpoint
         if (response.data.success) {
@@ -73,9 +73,9 @@ export const deleteExistingImage = async (uuid: any, token = null) => {
         return {"response": true, "message": `Error deleting image with UUID ${uuid}:`};
     }
 }
-export const deleteExistingVideos = async (uuid: any, token = null) => {
+export const deleteExistingVideos = async (uuid: any, token = '') => {
     try {
-        const response = await AxiosApi('admin', token).delete(baseURL + `/delete-media/${uuid}`); // Replace with your actual API endpoint
+        const response = await AxiosApi('admin', token).delete(baseURL + `/delete-media/${uuid}`);
         if (response.data.success) {
             // Optionally handle success feedback here (e.g., show a message)
 

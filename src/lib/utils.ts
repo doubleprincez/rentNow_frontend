@@ -104,9 +104,9 @@ export function deleteFormData(name: string) {
 }
 
 
-export const AxiosApi = (tokenFor: string = 'user', initialToken: string | null | undefined = null, customHeaders = {}) => {
+export const AxiosApi = (tokenFor: string = 'user', initialToken: string |  undefined = '', customHeaders = {}) => {
 
-    const csrfTokenMeta = getToken( tokenFor, initialToken);
+    const csrfTokenMeta = getToken(tokenFor, initialToken);
 
     const instance = axios.create({
         withCredentials: true,
@@ -126,18 +126,16 @@ export const AxiosApi = (tokenFor: string = 'user', initialToken: string | null 
     instance.interceptors.request.use(
         (config) => {
             config.headers.Authorization = `Bearer ${csrfTokenMeta}`;
-
             return config;
         },
         (error) => {
             return Promise.reject(error);
         }
     );
-
     return instance;
 }
 
-const getToken = (  tokenFor = 'user', initialToken: string) => {
+const getToken = (tokenFor = 'user', initialToken: string) => {
     let csrfTokenMeta;
 
     if (initialToken) {

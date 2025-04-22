@@ -105,13 +105,13 @@ export const deleteUser = async (id: number) => {
 };
 
 
-export const getAgentRents = async (page: number = 1, search: string = '',token=null) => {
-  try {
+export const getAgentRents = async (page: number = 1, search: string = '', token = null) => {
+    try {
 
-      const response = await AxiosApi('agent',token).get<ApiRentResponse>( baseURL + `/rented-apartments?page=${page}&search=${search}` );
+        const response = await AxiosApi('agent', token ?? '').get<ApiRentResponse>(baseURL + `/rented-apartments?page=${page}&search=${search}`);
 
-      return response.data;
-  } catch (error) {
-      throw error;
-  }
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 };

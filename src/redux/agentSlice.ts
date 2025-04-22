@@ -58,7 +58,7 @@ interface LoginResponse {
 
 const initialState: AgentState = {
     isLoggedIn: false,
-    token: null,
+    token: '',
     firstName: '',
     lastName: '',
     email: '',
