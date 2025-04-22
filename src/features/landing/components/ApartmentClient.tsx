@@ -28,6 +28,7 @@ import {baseURL, frontendURL} from "@/../next.config";
 import {AxiosApi, formatAmountNumber, saveFormData} from '@/lib/utils';
 import {EmailIcon, FacebookIcon, FacebookShareButton, WhatsappIcon, WhatsappShareButton} from 'react-share';
 import {useAlert} from '@/contexts/AlertContext';
+import Script from "next/script";
 
 interface ClientProps {
     prevApartment?: Apartment;
@@ -284,6 +285,9 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                 }
 </span>
                             </div>
+                            <Script>
+                                console.log('Amenities:', apartment.amenities, typeof apartment.amenities)
+                            </Script>
 
                             {
                                 apartment?.agent_type == 'agent' ? <>
