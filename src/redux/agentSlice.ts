@@ -1,8 +1,7 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
 import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
-import {logoutAdmin} from "@/redux/adminSlice";
 
 interface AgentState {
     isLoggedIn: boolean;
@@ -94,7 +93,7 @@ const getFromStorage = (key: string): string | null => {
     }
 };
 
-const setToStorage = (key: string, value: string): void => {
+const setToStorage = (key: string, value: any): void => {
     if (!isClient) return;
     try {
         saveFormData(key, value);
@@ -114,37 +113,43 @@ const removeFromStorage = (key: string): void => {
 
 // Load initial state from localStorage
 const loadInitialState = (): AgentState => {
-    const token = getFromStorage('agentToken');
-    const savedState = getFromStorage('agentState');
-    
-    if (token && savedState) {
-        try {
-            const parsedState = JSON.parse(savedState);
-            return {
-                ...initialState,
-                ...parsedState,
-                token,
-                isLoading: false,
-                error: null
-            };
-        } catch (error) {
-            console.error('Error parsing stored state:', error);
-        }
+    const token = getFromStorage('agentToken') as string;
+    const saved = getFromStorage('agentState');
+    if (saved && typeof saved === 'object' && 'isLoggedIn' in saved) {
+        const savedState = saved as AgentState;
+
+        if (token && savedState) {
+            try {
+                return {
+                    ...initialState,
+                    ...(savedState),
+                    token,
+                    isLoading: false,
+                    error: null
+                };
+            } catch (error) {
+                console.error('Error parsing stored state:', error);
+            }
+        }// now safe to use
     }
     return initialState;
 };
 
 export const loginAgent = createAsyncThunk(
     'agent/login',
-    async ({ email, password, account_id }: { email: string; password: string; account_id: number }, { rejectWithValue }) => {
+    async ({email, password, account_id}: {
+        email: string;
+        password: string;
+        account_id: number
+    }, {rejectWithValue}) => {
         try {
-            const response:any = await axios.post<LoginResponse>(baseURL+"/login", {
+            const response: any = await axios.post<LoginResponse>(baseURL + "/login", {
                 email,
                 password,
                 account_id
             });
 
-            const { data } = response;
+            const {data} = response;
 
             const nameParts = data.user.name.split(' ');
             const firstName = nameParts[0] || '';
@@ -175,7 +180,7 @@ export const loginAgent = createAsyncThunk(
             };
 
             setToStorage('agentToken', data.token);
-            setToStorage('agentState', JSON.stringify(persistState));
+            setToStorage('agentState', persistState);
 
             return {
                 token: data.token,
@@ -188,15 +193,14 @@ export const loginAgent = createAsyncThunk(
 );
 
 
-
 export const logoutAgent = createAsyncThunk(
     'agent/logout',
-    async (_, { rejectWithValue }) => {
+    async (_, {rejectWithValue}) => {
         try {
             const token = getFromStorage('agentToken');
             if (token) {
                 await axios.post(
-                    baseURL+'/logout',
+                    baseURL + '/logout',
                     {},
                     {
                         headers: {
@@ -259,11 +263,11 @@ const agentSlice = createSlice({
                 state.isLoggedIn = false;
             })
             .addCase(logoutAgent.fulfilled, (state) => {
-            Object.assign(state, initialState);
-        });
+                Object.assign(state, initialState);
+            });
     }
 });
 
 
-export const { logout, initializeFromStorage } = agentSlice.actions;
+export const {logout, initializeFromStorage} = agentSlice.actions;
 export default agentSlice.reducer;

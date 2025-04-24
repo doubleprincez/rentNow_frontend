@@ -100,8 +100,23 @@ export function saveFormData(name: string, data: any, duration = 30) {
 //     document.cookie = `${name}=${encodeURIComponent(JSON.stringify(data, getCircularReplacer(), 2))}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Strict`;
 // }
 
-export function getFormData(name: string) {
-    return  JSON.parse(localStorage.getItem(name)??'');
+export function getFormData<T>(value: string | null): T | string | null {
+    if (!value || typeof value !== 'string') return null;
+
+    try {
+        return JSON.parse(value);
+    } catch (error) {
+        // console.warn('Invalid JSON in storage:', value);
+        return value;
+    }
+    // }
+    // const data = localStorage.getItem(name)?.trim();
+    // console.log(data);
+    // if (data) {
+    //     return JSON.parse(String(data));
+    // }
+    //
+    // return undefined;
 }
 
 // export function getFormData(name: string) {

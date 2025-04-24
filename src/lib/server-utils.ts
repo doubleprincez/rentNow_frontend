@@ -7,7 +7,7 @@ export const getServerFormData = async (name: string) => {
     if (!cookie) return null;
 
     try {
-        return JSON.parse(decodeURIComponent(cookie.value));
+        return decodeURIComponent(cookie.value);
     } catch {
         return null;
     }

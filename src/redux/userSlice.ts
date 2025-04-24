@@ -1,10 +1,9 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { redirect, useRouter } from 'next/navigation';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
 
-interface UserState {
+export type UserState = {
     isLoggedIn: boolean;
-    isSubscribed?:boolean;
+    isSubscribed?: boolean;
     firstName: string;
     lastName: string;
     email: string;
@@ -18,7 +17,7 @@ interface UserState {
 
 const initialState: UserState = {
     isLoggedIn: false,
-    isSubscribed:false,
+    isSubscribed: false,
     firstName: '',
     lastName: '',
     email: '',
@@ -35,25 +34,25 @@ const loadState = (): UserState => {
 
     if (typeof window !== 'undefined') {
         try {
-            const savedState = getFormData('userState');
-            const token = getFormData('token');
-            
-            if (savedState) {
-                const parsedState = JSON.parse(savedState);
-                
+            const token = getFormData('token') as string;
+            const saved = getFormData('userState') as UserState;
+            if (saved && typeof saved === 'object' && 'userId' in saved) {
+                const parsedState = saved;
+
                 // Ensure userId is properly preserved
-                const userId = parsedState.userId !== undefined ? Number(parsedState.userId) : null;
-                
+                const userId = Number(parsedState.userId);
+
                 return {
                     ...initialState,
                     ...parsedState,
-                    userId, // Use the properly typed userId
+                    userId: userId, // Use the properly typed userId
                     phoneNumber: typeof parsedState.phoneNumber === 'number' ? parsedState.phoneNumber : null,
                     isLoggedIn: Boolean(parsedState.isLoggedIn),
                     token: token || undefined,
                     apartments: Array.isArray(parsedState.apartments) ? parsedState.apartments : [],
                     rentedApartments: Array.isArray(parsedState.rentedApartments) ? parsedState.rentedApartments : []
                 };
+
             }
         } catch (error) {
             //console.error('Error loading state:', error);
@@ -64,16 +63,16 @@ const loadState = (): UserState => {
 };
 
 export interface userSlicePayload {
-            firstName: string;
-            lastName: string;
-            email: string;
-            phoneNumber: number | null;
-            userId: number;
-            isSubscribed?:boolean;
-            accountType?: string;
-            apartments?: Array<any>;
-            rentedApartments?: Array<any>;
-        
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: number | null;
+    userId: number;
+    isSubscribed?: boolean;
+    accountType?: string;
+    apartments?: Array<any>;
+    rentedApartments?: Array<any>;
+
 }
 
 const userSlice = createSlice({
@@ -97,7 +96,7 @@ const userSlice = createSlice({
             if (typeof window !== 'undefined') {
                 const stateToStore = {
                     isLoggedIn: true,
-                    isSubscribed:action.payload.isSubscribed,
+                    isSubscribed: action.payload.isSubscribed,
                     firstName: action.payload.firstName,
                     lastName: action.payload.lastName,
                     email: action.payload.email,
@@ -114,8 +113,8 @@ const userSlice = createSlice({
             state.isSubscribed = action.payload;
 
             if (typeof window !== 'undefined') {
-                const storedState = JSON.parse(getFormData('userState') || "{}");
-                saveFormData('userState', JSON.stringify({ ...storedState, isSubscribed: action.payload }));
+                const storedState = getFormData('userState') || {}
+                saveFormData('userState', JSON.stringify({...storedState, isSubscribed: action.payload}));
             }
         },
         logout: (state) => {
@@ -123,10 +122,10 @@ const userSlice = createSlice({
             if (typeof window !== 'undefined') {
                 deleteFormData('userState');
                 deleteFormData('token');
-            } 
+            }
         }
     }
 });
 
-export const { login, logout,updateSubscription } = userSlice.actions;
+export const {login, logout, updateSubscription} = userSlice.actions;
 export default userSlice.reducer;

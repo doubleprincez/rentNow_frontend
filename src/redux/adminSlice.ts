@@ -1,7 +1,8 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
 import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
+import {UserState} from "@/redux/userSlice";
 
 interface AdminState {
     isLoggedIn: boolean;
@@ -11,7 +12,7 @@ interface AdminState {
     email: string;
     isLoading: boolean;
     error: string | null;
-    userId?: number;
+    userId: number | null;
     accountType?: string;
     role?: string;
 }
@@ -40,7 +41,7 @@ const initialState: AdminState = {
     email: '',
     isLoading: false,
     error: null,
-    userId: undefined,
+    userId: null,
     accountType: undefined,
     role: undefined
 };
@@ -48,7 +49,8 @@ const initialState: AdminState = {
 // Safe localStorage access
 const isClient = typeof window !== 'undefined';
 
-const getFromStorage = (key: string): string | null => {
+const getFromStorage = <T>(key: string): T | string | null => {
+
     if (!isClient) return null;
     try {
         return getFormData(key);
@@ -78,15 +80,14 @@ const removeFromStorage = (key: string): void => {
 
 // Load initial state from localStorage
 const loadInitialState = (): AdminState => {
-    const token = getFromStorage('adminToken');
-    const savedState = getFromStorage('adminState');
-    
+    const token = getFromStorage('adminToken') as string;
+    const savedState = getFromStorage('adminState') as UserState;
+
     if (token && savedState) {
         try {
-            const parsedState = JSON.parse(savedState);
             return {
                 ...initialState,
-                ...parsedState,
+                ...(savedState),
                 token,
                 isLoading: false,
                 error: null
@@ -100,15 +101,19 @@ const loadInitialState = (): AdminState => {
 
 export const loginAdmin = createAsyncThunk(
     'admin/login',
-    async ({ email, password,account_id }: { email: string; password: string ,account_id:number}, { rejectWithValue }) => {
+    async ({email, password, account_id}: {
+        email: string;
+        password: string,
+        account_id: number
+    }, {rejectWithValue}) => {
         try {
-            const response = await axios.post<LoginResponse>(baseURL+"/login", {
+            const response = await axios.post<LoginResponse>(baseURL + "/login", {
                 email,
                 password,
                 account_id
             });
 
-            const { data } = response;
+            const {data} = response;
 
             if (data.user.account.id !== 4) {
                 return rejectWithValue('Invalid account type. Please use admin credentials.');
@@ -143,12 +148,12 @@ export const loginAdmin = createAsyncThunk(
 
 export const logoutAdmin = createAsyncThunk(
     'admin/logout',
-    async (_, { rejectWithValue }) => {
+    async (_, {rejectWithValue}) => {
         try {
             const token = getFromStorage('adminToken');
             if (token) {
                 await axios.post(
-                    baseURL+'/logout',
+                    baseURL + '/logout',
                     {},
                     {
                         headers: {
@@ -210,9 +215,8 @@ const adminSlice = createSlice({
     }
 });
 
-export const { clearError, initializeFromStorage } = adminSlice.actions;
+export const {clearError, initializeFromStorage} = adminSlice.actions;
 export default adminSlice.reducer;
-
 
 
 //SAMPLE DATA RESPONSE

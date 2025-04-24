@@ -41,9 +41,9 @@ export interface ApiResponse {
 
 export const getAllApartments = async (page: number = 1, search: string = '', adminToken: string | null | undefined = null) => {
     try {
-        let token = adminToken;
+        let token: string | null | undefined = adminToken;
 
-        if (token == '') {
+        if (!token) {
             token = getFormData('adminToken');
         }
 
