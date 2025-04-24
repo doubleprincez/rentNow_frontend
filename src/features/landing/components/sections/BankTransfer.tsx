@@ -24,8 +24,6 @@ interface BankTransferI {
 const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
     const {showAlert} = useAlert();
     const router = useRouter();
-
-
     const user = useSelector((state: any) => state.user);
 
     const [loading, setLoading] = useState(false);
@@ -38,7 +36,7 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
     const fetchReference = async () => {
         if (loadingRef) return;
         setLoadingRef(true);
-        await AxiosApi('user', user.token ?? '', {}, true).post(baseURL + '/transaction/generateKey')
+        await AxiosApi('user', user.token, {}, true).post(baseURL + '/transaction/generateKey')
             .then((res: any) => {
                 setReference(res.data.data.transaction_reference)
             })
@@ -51,16 +49,19 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
 
     const [counter, setCounter] = useState(0);
 
+    const checkUserLoggedIn = () => {
+        if (!user.isLoggedIn && !user.token) {
+            saveFormData('intended_url', '/subscribe');
+            saveToken();
+            return redirect('auth/login?next=subscribe');
+        }
+    }
     const generateSubscription = async () => {
 
         if (loading) return;
         setLoading(true);
 
-        if (!user.isLoggedIn) {
-            saveFormData('intended_url', '/subscribe');
-            saveToken();
-            return redirect('auth/login?next=subscribe');
-        }
+        checkUserLoggedIn();
         if (!reference && counter < 4) {
             setCounter(() => counter + 1);
             fetchReference().then(r => generateSubscription()).then(r => setCounter(0));

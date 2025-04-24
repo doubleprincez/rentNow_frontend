@@ -77,7 +77,7 @@ export function isServer() {
 
 
 export function hasFormData(name: string) {
-    return localStorage.getItem(name) == null;
+    return getFormData(name) == null;
 }
 
 //
@@ -103,14 +103,14 @@ export function saveFormData(name: string, data: any, duration = 30) {
 export function getFormData<T>(key: string): T | null {
     const raw = localStorage.getItem(key);
     if (!raw) return null;
-
+    if (typeof raw == 'string') return raw as T;
     try {
         return JSON.parse(raw) as T;
     } catch {
         return null;
     }
     // }
-    // const data = localStorage.getItem(name)?.trim();
+    // const data = getFormData(name)?.trim();
     // console.log(data);
     // if (data) {
     //     return JSON.parse(String(data));
@@ -170,23 +170,22 @@ export const AxiosApi = (tokenFor: string = 'user', initialToken: string | undef
     return instance;
 }
 
-export const getToken = (tokenFor = 'user', initialToken: string, strictType = false) => {
+export const getToken = (tokenFor = 'user', initialToken: string = '', strictType = false) => {
     let csrfTokenMeta;
-
     if (initialToken) {
         csrfTokenMeta = initialToken;
     } else {
         if (strictType) {
             if (tokenFor == 'admin') {
-                csrfTokenMeta = localStorage.getItem('adminToken')
+                csrfTokenMeta = getFormData('adminToken')
             } else if (tokenFor == 'agent') {
-                csrfTokenMeta = localStorage.getItem('agentToken')
+                csrfTokenMeta = getFormData('agentToken')
             } else {
-                csrfTokenMeta = localStorage.getItem('token');
+                csrfTokenMeta = getFormData('token');
             }
 
         } else {
-            csrfTokenMeta = localStorage.getItem('adminToken') ?? localStorage.getItem('agentToken') ?? localStorage.getItem('token');
+            csrfTokenMeta = getFormData('adminToken') ?? getFormData('agentToken') ?? getFormData('token');
         }
 
         if (tokenFor === 'user' && hasFormData('token')) {
