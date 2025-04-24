@@ -77,31 +77,52 @@ export function isServer() {
 
 
 export function hasFormData(name: string) {
-    const cookies = document.cookie.split("; ");
-    return cookies.some(cookie => cookie.startsWith(`${name}=`));
+    return localStorage.getItem(name) == null;
 }
+
+//
+//
+// export function hasFormData(name: string) {
+//     const cookies = document.cookie.split("; ");
+//     return cookies.some(cookie => cookie.startsWith(`${name}=`));
+// }
 
 
 export function saveFormData(name: string, data: any, duration = 30) {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + duration * 24 * 60 * 60 * 1000); // Convert days to milliseconds
-    document.cookie = `${name}=${encodeURIComponent(JSON.stringify(data, getCircularReplacer(), 2))}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Strict`;
+    return localStorage.setItem(name, JSON.stringify(data));
 }
+
+//
+//
+// export function saveFormData(name: string, data: any, duration = 30) {
+//     const expires = new Date();
+//     expires.setTime(expires.getTime() + duration * 24 * 60 * 60 * 1000); // Convert days to milliseconds
+//     document.cookie = `${name}=${encodeURIComponent(JSON.stringify(data, getCircularReplacer(), 2))}; expires=${expires.toUTCString()}; path=/; Secure; SameSite=Strict`;
+// }
 
 export function getFormData(name: string) {
-    const cookies = document.cookie.split("; ");
-    for (let cookie of cookies) {
-        const [key, value] = cookie.split("=");
-        if (key === name) {
-            return JSON.parse(decodeURIComponent(value));
-        }
-    }
-    return null;
+    return  JSON.parse(localStorage.getItem(name)??'');
 }
 
+// export function getFormData(name: string) {
+//     const cookies = document.cookie.split("; ");
+//     for (let cookie of cookies) {
+//         const [key, value] = cookie.split("=");
+//         if (key === name) {
+//             return JSON.parse(decodeURIComponent(value));
+//         }
+//     }
+//     return null;
+// }
+
 export function deleteFormData(name: string) {
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    return localStorage.removeItem(name);
 }
+
+//
+// export function deleteFormData(name: string) {
+//     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+// }
 
 
 export const AxiosApi = (tokenFor: string = 'user', initialToken: string | undefined = '', customHeaders = {}, strictType = false) => {
@@ -134,7 +155,7 @@ export const AxiosApi = (tokenFor: string = 'user', initialToken: string | undef
     return instance;
 }
 
-const getToken = (tokenFor = 'user', initialToken: string, strictType = false) => {
+export const getToken = (tokenFor = 'user', initialToken: string, strictType = false) => {
     let csrfTokenMeta;
 
     if (initialToken) {

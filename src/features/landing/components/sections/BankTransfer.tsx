@@ -79,8 +79,8 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
                 .then(response => {
                     showAlert("Transaction Invoice Generated Successful", "success");
                     // return subscription
-                    if (response.data.data.transaction.reference) {
-                        router.push(frontendURL + '/invoice/' + response.data.data.transaction.reference);
+                    if (response.data.data?.transaction?.reference) {
+                        router.push(frontendURL + '/invoice/' + response.data.data.transaction?.reference);
                     }
 
                     //    if(response?.invoice){
