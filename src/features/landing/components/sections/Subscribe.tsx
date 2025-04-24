@@ -98,9 +98,14 @@ const Subscribe = ({plans}: CheckoutI) => {
 
 
     const fetchToken = () => {
+
         if (hasFormData('checkout_plan')) {
-            setSelectedPlan(getFormData('checkout_plan') as PlansInterface);
-            deleteFormData('checkout_plan')
+            const rawPlan = getFormData<PlansInterface>('checkout_plan');
+
+            if (rawPlan && typeof rawPlan !== 'string') {
+                setSelectedPlan(rawPlan);
+                deleteFormData('checkout_plan');
+            }
         }
         if (hasFormData('checkout_type')) {
             selectedPaymentMethodIs(getFormData('checkout_type') as string);
