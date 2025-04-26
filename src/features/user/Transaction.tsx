@@ -31,7 +31,7 @@ const Transaction = ({reference}: TransactionI) => {
         try {
             const res = await AxiosApi('user', user.token).get(baseURL + `/transaction/invoice/${reference}`);
             setTransaction(res.data.data);
-            console.log(res.data.data.payable_type);
+            // console.log(res.data.data.payable_type);
         } catch (error: any) {
             showAlert(
                 error?.response?.data?.message || error.message || "Unable to Process, Please try again.",

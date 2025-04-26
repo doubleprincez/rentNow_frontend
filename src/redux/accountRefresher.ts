@@ -83,7 +83,7 @@ const accountRefresher = (account = 'user') => {
                 }
             }).catch((error: any) => {
                 if (error.status == 401) {
-                    console.log('Authentication failed for ' + account);
+                    // console.log('Authentication failed for ' + account);
                     if (counter >= 2) {
                         logoutUserAutomatically(account);
                     }

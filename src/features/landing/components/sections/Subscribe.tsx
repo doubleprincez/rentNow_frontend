@@ -34,7 +34,7 @@ const Subscribe = ({plans}: CheckoutI) => {
         fetchToken();
 
         if (!isLoggedIn) {
-            saveFormData('intended_url', frontendURL + '/subscribe');
+            saveFormData('intended_url',  '/subscribe');
             router.push('/auth/login');
         }
     }, [isLoggedIn, router]);
@@ -79,7 +79,7 @@ const Subscribe = ({plans}: CheckoutI) => {
 
         if (set) {
             setSelectedPlan(set[0]);
-            saveFormData('checkout_plan', set[0]);
+            saveFormData('checkout_plan', set[0].slug);
         }
     }
 
@@ -90,9 +90,9 @@ const Subscribe = ({plans}: CheckoutI) => {
             return alert('Gateway Not Available');
         }
         const set = gateways?.filter((r => r.slug == slug));
-        if (set) {
+        if (set.length) {
             setSelectedGateway(set[0]);
-            saveFormData('checkout_gateway', set[0]);
+            saveFormData('checkout_gateway', set[0].slug);
         }
     }
 
@@ -139,7 +139,7 @@ const Subscribe = ({plans}: CheckoutI) => {
                                         className="text-3xl sm:text-4xl font-bold text-white">{pl.currency}{formatAmountNumber(pl?.price)}</span> / {pl?.invoice_interval}
                                 </p>
                                 <script>
-                                    console.log({pl?.description});
+                                    {/*console.log({pl?.description});*/}
                                 </script>
                                 {/*<p className="text-center mb-6">{Object.values(pl?.description)}</p>*/}
                                 <div>

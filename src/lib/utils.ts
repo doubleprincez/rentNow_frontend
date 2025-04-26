@@ -89,8 +89,14 @@ export function hasFormData(name: string) {
 
 
 export function saveFormData(name: string, data: any, duration = 30) {
-    return localStorage.setItem(name, JSON.stringify(data));
+    try {
+        const record = typeof data === "string" ? data : JSON.stringify(data);
+        localStorage.setItem(name, record);
+    } catch (error) {
+        console.error(`Failed to save ${name} to localStorage:`, error);
+    }
 }
+
 
 //
 //

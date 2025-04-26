@@ -93,7 +93,7 @@ const userSlice = createSlice({
             state.token = getFormData('token') || undefined;
 
             // Store in localStorage with explicit type preservation
-            if (typeof window !== 'undefined') {
+            if (typeof window == 'undefined') {
                 const stateToStore = {
                     isLoggedIn: true,
                     isSubscribed: action.payload.isSubscribed,
@@ -112,14 +112,14 @@ const userSlice = createSlice({
         updateSubscription: (state, action: PayloadAction<boolean>) => {
             state.isSubscribed = action.payload;
 
-            if (typeof window !== 'undefined') {
+            if (typeof window == 'undefined') {
                 const storedState = getFormData('userState') || {}
                 saveFormData('userState', JSON.stringify({...storedState, isSubscribed: action.payload}));
             }
         },
         logout: (state) => {
             Object.assign(state, initialState);
-            if (typeof window !== 'undefined') {
+            if (typeof window == 'undefined') {
                 deleteFormData('userState');
                 deleteFormData('token');
             }

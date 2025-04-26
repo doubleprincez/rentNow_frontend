@@ -1,7 +1,7 @@
 "use client"
 import {Button} from "@/components/ui/button";
 import {AxiosApi, formatAmountNumber, saveFormData} from "@/lib/utils";
-import {PlansInterface, TransactionHistory} from "@/types/subscription";
+import {PlansInterface, TransactionAPIResponse, TransactionHistory} from "@/types/subscription";
 import {useEffect, useState} from "react";
 import {baseURL, frontendURL} from "@/../next.config";
 
@@ -51,7 +51,7 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
 
     const checkUserLoggedIn = () => {
         if (!user.isLoggedIn && !user.token) {
-            saveFormData('intended_url', '/subscribe');
+            saveFormData('intended_url',  '/subscribe');
             saveToken();
             return redirect('auth/login?next=subscribe');
         }
@@ -77,7 +77,7 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
                 currency: plan?.currency,
                 callback_url: frontendURL + '/invoice/' + reference
             })
-                .then(response => {
+                .then((response: TransactionAPIResponse) => {
                     showAlert("Transaction Invoice Generated Successful", "success");
                     // return subscription
                     if (response.data.data?.transaction?.reference) {

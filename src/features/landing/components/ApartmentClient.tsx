@@ -423,7 +423,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                             </p>
                                             <Button
                                                 onClick={() => {
-                                                    saveFormData('intended_url', frontendURL + '/find-homes/' + apartment.id);
+                                                    saveFormData('intended_url', '/find-homes/' + apartment.id);
                                                     router.push('/auth/login')
                                                 }}
                                                 className="bg-orange-500 hover:bg-orange-600 text-white"

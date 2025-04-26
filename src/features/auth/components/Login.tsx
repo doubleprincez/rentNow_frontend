@@ -1,7 +1,7 @@
 "use client";
 import React, {useState} from "react";
 import {motion} from "framer-motion";
-import {useRouter} from "next/navigation";
+import {redirect, useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Label} from "@radix-ui/react-label";
 import {Checkbox} from "@/components/ui/checkbox";

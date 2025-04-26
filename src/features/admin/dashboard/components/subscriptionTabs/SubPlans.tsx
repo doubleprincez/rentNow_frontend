@@ -261,7 +261,7 @@ const PlanList = () => {
             await AxiosApi('admin').put(baseURL + `/plan/${plan.id}`, plan)
                 .then((response) => {
                     showAlert("Plan Updated", "success");
-                    console.log(plan, response.data);
+                    // console.log(plan, response.data);
                     if (plan.id) {
                         setPlans(plans?.map((p) => (p.id === plan.id ? response.data : p)));
 
