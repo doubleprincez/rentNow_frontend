@@ -76,7 +76,7 @@ const ManageProperty: React.FC = () => {
     const fetchProperties = async () => {
       if (!token) {
         setError('Authentication token not found');
-        setLoading(false);
+        setLoading(()=>false);
         return;
       }
       try {
@@ -96,11 +96,11 @@ const ManageProperty: React.FC = () => {
           setError('Invalid data format received from server');
           //console.error('Invalid response format:', response.data);
         }
-        setLoading(false);
+        setLoading(()=>false);
       } catch (err) {
         //console.error('Error fetching properties:', err);
         setError('Failed to load properties');
-        setLoading(false);
+        setLoading(()=>false);
       }
     };
     fetchProperties();

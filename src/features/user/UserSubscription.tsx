@@ -49,7 +49,7 @@ const UserSubscription = () => {
     const fetchSubscriptions = async () => {
         try {
             if(loading) return;
-            setLoading(true);
+            setLoading(()=>true);
             const response = await getUserSubscriptions(currentPage, searchTerm);
 
             if (response.success && response.data) {
@@ -64,7 +64,7 @@ const UserSubscription = () => {
             setError(err.message || 'Failed to fetch subscriptions');
             setSubscriptions('');
         } finally {
-            setLoading(false);
+            setLoading(()=>false);
         }
     };
 

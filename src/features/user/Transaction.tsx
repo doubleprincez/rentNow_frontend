@@ -27,7 +27,7 @@ const Transaction = ({reference}: TransactionI) => {
 
     const fetchTransaction = async () => {
         if (loading) return;
-        setLoading(true);
+        setLoading(()=>true);
         try {
             const res = await AxiosApi('user', user.token).get(baseURL + `/transaction/invoice/${reference}`);
             setTransaction(res.data.data);
@@ -38,7 +38,7 @@ const Transaction = ({reference}: TransactionI) => {
                 "error"
             );
         } finally {
-            setLoading(false);
+            setLoading(()=>false);
         }
     };
 

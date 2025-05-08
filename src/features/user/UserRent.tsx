@@ -57,7 +57,7 @@ const handleApartmentClick = (apartment:number) => {
     const fetchRents = async () => {
         try {
             if(loading)return ;
-            setLoading(true);
+            setLoading(()=>true);
             const response = await getUserRents(currentPage, searchTerm);
 
             if (response.success && response.data) {
@@ -72,7 +72,7 @@ const handleApartmentClick = (apartment:number) => {
             setError(err.message || 'Failed to fetch subscriptions');
             setRents('');
         } finally {
-            setLoading(false);
+            setLoading(()=>false);
         }
     };
 

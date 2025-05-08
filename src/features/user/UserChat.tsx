@@ -40,7 +40,7 @@ const UserChat = () => {
     const fetchPreviousConversations = async () => {
         try {
             if(loading) return ;
-            setLoading(true);
+            setLoading(()=>true);
             const response = await getUserConversations(token??'');
 
             if (response.success && response.data) {
@@ -54,7 +54,7 @@ const UserChat = () => {
             setError(err.message || 'Failed to fetch subscriptions');
             setConversations('');
         } finally {
-            setLoading(false);
+            setLoading(()=>false);
         }
     };
 

@@ -10,7 +10,7 @@ const Subscribe = () => {
     const [message, setMessage] = useState<string | null>(null)
 
     const handleSubscribe = async () => {
-        setLoading(true)
+        setLoading(()=>true)
         setMessage(null)
 
         try {
@@ -27,7 +27,7 @@ const Subscribe = () => {
                 setMessage('Unexpected error. Please try again later.')
             }
         } finally {
-            setLoading(false)
+            setLoading(()=>false)
         }
     }
 

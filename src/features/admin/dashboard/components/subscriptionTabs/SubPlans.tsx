@@ -232,7 +232,7 @@ const PlanList = () => {
     const fetchPlans = async () => {
 
         if (loading) return;
-        setLoading(true);
+        setLoading(()=>true);
         await AxiosApi('admin').get<ApiPlansResponse>(baseURL + "/plans" + (searchTerm ? '?search=' + searchTerm : ''))
             .then((response) => setPlans(response.data.data.data))
             .catch((error: any) => showAlert(error?.response?.data?.message || error.message || "Unable to Process, Please try again.", "error"))

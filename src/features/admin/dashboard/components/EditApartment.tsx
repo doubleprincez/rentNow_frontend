@@ -25,7 +25,7 @@ const EditApartment: React.FC = () => {
 
     const fetchApartment = async () => {
         if (loading) return;
-        setLoading(true);
+        setLoading(()=>true);
         setPageState('loading');
         await AxiosApi('admin', token ?? '')
             .get(baseURL + '/apartment/' + id + '?raw=true')
@@ -35,7 +35,7 @@ const EditApartment: React.FC = () => {
 
             .finally(() => {
                 setPageState('loaded');
-                setLoading(false);
+                setLoading(()=>false);
             })
         ;
     }

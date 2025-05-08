@@ -94,7 +94,7 @@ const Home = () => {
                 }
             } finally {
                 if (isMounted) {
-                    setLoading(false);
+                    setLoading(()=>false);
                 }
             }
         };

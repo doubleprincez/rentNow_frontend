@@ -138,3 +138,17 @@ export type bankInterface = {
     updated_at: Date | string;
 
 }
+
+
+export type PaystackInterface = {
+    authorization_code?: string | null;
+    transaction_id?: string | null;
+    gateway_response?: any | null; // Consider a more specific type if needed
+    paid_at?: string | null;
+    channel?: string | null;
+    ip_address?: string | null;
+    customer_code?: string | null;
+    plan?: string | null;
+
+
+}

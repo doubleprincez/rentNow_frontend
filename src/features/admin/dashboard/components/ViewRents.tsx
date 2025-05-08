@@ -35,7 +35,7 @@ const ViewRents = () => {
 
   const fetchRents = async () => {
     try {
-      setLoading(true);
+      setLoading(()=>true);
       const data = await rentApi.getAllRents();
       setRentData(data);
     } catch (error) {
@@ -46,7 +46,7 @@ const ViewRents = () => {
         description: "Failed to fetch rent requests",
       });
     } finally {
-      setLoading(false);
+      setLoading(()=>false);
     }
   };
 

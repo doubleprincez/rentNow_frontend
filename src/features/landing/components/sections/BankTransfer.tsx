@@ -59,7 +59,7 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
     const generateSubscription = async () => {
 
         if (loading) return;
-        setLoading(true);
+        setLoading(()=>true);
 
         checkUserLoggedIn();
         if (!reference && counter < 4) {
@@ -93,7 +93,7 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
                     error?.response?.data?.message || error.message || "Unable to Process, Please try again.",
                     "error"
                 ))
-                .finally(() => setLoading(false));
+                .finally(() => setLoading(()=>false));
 
         } else {
 

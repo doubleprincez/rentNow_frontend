@@ -168,7 +168,7 @@ const AdminTransaction = ({transaction, closeSelected}: { transaction: Transacti
     const [status, setStatus] = useState(transaction?.payable?.status);
 
     const updateTransactionStatus = async (newStatus: string) => {
-        setLoading(true);
+        setLoading(()=>true);
         try {
             await AxiosApi('admin', '', {'Content-Type': 'multipart/form-data'}).post(baseURL + `/transaction/verify`, {
                 user_id: transaction.user_id,
@@ -181,7 +181,7 @@ const AdminTransaction = ({transaction, closeSelected}: { transaction: Transacti
         } catch (error) {
             showAlert("Failed to update transaction status.", "error");
         } finally {
-            setLoading(false);
+            setLoading(()=>false);
         }
     };
 

@@ -25,7 +25,7 @@ const ViewApartment = () => {
 
     const fetchApartments = async () => {
         try {
-            setLoading(true);
+            setLoading(()=>true);
             const response = await getAllApartments(currentPage, searchTerm, token);
 
             if (response.success && response.data) {
@@ -40,7 +40,7 @@ const ViewApartment = () => {
             setError(err.message || 'Failed to fetch apartments');
             setApartments([]);
         } finally {
-            setLoading(false);
+            setLoading(()=>false);
         }
     };
 

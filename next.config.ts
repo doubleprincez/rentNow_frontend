@@ -2,22 +2,23 @@ import type {NextConfig} from "next";
 
 
 // LOCAL
-// export const frontendURL = 'http://localhost:3000';
-// export const backendUrl = 'http://localhost:8000';
+export const frontendURL = 'http://localhost:3000';
+export const backendUrl = 'http://localhost:8000';
 
 // ONLINE
-export const frontendURL = 'https://rentnow.ng';
-export const backendUrl = 'https://app.rentnow.ng';
+// export const frontendURL = 'https://rentnow.ng';
+// export const backendUrl = 'https://app.rentnow.ng';
 
-export const MAILCHIMP_API_KEY="9f9e0b3216195985c0d179ad071dc65a"
-export const MAILCHIMP_AUDIENCE_ID="c7f48b07e2"
-export const MAILCHIMP_API_SERVER="us2"
+export const PAYSTACK_PUBLIC_KEY = "pk_test_d196b71372349b838d7a0aa834a9d359874f1ac3"
+export const MAILCHIMP_API_KEY = "9f9e0b3216195985c0d179ad071dc65a"
+export const MAILCHIMP_AUDIENCE_ID = "c7f48b07e2"
+export const MAILCHIMP_API_SERVER = "us2"
 
-export const baseURL = backendUrl+'/api';
+export const baseURL = backendUrl + '/api';
 
 const nextConfig: NextConfig = {
     images: {
-        domains: ['images.unsplash.com', 'www.lummi.ai', 'www.rentnow.ng','api.rentnow.ng',"localhost"],
+        domains: ['images.unsplash.com', 'www.lummi.ai', 'www.rentnow.ng', 'api.rentnow.ng', "localhost"],
     },
     async headers() {
         return [
@@ -39,12 +40,11 @@ const nextConfig: NextConfig = {
         return [
             {
                 source: '/api/:path*',
-                 destination: baseURL+'/:path*',
+                destination: baseURL + '/:path*',
             },
         ];
     },
 };
-
 
 
 export default nextConfig;

@@ -9,7 +9,6 @@ import {deleteFormData, formatAmountNumber, getFormData, hasFormData, saveFormDa
 import {useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import {useRouter} from "next/navigation";
-import {frontendURL} from "@/../next.config";
 import {Button} from "@/components/ui/button";
 
 interface CheckoutI {
@@ -34,7 +33,7 @@ const Subscribe = ({plans}: CheckoutI) => {
         fetchToken();
 
         if (!isLoggedIn) {
-            saveFormData('intended_url',  '/subscribe');
+            saveFormData('intended_url', '/subscribe');
             router.push('/auth/login');
         }
     }, [isLoggedIn, router]);
@@ -66,7 +65,7 @@ const Subscribe = ({plans}: CheckoutI) => {
             title: 'Paystack',
             'slug': 'paystack',
             component: (<Paystack plan={selectedPlan} onGoBack={removePlan} onCompleted={setGatewayResponse}/>),
-            active: false,
+            active: true,
             icon: <BankIcon/>,
             className: "bg-orange-500 hover:bg-orange-600 text-white   text-lg font-bold  rounded hover:shadow-lg"
         }
@@ -175,9 +174,8 @@ const Subscribe = ({plans}: CheckoutI) => {
 
 
     const SelectPaymentMethod = () => {
-
         return <>
-            <div className="p-5 ">
+            <div className="py-6 ">
                 <h3 className="text-2xl">Payment Method</h3>
                 <div className="p-4 space-y-3">
                     <label className="mb-9 font-bold text-lg">Selected Plan:{" " + selectedPlan?.name}</label>
@@ -210,10 +208,10 @@ const Subscribe = ({plans}: CheckoutI) => {
     }
 
     return <>
-        <div className="p-6 flex justify-center items-center min-h-screen">
+        <div className="p-6 flex pt-20 justify-center items-center min-h-screen">
             {
                 (selectedGateway && selectedPlan) ? selectedGateway.component :
-                    <div>
+                    <div className={"md:w-9/12"}>
                         {selectedPlan ? SelectPaymentMethod() : PlanSelection()}
                     </div>
             }
