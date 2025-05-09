@@ -110,6 +110,13 @@ const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
 // show payment information and invoice generate 
 
 
+// display subscription details and provide a means of printing invoice
+    const showSubscriptionDetails = () => {
+        return <>
+
+        </>
+    }
+
     return <>
         <div className=" mt-20 w-full md:w-3/4 border border-gray-300 min-h-[300px] p-3">
             <h3 className="text-center text-2xl mb-4">Direct Bank Transfer</h3>

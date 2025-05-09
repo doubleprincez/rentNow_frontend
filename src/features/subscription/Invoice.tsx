@@ -8,11 +8,11 @@ import Image from 'next/image';
 import Logo from '@/components/assets/logo/logo.png'
 
 
-interface InoviceI {
+interface InvoiceI {
     transaction: TransactionHistory
 }
 
-const Invoice = ({transaction}: InoviceI) => {
+const Invoice = ({transaction}: InvoiceI) => {
 
     const componentRef = useRef<HTMLDivElement>(null);
     // Function to download PDF
@@ -56,7 +56,7 @@ const Invoice = ({transaction}: InoviceI) => {
 export default Invoice;
 
 
-const Layout = React.forwardRef<HTMLDivElement, InoviceI>(({transaction}, ref) => {
+const Layout = React.forwardRef<HTMLDivElement, InvoiceI>(({transaction}, ref) => {
 
     const withdrawal = (bank: bankInterface) => {
         return <>

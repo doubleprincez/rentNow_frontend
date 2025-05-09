@@ -146,7 +146,7 @@ const Transaction = ({reference}: TransactionI) => {
             <h2 className="text-center text-2xl font-bold">Transaction Invoice</h2>
 
             <div className="mb-9">
-                {transaction?.payable_type == 'App\\Models\\BankTransfer' && (transaction.status !== "completed" || transaction.status !== "success") && proofOfPayment()}
+                {transaction?.payable_type == 'App\\Models\\BankTransfer' && (transaction.status !== "completed" && transaction.status !== "success") && proofOfPayment()}
             </div>
             <div className="p-3">
                 <Suspense fallback={<div className="flex justify-center items-center min-h-screen"><Loader

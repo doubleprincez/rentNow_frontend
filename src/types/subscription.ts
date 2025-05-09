@@ -122,7 +122,7 @@ export type TransactionAPIResponse = {
         success: boolean;
         message: string;
         data: {
-            transaction:TransactionHistory
+            transaction: TransactionHistory
         }
     }
 }
@@ -141,6 +141,21 @@ export type bankInterface = {
 
 
 export type PaystackInterface = {
+    reference?: string,
+    trans?: string,
+    trxref?: string,
+    reference_paystack?: any,
+    transaction?: any,
+    plan_id?: any,
+    user_id?: any,
+    amount?: any,
+    currency?: any,
+    status?: any,
+    callback_url?: any,
+    meta?: any,
+    expire_at?: any,
+    created_at?: any,
+
     authorization_code?: string | null;
     transaction_id?: string | null;
     gateway_response?: any | null; // Consider a more specific type if needed
@@ -149,6 +164,6 @@ export type PaystackInterface = {
     ip_address?: string | null;
     customer_code?: string | null;
     plan?: string | null;
-
+    payable?: any
 
 }
