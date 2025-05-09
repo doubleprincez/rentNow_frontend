@@ -27,7 +27,7 @@ const Transaction = ({reference}: TransactionI) => {
 
     const fetchTransaction = async () => {
         if (loading) return;
-        setLoading(()=>true);
+        setLoading(() => true);
         try {
             const res = await AxiosApi('user', user.token).get(baseURL + `/transaction/invoice/${reference}`);
             setTransaction(res.data.data);
@@ -38,7 +38,7 @@ const Transaction = ({reference}: TransactionI) => {
                 "error"
             );
         } finally {
-            setLoading(()=>false);
+            setLoading(() => false);
         }
     };
 
@@ -139,11 +139,14 @@ const Transaction = ({reference}: TransactionI) => {
             </div>
         </div>
     }
+
+    // console.log(transaction);
     return (
         <div className="relative min-h-screen pt-28">
             <h2 className="text-center text-2xl font-bold">Transaction Invoice</h2>
+
             <div className="mb-9">
-                {transaction?.payable_type == 'App\\Models\\BankTransfer' && transaction.status !== "completed" && proofOfPayment()}
+                {transaction?.payable_type == 'App\\Models\\BankTransfer' && (transaction.status !== "completed" || transaction.status !== "success") && proofOfPayment()}
             </div>
             <div className="p-3">
                 <Suspense fallback={<div className="flex justify-center items-center min-h-screen"><Loader
@@ -151,6 +154,12 @@ const Transaction = ({reference}: TransactionI) => {
                     {transaction && <Invoice transaction={transaction}/>}
                 </Suspense>
             </div>
+
+            {
+                !loading && !transaction && <div className={"pt-4 flex justify-center items-center min-h-[200px]"}><h3
+                    className={"text-lg mt-9 font-bold text-red-600"}>Transaction Not Found</h3></div>
+            }
+
         </div>
     );
 };

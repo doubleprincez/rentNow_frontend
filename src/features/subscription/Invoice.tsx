@@ -95,8 +95,6 @@ const Layout = React.forwardRef<HTMLDivElement, InoviceI>(({transaction}, ref) =
         </>
     }
     const paystack = (paystack: PaystackInterface) => {
-        // console.log(paystack);
-
         return (
             <>
                 <div className={""}>Paystack Details</div>
@@ -125,12 +123,11 @@ const Layout = React.forwardRef<HTMLDivElement, InoviceI>(({transaction}, ref) =
                 </div>
                 <div className={""}>Transaction Channel</div>
 
-                <div className={"text-end  word-break  pr-3"}>{(paystack?.channel)}</div>
-
+                <div className={"text-end  word-break  pr-3"}>{(paystack?.payable?.channel)}</div>
                 <div className={""}>Transaction No.</div>
-                <div className={"text-end  word-break   pr-3"}>{paystack?.transaction_id}</div>
+                <div className={"text-end  word-break   pr-3"}>{paystack?.reference_paystack}</div>
                 <div className={""}></div>
-                <div className={"  pr-3"}></div>
+                <div className={" pr-3"}></div>
 
             </>
         );

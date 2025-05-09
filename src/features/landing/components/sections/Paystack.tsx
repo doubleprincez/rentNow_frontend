@@ -92,7 +92,7 @@ const Paystack = ({plan, onCompleted}: PaystackI) => {
                     internalReference: pendingReference // Assuming for now it's the same
                 });
 
-                console.log("Verification Result of Pending Transaction:", verificationResult.data);
+                // console.log("Verification Result of Pending Transaction:", verificationResult.data);
 
                 if (verificationResult.data?.status === 'success') {
                     showAlert("Payment confirmed! Redirecting to Invoice...", "success");
@@ -106,7 +106,7 @@ const Paystack = ({plan, onCompleted}: PaystackI) => {
                     setReference(null); // Allow retry
                 }
             } catch (error: any) {
-                console.error("Error verifying pending transaction:", error);
+                // console.error("Error verifying pending transaction:", error);
                 showAlert("Error checking payment status. You can retry or wait.", "error");
                 setLoading(() => false);
                 setReference(null); // Allow retry
@@ -178,8 +178,8 @@ const Paystack = ({plan, onCompleted}: PaystackI) => {
 
         const saveTransactionInfo = async (data) => {
             try {
-                console.log('store data ', data);
-
+                // console.log('store data ', data);
+                //
                 const storeRecord = await AxiosApi(
                     'user',
                     user.token,
@@ -193,7 +193,7 @@ const Paystack = ({plan, onCompleted}: PaystackI) => {
 
                 return storeRecord.data?.status === 'success'; // Return boolean indicating success
             } catch (error: any) {
-                console.error('Error saving transaction info:', error);
+                // console.error('Error saving transaction info:', error);
                 showAlert(error?.response?.data?.message || "Error saving transaction details.", "error");
                 return false;
             }
