@@ -3,7 +3,7 @@ import {Button} from "@/components/ui/button";
 import {Card, CardContent} from "@/components/ui/card";
 import {DialogHeader} from "@/components/ui/dialog";
 import {AxiosApi, formatAmountNumber, simpleDateFormat} from "@/lib/utils";
-import {Apartment} from "@/types/apartment";
+import {Apartment, filterAmenities} from "@/types/apartment";
 import {redirect} from 'next/navigation';
 import {RentInterface} from "@/types/rent";
 import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@radix-ui/react-dialog";
@@ -310,7 +310,7 @@ const BookApartment = ({bookingId}: BookApartmentI) => {
                                     <div className="flex items-center gap-2">
                                         <List className="text-orange-500"/>
                                         <span
-                                            className="text-gray-600">Amenities: {apartment.amenities?.length ? apartment.amenities.join(', ') : 'None listed'}</span>
+                                            className="text-gray-600">Amenities: {apartment.amenities ? filterAmenities(apartment.amenities)?.join(', ') : 'None listed'}</span>
                                     </div>
                                     {
                                         apartment.agent && <div className="flex items-center gap-2">

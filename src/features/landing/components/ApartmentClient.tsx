@@ -29,6 +29,7 @@ import {AxiosApi, formatAmountNumber, saveFormData} from '@/lib/utils';
 import {EmailIcon, FacebookIcon, FacebookShareButton, WhatsappIcon, WhatsappShareButton} from 'react-share';
 import {useAlert} from '@/contexts/AlertContext';
 import Script from "next/script";
+import {filterAmenities} from "@/types/apartment";
 
 interface ClientProps {
     prevApartment?: Apartment;
@@ -279,8 +280,8 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                 <List className="text-orange-500"/>
                                 <span className="text-gray-600">
   Amenities: {
-                                    Array.isArray(apartment.amenities) && apartment.amenities.length
-                                        ? apartment.amenities.join(', ')
+                                     apartment.amenities
+                                        ? filterAmenities(apartment.amenities)?.join(', ')
                                         : 'None listed'
                                 }
 </span>

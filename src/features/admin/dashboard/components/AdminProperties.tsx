@@ -8,6 +8,7 @@ import {useAlert} from '@/contexts/AlertContext';
 import {Loader2} from 'lucide-react';
 import {baseURL} from "@/../next.config";
 import {getFormData} from "@/lib/utils";
+import {filterAmenities} from "@/types/apartment";
 
 interface Apartment {
     id: number;
@@ -264,7 +265,7 @@ const AdminApartments: React.FC = () => {
                                 <div>
                                     <h3 className="font-semibold">Amenities</h3>
                                     <div className="flex flex-wrap gap-2">
-                                        {selectedApartment.amenities.map((amenity, index) => (
+                                        {filterAmenities(selectedApartment.amenities)?.map((amenity, index) => (
                                             <span
                                                 key={index}
                                                 className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-sm"

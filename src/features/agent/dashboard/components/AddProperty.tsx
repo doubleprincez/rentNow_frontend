@@ -350,7 +350,7 @@ const AddProperty: React.FC = () => {
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">Amenities</label>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                                {AVAILABLE_AMENITIES.map((amenity) => (
+                                {AVAILABLE_AMENITIES.map((amenity: any) => (
                                     <label key={amenity}
                                            className="flex items-center space-x-2 text-white cursor-pointer">
                                         <input

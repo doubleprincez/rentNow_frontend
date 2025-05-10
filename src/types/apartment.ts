@@ -126,3 +126,19 @@ export interface CategoryTabProps {
     apartments: Apartment[];
     onApartmentClick: (apartment: Apartment) => void;
 }
+
+
+export const filterAmenities=(amenities:any=[])=>{
+    let parsedAmenities: string[] = [];
+
+    try {
+        if(Array.isArray(amenities)){
+            parsedAmenities = amenities;
+        }else{
+            parsedAmenities = JSON.parse(amenities);
+        }
+    } catch (error) {
+        parsedAmenities = []; // Handle potential parsing errors
+    }
+    return parsedAmenities;
+}
