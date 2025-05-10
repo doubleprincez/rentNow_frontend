@@ -6,7 +6,7 @@ import axios from 'axios';
 import {useAlert} from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
 import {AxiosApi, stringToNumber} from "@/lib/utils";
-import {AVAILABLE_AMENITIES} from "@/types/apartment";
+import {allStates, AVAILABLE_AMENITIES} from "@/types/apartment";
 import {useSelector} from "react-redux";
 import {useRouter} from "next/navigation";
 import {deleteExistingImage, deleteExistingVideos} from "@/features/admin/dashboard/api/adminDashboardService";
@@ -548,10 +548,18 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
 
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">State</label>
-                            <input
-                                {...register('state_code', {required: 'State is required'})}
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
-                            />
+                            <select
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2" {...register('state_code', {required: 'State is required'})}>
+                                <option value={""}>Select One</option>
+                                {allStates.map((stateObject: string, index: number) => {
+                                    const stateName = Object.keys(stateObject)[0];
+                                    return (
+                                        <option key={index} value={stateName}>
+                                            {stateName}
+                                        </option>
+                                    );
+                                })}
+                            </select>
                             {errors.state_code &&
                                 <p className="text-red-500 text-sm">{errors.state_code.message}</p>}
                         </div>
