@@ -383,7 +383,7 @@ const AddProperty: React.FC = () => {
 
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">State</label>
-                            <select    className="w-full border border-gray-300 rounded-lg px-4 py-2" {...register('state_code', {required: 'State is required'})}>
+                            <select className="w-full border border-gray-300 rounded-lg px-4 py-2" {...register('state_code', {required: 'State is required'})}>
                                 <option value={""}>Select One</option>
                                 {allStates.map((stateObject:string, index:number) => {
                                     const stateName = Object.keys(stateObject)[0];

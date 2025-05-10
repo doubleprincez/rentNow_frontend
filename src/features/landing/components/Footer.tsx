@@ -102,10 +102,10 @@ const Footer = () => {
 
           </p>
           <div className='flex items-center gap-5 md:mt-4'>
-            <Facebook className='text-white'/>
-            <Instagram className='text-white'/>
-            <Linkedin className='text-white'/>
-            <Twitter className='text-white'/>
+            <a href={"https://www.facebook.com/share/16UZ45mRaX/"} > <Facebook className='text-white'/></a>
+              <a href={"https://www.instagram.com/tenantplus?igsh=MWxpYXZvMDdrOXM1dA=="} > <Instagram className='text-white'/> </a>
+                    <Linkedin className='text-white'/>
+                    <Twitter className='text-white'/>
           </div>
         </div>
 
