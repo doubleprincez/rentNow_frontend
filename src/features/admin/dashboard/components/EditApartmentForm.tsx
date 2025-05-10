@@ -551,7 +551,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                             <select
                                 className="w-full border border-gray-300 rounded-lg px-4 py-2" {...register('state_code', {required: 'State is required'})}>
                                 <option value={""}>Select One</option>
-                                {allStates.map((stateObject: string, index: number) => {
+                                {allStates.map((stateObject: any, index: number) => {
                                     const stateName = Object.keys(stateObject)[0];
                                     return (
                                         <option key={index} value={stateName}>

@@ -370,22 +370,22 @@ const AddProperty: React.FC = () => {
                 {step === 4 && (
                     <div className="space-y-4">
                         {/* THIS DIV BELOW IS HIDDEN - NOT USELESS/REMOVED */}
-                        <div className='hidden'>
-                            <label className="block text-sm font-semibold mb-2 text-white">Country</label>
-                            <input
-                                {...register('country_code', {required: 'Country code is required'})}
-                                defaultValue="NG"
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"
-                            />
-                            {errors.country_code &&
-                                <p className="text-red-500 text-sm">{errors.country_code.message}</p>}
-                        </div>
+                        {/*<div className='hidden'>*/}
+                        {/*    <label className="block text-sm font-semibold mb-2 text-white">Country</label>*/}
+                        {/*    <input*/}
+                        {/*        {...register('country_code', {required: 'Country code is required'})}*/}
+                        {/*        defaultValue="NG"*/}
+                        {/*        className="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white text-black"*/}
+                        {/*    />*/}
+                        {/*    {errors.country_code &&*/}
+                        {/*        <p className="text-red-500 text-sm">{errors.country_code.message}</p>}*/}
+                        {/*</div>*/}
 
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">State</label>
                             <select className="w-full border border-gray-300 rounded-lg px-4 py-2" {...register('state_code', {required: 'State is required'})}>
                                 <option value={""}>Select One</option>
-                                {allStates.map((stateObject:string, index:number) => {
+                                {allStates.map((stateObject:any, index:number) => {
                                     const stateName = Object.keys(stateObject)[0];
                                     return (
                                         <option key={index} value={stateName}>
