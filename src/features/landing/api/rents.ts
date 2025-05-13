@@ -32,3 +32,25 @@ export const getUserRents = async (page: number = 1, search: string = '') => {
         throw error;
     }
 };
+
+export const getUserVisits = async (page: number = 1, search: string = '') => {
+    try {
+        const token = getFormData('token');
+        if (!token) {
+            throw new Error('No authentication token found');
+        }
+        const response = await axios.get<ApiRentResponse>(
+            baseURL + `/visitations?page=${page}&search=${search}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: 'application/json',
+                },
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

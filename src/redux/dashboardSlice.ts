@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchDashboardData } from '@/features/admin/dashboard/api/adminDashboardService';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
+import {fetchDashboardData} from '@/features/admin/dashboard/api/adminDashboardService';
 
 interface DashboardState {
   statistics: {
@@ -33,8 +33,7 @@ export const fetchDashboard = createAsyncThunk(
   'dashboard/fetchData',
   async (token: string, { rejectWithValue }) => {
     try {
-      const data = await fetchDashboardData(token);
-      return data;
+      return await fetchDashboardData(token);
     } catch (error: any) {
       return rejectWithValue(error.message);
     }

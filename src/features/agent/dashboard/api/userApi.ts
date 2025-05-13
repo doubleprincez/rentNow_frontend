@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
 import {AxiosApi, getFormData} from '@/lib/utils';
-import {ApiRentResponse} from "@/types/rent";
+import {ApiRentResponse, ApiVisitResponse} from "@/types/rent";
 
 
 // Types
@@ -110,6 +110,15 @@ export const getAgentRents = async (page: number = 1, search: string = '', token
 
         const response = await AxiosApi('agent', token ?? '').get<ApiRentResponse>(baseURL + `/rented-apartments?page=${page}&search=${search}`);
 
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+export const getAgentVisits = async (page: number = 1, search: string = '', token = null) => {
+    try {
+
+        const response = await AxiosApi('agent', token ?? '').get<ApiVisitResponse>(baseURL + `/visitation/agent?page=${page}&search=${search}`);
         return response.data;
     } catch (error) {
         throw error;

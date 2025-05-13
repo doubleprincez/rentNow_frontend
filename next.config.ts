@@ -1,17 +1,23 @@
 import type {NextConfig} from "next";
 
+const env = 'local';
+
+let frontendURL, backendUrl, PAYSTACK_PUBLIC_KEY;
 
 // LOCAL
-// export const frontendURL = 'http://localhost:3000';
-// export const backendUrl = 'http://localhost:8000';
-// export const PAYSTACK_PUBLIC_KEY = "pk_test_d196b71372349b838d7a0aa834a9d359874f1ac3"
+if (env !== "production") {
+    frontendURL = 'http://localhost:3000';
+    backendUrl = 'http://localhost:8000';
+    PAYSTACK_PUBLIC_KEY = "pk_test_d196b71372349b838d7a0aa834a9d359874f1ac3"
 
-// ONLINE
-export const frontendURL = 'https://rentnow.ng';
-export const backendUrl = 'https://app.rentnow.ng';
-//
-export const PAYSTACK_PUBLIC_KEY = "pk_live_eeefde6e6c7a8c005b5d1ec9eeef98550543d535"
+} else {
+    // ONLINE
+    frontendURL = 'https://rentnow.ng';
+    backendUrl = 'https://app.rentnow.ng';
+    PAYSTACK_PUBLIC_KEY = "pk_live_eeefde6e6c7a8c005b5d1ec9eeef98550543d535"
+}
 
+export {frontendURL, backendUrl, PAYSTACK_PUBLIC_KEY};
 
 export const MAILCHIMP_API_KEY = "9f9e0b3216195985c0d179ad071dc65a"
 export const MAILCHIMP_AUDIENCE_ID = "c7f48b07e2"

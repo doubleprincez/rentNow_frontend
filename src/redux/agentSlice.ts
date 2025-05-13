@@ -1,7 +1,7 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
-import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
+import {deleteFormData, getFormData, inArray, saveFormData} from "@/lib/utils";
 
 interface AgentState {
     isLoggedIn: boolean;
@@ -114,16 +114,18 @@ const removeFromStorage = (key: string): void => {
 // Load initial state from localStorage
 const loadInitialState = (): AgentState => {
     const token = getFromStorage('agentToken') as string;
-    const saved = getFromStorage('agentState');
+    const saved = JSON.parse(getFromStorage('agentState'));
+
+    console.log(typeof saved, saved, inArray('isLoggedIn', saved));
     if (saved && typeof saved === 'object' && 'isLoggedIn' in saved) {
         const savedState = saved as AgentState;
-
         if (token && savedState) {
             try {
+
                 return {
                     ...initialState,
                     ...(savedState),
-                    token,
+                    token: token,
                     isLoading: false,
                     error: null
                 };

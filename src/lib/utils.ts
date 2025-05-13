@@ -8,6 +8,14 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
 
+export const inArray = (key: string, value: []) => {
+    try {
+        return value[key] ?? false;
+    } catch (e) {
+        return false;
+    }
+}
+
 export const formatAmountNumber = (num: number | string | null | undefined) => {
     if (num) {
         return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add commas for thousands

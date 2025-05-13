@@ -21,6 +21,7 @@ import {Button} from '@/components/ui/button';
 import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger} from '@/components/ui/dialog';
 import {Input} from '@/components/ui/input';
 import type {Apartment} from '@/types/apartment';
+import {filterAmenities} from "@/types/apartment";
 import {useRouter} from 'next/navigation';
 import {useSelector} from 'react-redux';
 import ChatDialog from '@/features/landing/components/ChatDialog';
@@ -28,8 +29,6 @@ import {baseURL, frontendURL} from "@/../next.config";
 import {AxiosApi, formatAmountNumber, saveFormData} from '@/lib/utils';
 import {EmailIcon, FacebookIcon, FacebookShareButton, WhatsappIcon, WhatsappShareButton} from 'react-share';
 import {useAlert} from '@/contexts/AlertContext';
-import Script from "next/script";
-import {filterAmenities} from "@/types/apartment";
 
 interface ClientProps {
     prevApartment?: Apartment;
@@ -99,18 +98,127 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
     }
 
 
+    const [bookingData, setBookingData] = useState({
+        start: '',
+        end: '',
+    });
+    const [visitDate, setVisitDate] = useState('');
+    const [isBooking, setIsBooking] = useState(false);
+    const [isVisiting, setIsVisiting] = useState(false);
+
+    const [minDate, setMinDate] = useState('');
+
+
     useEffect(() => {
         setApartment(prevApartment);
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        setMinDate(`${year}-${month}-${day}T${hours}:${minutes}`);
         return () => {
         }
     }, []);
 
 
-    const [bookingData, setBookingData] = useState({
-        start: '',
-        end: '',
-    });
-    const [isBooking, setIsBooking] = useState(false);
+    const rentApartmentNow = () => {
+        return <Dialog>
+            <DialogTrigger asChild>
+                <Button className="bg-green-500 hover:bg-green-600 text-white">
+                    Rent Now
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Rent Apartment</DialogTitle>
+                </DialogHeader>
+
+                <div className="grid gap-4 py-4">
+
+                    <div className="grid gap-2">
+                        <label htmlFor="start-date" className="text-sm font-medium">
+                            Start Date
+                        </label>
+                        <Input
+                            id="start-date"
+                            type="date"
+                            value={bookingData.start}
+                            onChange={(e) => setBookingData(prev => ({
+                                ...prev,
+                                start: e.target.value
+                            }))}
+                            className="col-span-3"
+                        />
+                    </div>
+
+                    <div className="bg-orange-50 p-3 rounded-md mt-2">
+                        <p className="text-sm text-orange-800">
+                            The rent duration will be {apartment.duration} from the
+                            selected start date.
+                        </p>
+                    </div>
+
+                    <Button
+                        onClick={handleBooking}
+                        disabled={isBooking || !bookingData.start}
+                        className="bg-orange-500 hover:bg-orange-600 text-white w-full mt-2"
+                    >
+                        {isBooking ? 'Registering...' : 'Confirm Rent'}
+                    </Button>
+
+                </div>
+
+            </DialogContent>
+        </Dialog>
+    }
+
+    const bookVisitation = () => {
+        return <Dialog>
+            <DialogTrigger asChild>
+                <Button className="bg-indigo-500 hover:bg-indigo-600 text-white">
+                    Book Visitation
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                    <DialogTitle>Book Visitation</DialogTitle>
+                </DialogHeader>
+
+                <div className="grid gap-4 py-4">
+                    <div className="bg-orange-50 p-3 rounded-md mt-2">
+                        <p className="text-sm text-orange-800">
+                            Select the day you will like to go for inspection.
+                        </p>
+                    </div>
+
+                    <div className="grid gap-2">
+                        <label htmlFor="start-date" className="text-sm font-medium">
+                            Visit Date
+                        </label>
+
+                        <div>
+                            <Input
+                                id="start-date"
+                                type="datetime-local" min={minDate}
+                                value={visitDate}
+                                onChange={(e: any) => setVisitDate(e.target.value)}
+                                className="col-span-3"
+                            />
+                        </div>
+                    </div>
+                    <Button
+                        onClick={handleVisiting}
+                        disabled={!visitDate | isVisiting}
+                        className="bg-orange-500 hover:bg-orange-600 text-white w-full mt-2"
+                    >
+                        {isBooking ? 'Registration...' : 'Confirm Visitation'}
+                    </Button>
+                </div>
+            </DialogContent>
+        </Dialog>
+    }
 
 
     const calculateEndDate = (startDate: string, duration?: string): string => {
@@ -195,6 +303,48 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
             setIsBooking(false);
         }
     };
+    const handleVisiting = async () => {
+        if (!apartment) return;
+
+        if (!isLoggedIn || !token) {
+            alert('Please log in to Register Visit Date');
+            return;
+        }
+
+        if (!visitDate) {
+            alert('Please select a date');
+            return;
+        }
+        setIsVisiting(true);
+        try {
+            const response = await fetch(baseURL + '/visitation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({date: visitDate, apartment_id: apartment.id}),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    showAlert('Visitation Booked! Please contact ' + (apartment?.user?.apartment?.business_name || apartment?.user?.apartment?.name)+' for directions and further instructions.', 'success');
+                    router.push(frontendURL + '/user/rent/');
+                } else {
+                    showAlert(data?.message, 'error');
+                }
+            } else {
+                const errorData = await response.json();
+                showAlert(errorData.message || 'Failed to book viewing session. Please try again.', 'error');
+            }
+        } catch (error) {
+            //console.error('Error booking viewing session:', error);
+            showAlert('Failed to book viewing session. Please try again.', 'error');
+        } finally {
+            setIsVisiting(false);
+        }
+    }
 
     if (isLoading) {
         return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
@@ -228,22 +378,6 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                             </div>
 
 
-                            {/* {
-                  
-                    apartment.security_deposit &&
-                    <div className="flex items-center gap-2">
-                    <CreditCardIcon className="text-orange-500"/>
-                    <span className="text-gray-600">Security Deposit: {formatAmountNumber(apartment.security_deposit) || 'Not specified'}</span>
-                  </div>
-              } */}
-                            {/*{*/}
-                            {/*    apartment.business_name &&*/}
-                            {/*    <div className="flex items-center gap-2">*/}
-                            {/*      <Building className="text-orange-500"/>*/}
-                            {/*      <span className="text-gray-600">Business: {apartment.business_name || 'Not specified'}</span>*/}
-                            {/*    </div>*/}
-                            {/*}*/}
-
                             {
                                 apartment.category && <div className="flex items-center gap-2">
                                     <Boxes className="text-orange-500"/>
@@ -272,7 +406,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                             <div className="flex items-center gap-2">
                                 <Shield className="text-orange-500"/>
                                 <span
-                                    className="text-gray-800 font-bold">Security Deposit: {apartment?.security_deposit_currency_code}
+                                    className="text-gray-800">Security Deposit: {apartment?.security_deposit_currency_code}
                                     {formatAmountNumber(apartment?.security_deposit)}</span>
                             </div>
 
@@ -280,7 +414,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                 <List className="text-orange-500"/>
                                 <span className="text-gray-600">
   Amenities: {
-                                     apartment.amenities
+                                    apartment.amenities
                                         ? filterAmenities(apartment.amenities)?.join(', ')
                                         : 'None listed'
                                 }
@@ -290,7 +424,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                             {
                                 apartment?.agent_type == 'agent' ? <>
                                     {
-                                    apartment.agent && <div className="flex items-center gap-2">
+                                        apartment.agent && <div className="flex items-center gap-2">
                                             <User className="text-orange-500"/>
                                             <span
                                                 className="text-gray-600">{String(apartment.agent_type).toLocaleUpperCase()}: {apartment.agent}</span>
@@ -355,54 +489,10 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                 {
 
                                     isLoggedIn ? isSubscribed === true ? <>
-                                            <Dialog>
-                                                <DialogTrigger asChild>
-                                                    <Button className="bg-orange-500 hover:bg-orange-600 text-white">
-                                                        Book Apartment
-                                                    </Button>
-                                                </DialogTrigger>
-                                                <DialogContent className="sm:max-w-[425px]">
-                                                    <DialogHeader>
-                                                        <DialogTitle>Book Apartment</DialogTitle>
-                                                    </DialogHeader>
+                                            {rentApartmentNow()}
 
-                                                    <div className="grid gap-4 py-4">
+                                            {bookVisitation()}
 
-                                                        <div className="grid gap-2">
-                                                            <label htmlFor="start-date" className="text-sm font-medium">
-                                                                Start Date
-                                                            </label>
-                                                            <Input
-                                                                id="start-date"
-                                                                type="date"
-                                                                value={bookingData.start}
-                                                                onChange={(e) => setBookingData(prev => ({
-                                                                    ...prev,
-                                                                    start: e.target.value
-                                                                }))}
-                                                                className="col-span-3"
-                                                            />
-                                                        </div>
-
-                                                        <div className="bg-orange-50 p-3 rounded-md mt-2">
-                                                            <p className="text-sm text-orange-800">
-                                                                The booking duration will be {apartment.duration} from the
-                                                                selected start date.
-                                                            </p>
-                                                        </div>
-
-                                                        <Button
-                                                            onClick={handleBooking}
-                                                            disabled={isBooking || !bookingData.start}
-                                                            className="bg-orange-500 hover:bg-orange-600 text-white w-full mt-2"
-                                                        >
-                                                            {isBooking ? 'Booking...' : 'Confirm Booking'}
-                                                        </Button>
-
-                                                    </div>
-
-                                                </DialogContent>
-                                            </Dialog>
                                             {
                                                 apartment?.agent_id && (apartment?.agent || apartment?.business_name) &&
                                                 <ChatDialog
@@ -438,10 +528,10 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                 <h2 className="text-xl font-semibold mb-2">Description</h2>
                                 <p className="text-gray-600">{apartment.description}</p>
                             </div>
-                            <div className='flex justify-center space-x-2'>
-                                <div className='flex space-x-2'>{apartment?.views_count}&nbsp; <LucideEye/>
+                            <div className='flex justify-center space-x-4'>
+                                <div className='flex  '>{apartment?.views_count}&nbsp; <LucideEye/>
                                 </div>
-                                <div className='flex justify-center space-x-2'>
+                                <div className='flex justify-center'>
                                     <div>{apartment?.like_count}</div>
                                     <div>
                                         {
