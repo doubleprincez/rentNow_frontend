@@ -23,9 +23,9 @@ const ForgetPwd = () => {
         }
 
         setIsLoading(true);
-        const intended = window.location.href;
+        const intended =window.location.href;
         try {
-            const response = await axios.post(baseURL + "/forgot-password", {email, intended});
+            const response = await axios.post(baseURL + "/forgot-password", {email,intended});
             // console.log("User Response:", response.data);
             setStep(2); // Change step based on successful backend response
         } catch (error) {

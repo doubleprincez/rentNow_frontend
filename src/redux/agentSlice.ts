@@ -116,7 +116,7 @@ const loadInitialState = (): AgentState => {
     const token = getFromStorage('agentToken') as string;
     const saved = JSON.parse(getFromStorage('agentState'));
 
-    console.log(typeof saved, saved, inArray('isLoggedIn', saved));
+    // console.log(typeof saved, saved, inArray('isLoggedIn', saved));
     if (saved && typeof saved === 'object' && 'isLoggedIn' in saved) {
         const savedState = saved as AgentState;
         if (token && savedState) {

@@ -1,11 +1,13 @@
-'use client'
-import React, {useEffect, useState} from 'react';
+'use client';
+import React, {useCallback, useEffect, useState} from 'react'; // ADD THIS LINE
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {Banknote, Clock, MapPin} from 'lucide-react';
 import {useRouter} from 'next/navigation';
 import {baseURL} from "@/../next.config";
 import type {Apartment, ApartmentCardProps, ApiResponse, FindHomesProps} from '@/types/apartment';
+import {AVAILABLE_AMENITIES} from "@/types/apartment";
 import {AxiosApi} from '@/lib/utils';
+import {useDebounce} from 'use-debounce';
 
 const ApartmentCard: React.FC<ApartmentCardProps> = ({apartment, onClick}) => (
     <div
@@ -45,45 +47,107 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
     const [isLoading, setIsLoading] = useState<boolean>(!initialData);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
+    const [page, setPage] = useState<number>(1); // For pagination
 
-    const fetchApartments = async () => {
+    // Filter states
+    const [stateCodeFilter, setStateCodeFilter] = useState<string>('');
+    const [cityCodeFilter, setCityCodeFilter] = useState<string>('');
+    const [amenitiesFilter, setAmenitiesFilter] = useState<string>('');
+    const [filterName, setFilterName] = useState<string>('');
+    const [filterDir, setFilterDir] = useState<string>('eq');
+    const [filterVal, setFilterVal] = useState<string>('');
 
+    const fetchApartments = useCallback(async () => {
         setIsLoading(true);
-        await AxiosApi().get(baseURL + '/apartments')
+        let url = `${baseURL}/apartments?page=${page}&`; // Include pagination
 
-            .then((response) => {
-                let data: ApiResponse = response.data;
-                if (data.success) {
-                    setApartments(data.data.data);
-                    const uniqueCategories = [...new Set(data.data.data.map((apt: any) => apt.category))];
-                    setCategories(uniqueCategories);
-                } else {
-                    setError(data.message || 'Failed to fetch apartments');
-                }
-            }).catch((error) => setError('Failed to fetch apartments'))
-            .finally(() => {
-                setIsLoading(false);
-            })
-    }
+        if (stateCodeFilter) url += `state_code=${stateCodeFilter}&`;
+        if (cityCodeFilter) url += `city_code=${cityCodeFilter}&`;
+        if (amenitiesFilter) url += `amenities=${amenitiesFilter}&`;
+        if (filterName && filterDir && filterVal) url += `filter_name=${filterName}&filter_dir=${filterDir}&filter_val=${filterVal}&`;
+
+        url = url.slice(0, -1);
+
+        try {
+            const response = await AxiosApi().get<ApiResponse>(url);
+            const data = response.data;
+            const record: Apartment[] = Object.values(data?.data?.data) as Apartment[];
+            if (data.success && record) {
+                // console.log('merging ', apartments, record);
+                setApartments(prev => page === 1 ? record : [...prev, ...record]); // Handle pagination
+                const uniqueCategories = [...new Set(record.map((apt: any) => apt.category))].filter((c): c is string => !!c);
+                setCategories(uniqueCategories);
+                // Potentially update total count and other pagination info here if needed
+            } else {
+                setError(data.message || 'Failed to fetch apartments');
+            }
+        } catch (error) {
+            setError('Failed to fetch apartments');
+        } finally {
+            setIsLoading(false);
+        }
+    }, [page, stateCodeFilter, cityCodeFilter, amenitiesFilter, filterName, filterDir, filterVal]);
+
+    const [debouncedFetch] = useDebounce(fetchApartments, 300); // Adjust delay as needed
+
 
     useEffect(() => {
-        if (initialData) {
-            setApartments(initialData.data.data);
-            const uniqueCategories = [...new Set(initialData.data.data.map(apt => apt.category))]
+        if (initialData?.data) {
+            setApartments(initialrecord);
+            const uniqueCategories = [...new Set(initialrecord.map(apt => apt.category))]
                 .filter((category): category is string => category !== undefined);
             setCategories(uniqueCategories);
             return;
         }
 
-
-        fetchApartments();
-    }, [initialData]);
+        debouncedFetch(); // Use debounced fetch
+    }, [initialData, debouncedFetch]);
 
     const handleApartmentClick = (apartment: Apartment) => {
         router.push(`/find-homes/${apartment.id}`);
     };
 
-    if (isLoading) {
+    const handleStateCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setStateCodeFilter(event.target.value);
+        setPage(1); // Reset page on filter change
+    };
+
+    const handleCityCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setCityCodeFilter(event.target.value);
+        setPage(1);
+    };
+
+    const handleAmenitiesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAmenitiesFilter(event.target.value);
+        setPage(1);
+    };
+
+    const handleFilterNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFilterName(event.target.value);
+        setPage(1);
+    };
+
+    const handleFilterDirChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setFilterDir(event.target.value);
+        setPage(1);
+    };
+
+    const handleFilterValChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setFilterVal(event.target.value);
+        setPage(1);
+    };
+
+    const loadMore = useCallback(() => {
+        setPage(prev => prev + 1);
+    }, []);
+
+    useEffect(() => {
+        if (page > 1) {
+            fetchApartments();
+        }
+    }, [page, fetchApartments]);
+
+    if (isLoading && apartments.length === 0) {
         return (
             <div className="w-full min-h-screen flex items-center justify-center">
                 <p className="text-gray-600">Loading apartments...</p>
@@ -106,31 +170,73 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
                 Find Your New Home
             </p>
 
+            <div className="">
+                <h3 className="text-lg font-semibold text-gray-700">Filter Options</h3>
+                <div className={"flex flex-wrap gap-3"}>
+                    <div className="flex flex-wrap sm:flex-row gap-2">
+                        <div><input type="text" placeholder="State" value={stateCodeFilter}
+                                    onChange={handleStateCodeChange}
+                                    className="p-2 border rounded"/></div>
+                        <div><input type="text" placeholder="City " value={cityCodeFilter}
+                                    onChange={handleCityCodeChange}
+                                    className="p-2 border rounded"/></div>
+                        <div>
+                            {/*<input type="text" placeholder="Amenities (e.g., pool, gym)" value={amenitiesFilter}*/}
+                            {/*       onChange={handleAmenitiesChange} className="p-2 border rounded"/>*/}
+                            <select defaultValue={amenitiesFilter} onChange={handleAmenitiesChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 text-black">
+                                 {AVAILABLE_AMENITIES.map((amenity: any) => (
+                                        <option key={amenity} value={amenity}
+                                                className="flex items-center space-x-2 cursor-pointer">
+                                            {amenity}
+                                        </option>
+                                    ))}
+                            </select>
+                        </div>
+                        <div><select defaultValue={filterName}
+                                     onChange={handleFilterNameChange} className="w-full border border-gray-300 rounded-lg px-4 py-2">
+                            <option value={"amount"}>Amount</option>
+                            <option value={"security_deposit"}>Security Deposit</option>
+                            <option value={"number_of_rooms"}>Rooms</option>
+                        </select></div>
+                        <div><select value={filterDir} onChange={handleFilterDirChange} className="w-full border border-gray-300 rounded-lg px-4 py-2">
+                            <option value="eq">{"="}</option>
+                            <option value="gt">{">"}</option>
+                            <option value="lt">{"<"}</option>
+                            <option value="gte">{">="}</option>
+                            <option value="lte">{"<="}</option>
+                        </select></div>
+                        <div><input type="text" placeholder="Filter Value" value={filterVal}
+                                    onChange={handleFilterValChange}
+                                    className="p-2 border rounded"/></div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
             <Tabs defaultValue="all" className="w-full py-3 md:py-5 flex flex-col gap-8">
                 <TabsList className="w-full flex gap-4">
                     <div
                         className="w-[1000px] py-4 mx-auto flex gap-2 sm:gap-4 overflow-x-auto no-scrollbar md:justify-center">
-                        <TabsTrigger value="all" className="p-2 flex gap-2 shadow-md">
-                            All Properties
-                        </TabsTrigger>
+                        <TabsTrigger value="all" className="p-2 flex gap-2 shadow-md">All Properties</TabsTrigger>
                         {categories.map((category) => (
-                            <TabsTrigger key={category} value={category} className="p-2 flex gap-2 shadow-md">
-                                {category}
-                            </TabsTrigger>
+                            <TabsTrigger key={category} value={category}
+                                         className="p-2 flex gap-2 shadow-md">{category}</TabsTrigger>
                         ))}
                     </div>
                 </TabsList>
 
                 <TabsContent value="all">
                     <div className="w-full grid grid-cols-1 sml:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {apartments.map((apt) => (
-                            <ApartmentCard
-                                key={apt.id}
-                                apartment={apt}
-                                onClick={handleApartmentClick}
-                            />
+                        {apartments.map((apt, id) => (
+                            <ApartmentCard key={id} apartment={apt} onClick={handleApartmentClick}/>
                         ))}
                     </div>
+                    {apartments.length > 0 && !isLoading && (
+                        <button onClick={loadMore} className="mt-4 bg-orange-400 text-white py-2 px-4 rounded">Load
+                            More</button>
+                    )}
                 </TabsContent>
 
                 {categories.map((category) => (
@@ -139,13 +245,13 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
                             {apartments
                                 .filter((apt) => apt.category === category)
                                 .map((apt) => (
-                                    <ApartmentCard
-                                        key={apt.id}
-                                        apartment={apt}
-                                        onClick={handleApartmentClick}
-                                    />
+                                    <ApartmentCard key={apt.id} apartment={apt} onClick={handleApartmentClick}/>
                                 ))}
                         </div>
+                        {apartments.filter((apt) => apt.category === category).length > 0 && !isLoading && (
+                            <button onClick={loadMore} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Load
+                                More</button>
+                        )}
                     </TabsContent>
                 ))}
             </Tabs>

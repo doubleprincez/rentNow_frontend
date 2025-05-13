@@ -161,6 +161,7 @@ export const allStates = [
     {"Enugu": "Enugu"},
     {"Gombe": "Gombe"},
     {"Imo": "Imo"},
+    {"Federal Capital Territory": "Federal Capital Territory"},
     {"Jigawa": "Jigawa"},
     {"Kaduna": "Kaduna"},
     {"Kano": "Kano"},

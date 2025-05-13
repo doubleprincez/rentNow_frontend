@@ -25,7 +25,6 @@ const Page = async () => {
     const data = await fetchApartments();
     return (
         <WhatsAppFloater>
-
             <Header/>
             <Home/>
             {data ? (
