@@ -23,13 +23,13 @@ const ForgetPwd = () => {
         }
 
         setIsLoading(true);
-        const intended =window.location.href;
+        const intended = window.location.href;
         try {
-            const response = await axios.post(baseURL + "/forgot-password", {email,intended});
+            const response = await axios.post(baseURL + "/forgot-password", {email, intended});
             // console.log("User Response:", response.data);
             setStep(2); // Change step based on successful backend response
-        } catch (error) {
-            showAlert(error?.response?.data?.message || error.message || "Unable to Process, Please try again.", "error")
+        } catch (error: any) {
+            showAlert(error.message ?? error?.response?.data?.message ?? "Unable to Process, Please try again.", "error")
         } finally {
             setIsLoading(false);
         }

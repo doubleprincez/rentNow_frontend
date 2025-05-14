@@ -57,6 +57,7 @@ export interface Apartment {
     views_count?: number;
     like_apartment?: boolean;
     like_count?: number;
+    user?: any
 }
 
 
@@ -128,13 +129,13 @@ export interface CategoryTabProps {
 }
 
 
-export const filterAmenities=(amenities:any=[])=>{
+export const filterAmenities = (amenities: any = []) => {
     let parsedAmenities: string[] = [];
 
     try {
-        if(Array.isArray(amenities)){
+        if (Array.isArray(amenities)) {
             parsedAmenities = amenities;
-        }else{
+        } else {
             parsedAmenities = JSON.parse(amenities);
         }
     } catch (error) {

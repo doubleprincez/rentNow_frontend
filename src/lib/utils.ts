@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
 
-export const inArray = (key: string, value: []) => {
+export const inArray = (key: any, value: []) => {
     try {
         return value[key] ?? false;
     } catch (e) {

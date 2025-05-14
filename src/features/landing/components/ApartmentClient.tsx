@@ -31,7 +31,7 @@ import {EmailIcon, FacebookIcon, FacebookShareButton, WhatsappIcon, WhatsappShar
 import {useAlert} from '@/contexts/AlertContext';
 
 interface ClientProps {
-    prevApartment?: Apartment;
+    prevApartment: Apartment;
 }
 
 
@@ -155,7 +155,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
 
                     <div className="bg-orange-50 p-3 rounded-md mt-2">
                         <p className="text-sm text-orange-800">
-                            The rent duration will be {apartment.duration} from the
+                            The rent duration will be {apartment?.duration} from the
                             selected start date.
                         </p>
                     </div>
@@ -210,7 +210,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                     </div>
                     <Button
                         onClick={handleVisiting}
-                        disabled={!visitDate | isVisiting}
+                        disabled={visitDate != '' || isVisiting}
                         className="bg-orange-500 hover:bg-orange-600 text-white w-full mt-2"
                     >
                         {isBooking ? 'Registration...' : 'Confirm Visitation'}
@@ -329,7 +329,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
             if (response.ok) {
                 const data = await response.json();
                 if (data.success) {
-                    showAlert('Visitation Booked! Please contact ' + (apartment?.user?.apartment?.business_name || apartment?.user?.apartment?.name)+' for directions and further instructions.', 'success');
+                    showAlert('Visitation Booked! Please contact ' + (apartment?.user?.business_name || apartment?.user?.name) + ' for directions and further instructions.', 'success');
                     router.push(frontendURL + '/user/rent/');
                 } else {
                     showAlert(data?.message, 'error');
@@ -399,7 +399,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
 
                             <div className="flex items-center gap-2">
                                 <Clock className="text-orange-500"/>
-                                <span className="text-gray-600">Duration: {apartment.duration}</span>
+                                <span className="text-gray-600">Duration: {apartment?.duration}</span>
                             </div>
 
 

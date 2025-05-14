@@ -93,10 +93,10 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
 
     useEffect(() => {
         if (initialData?.data) {
-            setApartments(initialrecord);
-            const uniqueCategories = [...new Set(initialrecord.map(apt => apt.category))]
-                .filter((category): category is string => category !== undefined);
-            setCategories(uniqueCategories);
+            // setApartments(initialData?.data?.data);
+            // const uniqueCategories = [...new Set(initialData?.data.map(apt => apt.category))]
+            //     .filter((category): category is string => category !== undefined);
+            // setCategories(uniqueCategories);
             return;
         }
 
@@ -117,12 +117,12 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
         setPage(1);
     };
 
-    const handleAmenitiesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAmenitiesChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setAmenitiesFilter(event.target.value);
         setPage(1);
     };
 
-    const handleFilterNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFilterNameChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         setFilterName(event.target.value);
         setPage(1);
     };
