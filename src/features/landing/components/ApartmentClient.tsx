@@ -210,7 +210,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                     </div>
                     <Button
                         onClick={handleVisiting}
-                        disabled={visitDate != '' || isVisiting}
+                        disabled={visitDate == '' || isVisiting}
                         className="bg-orange-500 hover:bg-orange-600 text-white w-full mt-2"
                     >
                         {isBooking ? 'Registration...' : 'Confirm Visitation'}
