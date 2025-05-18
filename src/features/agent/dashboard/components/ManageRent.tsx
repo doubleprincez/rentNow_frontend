@@ -5,7 +5,7 @@ import {RentInterface} from "@/types/rent";
 import React, {useEffect, useState} from "react";
 import {baseURL} from "@/../next.config";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {ChevronLeft, ChevronRight, EyeIcon, Loader2, LoaderCircle, Search} from "lucide-react";
+import {ChevronLeft, ChevronRight, EyeIcon, Loader2, LoaderCircle, MailIcon, PhoneCallIcon, Search} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {getAgentRents, getAgentVisits} from "../api/userApi";
 import {DialogHeader} from "@/components/ui/dialog";
@@ -183,10 +183,15 @@ const ManageRent = () => {
                                         <TableCell>{new Date(visit.visit_date).toLocaleString()} </TableCell>
                                         <TableCell>
                                             <div className={"flex"}>
-                                                Email: <a href={"mailto:" + visit?.user?.email}>{visit?.user?.email}</a>
+                                                <div>
+                                                    <MailIcon className="text-orange-500"/></div>
+                                                <div>
+                                                    <a href={"mailto:" + visit?.user?.email}>{visit?.user?.email}</a>
+                                                </div>
                                             </div>
                                             <div className={"flex"}>
-                                                Call: <a href={"tel:" + visit?.user?.phone}>{visit?.user?.phone}</a>
+                                                <PhoneCallIcon className="text-orange-500"/> <a
+                                                href={"tel:" + visit?.user?.phone}>{visit?.user?.phone}</a>
                                             </div>
                                         </TableCell>
 
