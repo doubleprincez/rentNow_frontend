@@ -9,11 +9,15 @@ import {useAlert} from '@/contexts/AlertContext';
 import {DialogContent, DialogTrigger} from "@/components/ui/dialog";
 import {Dialog, DialogTitle} from "@radix-ui/react-dialog";
 import ForgetPassword from "@/features/agent/auth/components/ForgetPassword";
+import {Eye, EyeOff} from "lucide-react";
+import {Button} from "@/components/ui/button";
 
 const Login: React.FC = () => {
     const {showAlert} = useAlert();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const [showPassword, setShowPassword] = useState(false);
     const account_id = 2;
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -71,18 +75,32 @@ const Login: React.FC = () => {
                             />
                         </div>
                         <div className="mt-4">
-                            <label htmlFor="password" className="sr-only">Password</label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="w-full text-[.9em] border border-gray-400 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                                placeholder="Enter your password"
-                                required
-                                disabled={isLoading}
-                            />
+                            <label htmlFor="password" className="sr-only w-full">Password</label>
+                            <div className={"relative"}>
+
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="w-full text-[.9em] border border-gray-400 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    placeholder="Enter your password"
+                                    required
+                                    disabled={isLoading}
+                                />
+                                <Button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5 text-gray-500"/>
+                                    ) : (
+                                        <Eye className="h-5 w-5 text-gray-500"/>
+                                    )}
+                                </Button>
+                            </div>
                         </div>
                     </div>
 

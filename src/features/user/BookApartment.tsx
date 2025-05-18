@@ -85,8 +85,7 @@ const BookApartment = ({bookingId}: BookApartmentI) => {
         }
     }, [bookingId]);
 
-
-    //show page loading using lucide react icon, get the booked apartment
+    //show page loading using Lucide react icon, get the booked apartment
 
     // provide an invoice template
 
