@@ -284,7 +284,7 @@ const UserRent = () => {
                                         <TableCell>
                                             <div className={"flex flex-col"}>
 
-                                                {visit?.apartment?.user?.business_email ?? visit?.apartment?.user?.email &&
+                                                {(visit?.apartment?.user?.business_email ?? visit?.apartment?.user?.email) &&
                                                     <div className={"flex mb-2"}>
                                                         <div><MailIcon className="text-orange-500"/></div>
                                                         <div>
