@@ -184,6 +184,7 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
                             {/*<input type="text" placeholder="Amenities (e.g., pool, gym)" value={amenitiesFilter}*/}
                             {/*       onChange={handleAmenitiesChange} className="p-2 border rounded"/>*/}
                             <select defaultValue={amenitiesFilter} onChange={handleAmenitiesChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 text-black">
+                                <option value={""}>All Amenities</option>
                                  {AVAILABLE_AMENITIES.map((amenity: any) => (
                                         <option key={amenity} value={amenity}
                                                 className="flex items-center space-x-2 cursor-pointer">
@@ -194,6 +195,7 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
                         </div>
                         <div><select defaultValue={filterName}
                                      onChange={handleFilterNameChange} className="w-full border border-gray-300 rounded-lg px-4 py-2">
+                            <option value={""}>No Filter</option>
                             <option value={"amount"}>Amount</option>
                             <option value={"security_deposit"}>Security Deposit</option>
                             <option value={"number_of_rooms"}>Rooms</option>
@@ -202,8 +204,8 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
                             <option value="eq">{"="}</option>
                             <option value="gt">{">"}</option>
                             <option value="lt">{"<"}</option>
-                            <option value="gte">{">="}</option>
-                            <option value="lte">{"<="}</option>
+                            {/*<option value="gte">{">="}</option>*/}
+                            {/*<option value="lte">{"<="}</option>*/}
                         </select></div>
                         <div><input type="text" placeholder="Filter Value" value={filterVal}
                                     onChange={handleFilterValChange}
