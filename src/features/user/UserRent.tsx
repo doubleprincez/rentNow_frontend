@@ -247,7 +247,7 @@ const UserRent = () => {
                                 <TableHead>Apartment</TableHead>
                                 <TableHead>Visiting Date</TableHead>
                                 <TableHead>Agent</TableHead>
-                                <TableHead>Action</TableHead>
+                                <TableHead>Contact Agent</TableHead>
                             </TableRow>
                         </TableHeader>
 
@@ -283,7 +283,6 @@ const UserRent = () => {
                                         </TableCell>
                                         <TableCell>
                                             <div className={"flex flex-col"}>
-
                                                 {(visit?.apartment?.user?.business_email ?? visit?.apartment?.user?.email) &&
                                                     <div className={"flex mb-2"}>
                                                         <div><MailIcon className="text-orange-500"/></div>
@@ -292,10 +291,10 @@ const UserRent = () => {
                                                                href={"mailto:" + (visit?.apartment?.user?.business_email ?? visit?.apartment?.user?.email)}>{visit?.apartment?.user?.business_email ?? visit?.apartment?.user?.email}
                                                             </a></div>
                                                     </div>}
-                                                {visit?.apartment?.user?.phone && <div className={"flex mb-2"}>
+                                                {(visit?.apartment?.user?.business_phone||visit?.apartment?.user?.phone) && <div className={"flex mb-2"}>
                                                     <div><PhoneCallIcon className="text-orange-500"/></div>
                                                     <div><a className={"text-red-200"}
-                                                            href={"tel:" + (visit?.apartment?.user?.phone)}>{visit?.apartment?.user?.phone}</a>
+                                                            href={"tel:" + (visit?.apartment?.user?.business_phone||visit?.apartment?.user?.phone)}>{visit?.apartment?.user?.business_phone||visit?.apartment?.user?.phone}</a>
                                                     </div>
                                                 </div>}
                                             </div>

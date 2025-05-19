@@ -191,9 +191,9 @@ export const getToken = (tokenFor = 'user', initialToken: string = '', strictTyp
     } else {
         if (strictType) {
             if (tokenFor == 'admin') {
-                csrfTokenMeta = getFormData('adminToken')
+                csrfTokenMeta = getFormData('adminToken');
             } else if (tokenFor == 'agent') {
-                csrfTokenMeta = getFormData('agentToken')
+                csrfTokenMeta = getFormData('agentToken');
             } else {
                 csrfTokenMeta = getFormData('token');
             }
@@ -202,16 +202,19 @@ export const getToken = (tokenFor = 'user', initialToken: string = '', strictTyp
             csrfTokenMeta = getFormData('adminToken') ?? getFormData('agentToken') ?? getFormData('token');
         }
 
-        if (tokenFor === 'user' && hasFormData('token')) {
-            csrfTokenMeta = csrfTokenMeta ?? getFormData('token');
-        }
+        if (!csrfTokenMeta) {
 
-        if (tokenFor === 'agent' && hasFormData('agentToken')) {
-            csrfTokenMeta = csrfTokenMeta ?? getFormData('agentToken');
-        }
+            if (tokenFor === 'user' && hasFormData('token')) {
+                csrfTokenMeta = csrfTokenMeta ?? getFormData('token');
+            }
 
-        if (tokenFor === 'admin' && hasFormData('adminToken')) {
-            csrfTokenMeta = csrfTokenMeta ?? getFormData('adminToken');
+            if (tokenFor === 'agent' && hasFormData('agentToken')) {
+                csrfTokenMeta = csrfTokenMeta ?? getFormData('agentToken');
+            }
+
+            if (tokenFor === 'admin' && hasFormData('adminToken')) {
+                csrfTokenMeta = csrfTokenMeta ?? getFormData('adminToken');
+            }
         }
     }
     return csrfTokenMeta;

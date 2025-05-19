@@ -108,7 +108,7 @@ export const deleteUser = async (id: number) => {
 export const getAgentRents = async (page: number = 1, search: string = '', token = null) => {
     try {
 
-        const response = await AxiosApi('agent', token ?? '').get<ApiRentResponse>(baseURL + `/rented-apartments?page=${page}&search=${search}`);
+        const response = await AxiosApi('agent', token ?? '', {}, true).get<ApiRentResponse>(baseURL + `/rented-apartments?page=${page}&search=${search}`);
 
         return response.data;
     } catch (error) {
@@ -118,7 +118,7 @@ export const getAgentRents = async (page: number = 1, search: string = '', token
 export const getAgentVisits = async (page: number = 1, search: string = '', token = null) => {
     try {
 
-        const response = await AxiosApi('agent', token ?? '').get<ApiVisitResponse>(baseURL + `/visitation/agent?page=${page}&search=${search}`);
+        const response = await AxiosApi('agent', token ?? '', {}, true).get<ApiVisitResponse>(baseURL + `/visitation/agent?page=${page}&search=${search}`);
         return response.data;
     } catch (error) {
         throw error;
