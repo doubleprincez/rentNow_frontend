@@ -215,6 +215,8 @@ const AddProperty: React.FC = () => {
             if (response.data.success) {
                 showAlert('Property successfully added!', 'success');
                 reset();
+                setUploadedImages([]);
+                setUploadedVideos([]);
                 setSelectedAmenities([]);
                 setStep(1);
             }
@@ -383,9 +385,10 @@ const AddProperty: React.FC = () => {
 
                         <div>
                             <label className="block text-sm font-semibold mb-2 text-white">State</label>
-                            <select className="w-full border border-gray-300 rounded-lg px-4 py-2" {...register('state_code', {required: 'State is required'})}>
+                            <select
+                                className="w-full border border-gray-300 rounded-lg px-4 py-2" {...register('state_code', {required: 'State is required'})}>
                                 <option value={""}>Select One</option>
-                                {allStates.map((stateObject:any, index:number) => {
+                                {allStates.map((stateObject: any, index: number) => {
                                     const stateName = Object.keys(stateObject)[0];
                                     return (
                                         <option key={index} value={stateName}>
