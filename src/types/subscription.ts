@@ -1,7 +1,9 @@
 import {PaginationLink} from "./apartment"
 
 
-export type TransactionInterface = {}
+export type TransactionInterface = {
+
+}
 
 export interface FeatureInterface {
     plan_id?: number;

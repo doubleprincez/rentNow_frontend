@@ -14,7 +14,7 @@ const registerSchema = z.object({
   password_confirmation: z.string(),
   business_name: z.string().min(1, 'Business name is required').max(255),
   business_email: z.string().email('Invalid business email').max(255).optional(),
-  business_phone: z.string().max(255).nullable(),
+  business_phone: z.string().max(255),
   business_address: z.string().max(255).nullable(),
   country: z.string().min(1, 'Country is required').max(255),
   state: z.string().max(255).nullable(),
@@ -211,6 +211,7 @@ const Register: React.FC = () => {
                 value={formData.business_phone || ''}
                 onChange={handleChange}
                 className="w-full border border-gray-300 text-sm rounded-lg px-4 py-2 focus:ring-2 focus:ring-orange-500"
+                required
               />
             </div>
 
