@@ -25,6 +25,17 @@ export interface User {
   };
 }
 
+export const REQUIRED_PROFILE_FIELDS: Array<keyof User> = [
+  'phoneNumber',
+  // 'business_name',
+  // 'country',
+  // 'state',
+  // 'city',
+  // 'business_email',
+  // 'business_phone',
+  // 'business_address',
+];
+
 export interface PaginatedResponse {
   current_page: number;
   data: User[];

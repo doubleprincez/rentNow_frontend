@@ -12,6 +12,7 @@ import Logo from '@/components/assets/logo/logo.png'
 import accountRefresher from '@/redux/accountRefresher';
 import {getFormData} from "@/lib/utils";
 import {useAppDispatch} from "@/redux/hook";
+import RequestForUpdate from "@/features/landing/components/RequestForUpdate";
 
 const Header = () => {
     const pathname = usePathname();
@@ -246,6 +247,7 @@ const Header = () => {
                     </motion.div>
                 )}
             </div>
+            <RequestForUpdate/>
         </div>
     );
 };

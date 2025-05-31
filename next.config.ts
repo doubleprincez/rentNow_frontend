@@ -4,7 +4,7 @@ import type {NextConfig} from "next";
 // export const frontendURL = 'http://localhost:3000';
 // export const backendUrl = 'http://localhost:8000';
 // export const PAYSTACK_PUBLIC_KEY = "pk_test_d196b71372349b838d7a0aa834a9d359874f1ac3"
-//
+
 export const   frontendURL = 'https://rentnow.ng';
 export const     backendUrl = 'https://app.rentnow.ng';
 export const     PAYSTACK_PUBLIC_KEY = "pk_live_eeefde6e6c7a8c005b5d1ec9eeef98550543d535"
