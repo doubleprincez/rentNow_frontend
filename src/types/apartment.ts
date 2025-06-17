@@ -57,7 +57,8 @@ export interface Apartment {
     views_count?: number;
     like_apartment?: boolean;
     like_count?: number;
-    user?: any
+    user?: any;
+    new?:false;
 }
 
 

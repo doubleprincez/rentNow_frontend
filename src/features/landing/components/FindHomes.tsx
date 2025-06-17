@@ -14,8 +14,13 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({apartment, onClick}) => (
         className="flex flex-col gap-4 p-2 md:p-4 bg-white shadow-md rounded-2xl cursor-pointer hover:shadow-lg transition-shadow"
         onClick={() => onClick(apartment)}
     >
-        <div className="flex flex-col gap-2">
-            <div className="flex w-full h-[200px] rounded-lg overflow-hidden">
+        <div className="flex flex-col gap-2 relative">
+            {
+                apartment?.new ? <span
+                    className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-1"}>New</span> : ''
+            }
+            <div className="flex w-full h-[200px] rounded-lg overflow-hidden ">
+
                 <img
                     src={apartment?.images && Object.values(apartment?.images)[0]?.preview_url || '/placeholder.jpg'}
                     alt={apartment.title}
@@ -183,24 +188,27 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
                         <div>
                             {/*<input type="text" placeholder="Amenities (e.g., pool, gym)" value={amenitiesFilter}*/}
                             {/*       onChange={handleAmenitiesChange} className="p-2 border rounded"/>*/}
-                            <select defaultValue={amenitiesFilter} onChange={handleAmenitiesChange} className="w-full border border-gray-300 rounded-lg px-4 py-2 text-black">
+                            <select defaultValue={amenitiesFilter} onChange={handleAmenitiesChange}
+                                    className="w-full border border-gray-300 rounded-lg px-4 py-2 text-black">
                                 <option value={""}>All Amenities</option>
-                                 {AVAILABLE_AMENITIES.map((amenity: any) => (
-                                        <option key={amenity} value={amenity}
-                                                className="flex items-center space-x-2 cursor-pointer">
-                                            {amenity}
-                                        </option>
-                                    ))}
+                                {AVAILABLE_AMENITIES.map((amenity: any) => (
+                                    <option key={amenity} value={amenity}
+                                            className="flex items-center space-x-2 cursor-pointer">
+                                        {amenity}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div><select defaultValue={filterName}
-                                     onChange={handleFilterNameChange} className="w-full border border-gray-300 rounded-lg px-4 py-2">
+                                     onChange={handleFilterNameChange}
+                                     className="w-full border border-gray-300 rounded-lg px-4 py-2">
                             <option value={""}>No Filter</option>
                             <option value={"amount"}>Amount</option>
                             <option value={"security_deposit"}>Security Deposit</option>
                             <option value={"number_of_rooms"}>Rooms</option>
                         </select></div>
-                        <div><select value={filterDir} onChange={handleFilterDirChange} className="w-full border border-gray-300 rounded-lg px-4 py-2">
+                        <div><select value={filterDir} onChange={handleFilterDirChange}
+                                     className="w-full border border-gray-300 rounded-lg px-4 py-2">
                             <option value="eq">{"="}</option>
                             <option value="gt">{">"}</option>
                             <option value="lt">{"<"}</option>

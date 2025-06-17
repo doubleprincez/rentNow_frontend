@@ -110,7 +110,6 @@ const Home: React.FC = () => {
         return (
             <div className="w-full h-screen flex items-center justify-center bg-white">
                 <div className="text-white text-lg">
-
                 </div>
             </div>
         );
@@ -159,8 +158,13 @@ const Home: React.FC = () => {
     };
 
     const ApartmentCard = ({apartment}: { apartment: Apartment }) => (
-        <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow">
+        <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow relative">
+            {
+                apartment?.new ? <span
+                    className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-1"}>New</span> : ''
+            }
             <div className="aspect-video relative overflow-hidden rounded-lg">
+
                 <img
                     src={apartment?.images && Object.values(apartment.images)[0]?.preview_url || '/placeholder.jpg'}
                     alt={apartment.title}

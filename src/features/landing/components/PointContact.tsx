@@ -99,8 +99,12 @@ const PointContact = ({apartments}: PointContactI) => {
                     {displayedApartments.map((apartment) => (
                         <div
                             key={apartment.id}
-                            className='w-full h-[100px] sm:h-[120px] bg-white p-2 md:p-4 rounded-xl md:rounded-2xl overflow-hidden shadow-md flex items-center gap-3 cursor-pointer hover:shadow-lg transition-shadow'
+                            className='w-full h-[100px] sm:h-[120px] bg-white p-2 md:p-4 rounded-xl md:rounded-2xl overflow-hidden shadow-md flex items-center gap-3 cursor-pointer hover:shadow-lg transition-shadow relative'
                             onClick={() => handleApartmentClick(apartment)}  >
+                            {
+                                apartment?.new ? <span
+                                    className={"absolute top-0.5 right-0.5 text-green-700 font-bold bg-white z-10 rotate-12 p-1"}>New</span> : ''
+                            }
                             <div className='w-[30%] h-full rounded-lg md:rounded-xl overflow-hidden'>
                                 <img
                                     src={apartment?.images &&Object.values(apartment.images)[0]?.preview_url || '/placeholder.jpg'}
