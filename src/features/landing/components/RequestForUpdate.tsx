@@ -1,223 +1,342 @@
 // components/RequestForUpdate.tsx
 import React, {FormEvent, useEffect, useState} from 'react';
-
-// Assuming these imports are correct based on your project structure
-import {REQUIRED_PROFILE_FIELDS, User} from "@/features/admin/dashboard/api/userApi";
-import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"; // Added DialogHeader, DialogTitle, DialogDescription
-import {Input} from "@/components/ui/input"; // Assuming you have shadcn Input
-import {Button} from "@/components/ui/button"; // Assuming you have shadcn Button
-import {Label} from "@/components/ui/label"; // Assuming you have shadcn Label
-import {useSelector} from "react-redux";
+import {Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {Label} from "@/components/ui/label";
+import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
-import {baseURL} from "../../../../next.config";
 import {AxiosApi} from "@/lib/utils";
-import {updateProfile} from "@/redux/userSlice"; // Assuming you have shadcn Select
+import {updateProfile, UserState} from "@/redux/userSlice"; // Assuming updateProfile exists and handles partial UserState
+import {backendUrl} from "../../../../next.config"; // Path to your backend URL config
 
-interface RequestForUpdateProps {
-    user: User | null; // The user object, which should be provided by your authentication system
-    // onUserUpdated: (updatedUser: User) => void; // Optional: If the parent needs to know about updates
+
+// --- Local Type for Form Data ---
+// This interface defines the exact shape of the data that this form will manage.
+// It maps the properties from UserState to suit form inputs (e.g., 'phone' as string).
+export interface FormProfileData {
+    id?: null | string | number; // Optional ID for existing users
+    firstName?: string | null;
+    lastName?: string | null;
+    email?: string | null;
+    phone: string | null;
 }
 
-const RequestForUpdate: React.FC<RequestForUpdateProps> = () => {
+// --- Define Required Fields for this Form ---
+// These are the keys from FormProfileData that must be non-empty for a "complete" profile.
+const REQUIRED_PROFILE_FIELDS: Array<keyof FormProfileData> = [
+    'firstName',
+    'lastName',
+    'email',
+    'phone',
+    // Add other fields from FormProfileData that are mandatory for this form's completion check
+    // e.g., 'business_name', 'country', 'state', 'city', 'business_email', 'business_phone', 'business_address'
+];
 
-        const user = useSelector((state: RootState) => state.user);
-        const [isModalOpen, setIsModalOpen] = useState(false);
-        const [localUser, setLocalUser] = useState<User | null>(user); // Use local state to manage user copy
-        const [missingFields, setMissingFields] = useState<Array<keyof User>>([]);
-        const [formData, setFormData] = useState<Partial<User>>({});
-        const [loading, setLoading] = useState(false);
-        const [error, setError] = useState<string | null>(null);
+interface extendedUserState extends UserState {
+    isLoading?: false,
+    error?: null,
+}
 
-        // --- Profile Completion Check Logic ---
-        const checkIfProfileComplete = (userData: User | null): boolean => {
-            if (!userData) {
-                return false;
-            }
-            return REQUIRED_PROFILE_FIELDS.every(
-                (field) => userData[field] !== null && (typeof userData[field] === 'string' && (userData[field] as string).trim() === '')
-            );
+const RequestForUpdate: React.FC = () => {
+    const dispatch = useDispatch();
+    const preparedState = useSelector((state: RootState) => state.user); // Get the full UserState from Redux
+    const userState:extendedUserState = preparedState as extendedUserState;
+
+    // --- Helper function to map UserState to FormProfileData ---
+    // This transforms the Redux UserState structure (e.g., phoneNumber: number)
+    // into the FormProfileData structure (e.g., phone: string).
+    const mapUserStateToFormProfileData = (state: UserState): FormProfileData => {
+        return {
+            id: state.userId ?? undefined, // userId from UserState maps to id in FormProfileData
+            firstName: state.firstName,
+            lastName: state.lastName,
+            email: state.email,
+            phone: state.phoneNumber !== null && state.phoneNumber !== undefined
+                ? String(state.phoneNumber)
+                : null,
+
         };
+    };
 
-        // --- Effect to manage modal visibility based on user data ---
-        useEffect(() => {
-            setLocalUser(user); // Keep local user state in sync with prop
+    // --- State Management for the Form ---
+    // This state holds the current profile data formatted for the form.
+    const [currentProfileDataMapped, setCurrentProfileDataMapped] = useState<FormProfileData | null>(
+        userState.isLoggedIn && userState.userId // Only map if user is considered logged in
+            ? mapUserStateToFormProfileData(userState)
+            : null
+    );
 
-            if (user.accountType && user?.isLoggedIn) {
-                const needsUpdate = !checkIfProfileComplete(user);
-                // Check if modal was not previously dismissed for this session/user
-                const dismissed = localStorage.getItem('dismissProfileModal_' + user.id) === 'true';
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [localUser, setLocalUser] = useState<FormProfileData | null>(currentProfileDataMapped); // For dismissal logic
+    const [missingFields, setMissingFields] = useState<Array<keyof FormProfileData>>([]);
+    const [formData, setFormData] = useState<Partial<FormProfileData>>({}); // Holds current form input values
 
-                if (needsUpdate && !dismissed) {
-                    setIsModalOpen(true);
-
-                    // Initialize form data with existing user data for missing fields
-                    const initialFormData: Partial<User> = {};
-                    REQUIRED_PROFILE_FIELDS.forEach(field => {
-                        if (!user[field] || (typeof user[field] === 'string' && (user[field] as string).trim() === '')) {
-                            initialFormData[field] = user[field] || '';
-                        }
-                    });
-                    setFormData(initialFormData);
-                    setMissingFields(REQUIRED_PROFILE_FIELDS.filter(
-                        (field) => !user[field] || (typeof user[field] === 'string' && (user[field] as string).trim() === '')
-                    ));
-
-                } else {
-                    setIsModalOpen(false); // Close if complete or dismissed
-                }
-            } else {
-                setIsModalOpen(false); // Close modal if user logs out
-            }
-        }, [user]); // Re-run whenever the user prop changes
-
-        // --- Form handling logic ---
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            const {name, value} = e.target;
-            setFormData(prev => ({...prev, [name]: value}));
-        };
-
-        const handleSelectChange = (name: keyof User, value: string) => {
-            setFormData(prev => ({...prev, [name]: value}));
-        };
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
 
-        const handleSubmit = async (e: FormEvent) => {
-            e.preventDefault();
-            setLoading(true);
-            setError(null);
-
-            try {
-                // Validate form data client-side before sending
-                const currentMissingFields = missingFields.filter(field => !formData[field] || (typeof formData[field] === 'string' && (formData[field] as string).trim() === ''));
-
-                if (currentMissingFields.length > 0) {
-                    setError('Please fill in all required fields.');
-                    setLoading(false);
-                    return;
-                }
-
-                // *** IMPORTANT: Replace with your actual backend API endpoint ***
-                const response = await AxiosApi('user', '', {}, true).put(baseURL + '/user-profile', formData);
-                const result = await response.data;
-                if (response.status!==200) {
-                    const errorData = result;
-                    throw new Error(errorData.message || 'Failed to update profile.');
-                }
-
-                const updatedUserData: User = result.data; // Assuming API returns the updated user object
-
-                updateProfile(updatedUserData);
-                setLocalUser(updatedUserData); // Update local user state
-                // Re-check completion and close modal if complete
-                const needsUpdateAfterSubmit = checkIfProfileComplete(updatedUserData);
-
-                setIsModalOpen(needsUpdateAfterSubmit); // Close if now complete
-
-                // Clear dismissal flag if profile is now complete
-                if (!needsUpdateAfterSubmit && updatedUserData) {
-                    localStorage.removeItem('dismissProfileModal_' + updatedUserData.id);
-                }
-                // Optional: Call onUserUpdated if you have it
-                // if (onUserUpdated) { onUserUpdated(updatedUserData); }
-
-            } catch (err: any) {
-                console.error('Profile update error:', err);
-                setError(err.message || 'An unexpected error occurred during update.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-// --- Modal close and dismissal logic ---
-        const handleCloseModal = () => {
-            setIsModalOpen(false);
-            if (localUser) {
-                localStorage.setItem('dismissProfileModal_' + localUser.id, 'true');
-            }
-        };
-
-// Only render the Dialog if it's open and we have a user
-        if (!isModalOpen || !localUser || missingFields.length === 0) {
-            return null;
+    // --- Profile Completion Check Logic ---
+    // Checks if all REQUIRED_PROFILE_FIELDS are non-null, non-undefined, and non-empty strings.
+    const checkIfProfileComplete = (profileData: FormProfileData | null): boolean => {
+        if (!profileData) {
+            return false; // Cannot be complete if no data
         }
-
-        return (
-            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}> {/* Control Dialog open state */}
-                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle>Complete Your Profile</DialogTitle>
-                        <DialogDescription>
-                            Please provide the missing information to complete your profile.
-                        </DialogDescription>
-                    </DialogHeader>
-
-                    {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
-                             role="alert">
-                            <span className="block sm:inline">{error}</span>
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
-                        {missingFields.map((field) => (
-                            <div key={field} className="space-y-2">
-                                <Label htmlFor={field} className="capitalize">
-                                    {field.replace(/_/g, ' ')}
-                                </Label>
-                                {/* Conditional rendering for different input types */}
-                                {field === 'state' ? (
-                                    <Input
-                                        id={field}
-                                        name={field}
-                                        type="text" // Can be a Select too, conditionally based on country
-                                        value={formData[field] || ''}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                ) : field.includes('email') ? (
-                                    <Input
-                                        id={field}
-                                        name={field}
-                                        type="email"
-                                        value={formData[field] || ''}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                ) : field.includes('phoneNumber') ? (
-                                    <Input
-                                        id={field}
-                                        name={field}
-                                        type="tel"
-                                        value={formData[field] || ''}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                ) : (
-                                    <Input
-                                        id={field}
-                                        name={field}
-                                        type="text"
-                                        value={formData[field] || ''}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                )}
-                            </div>
-                        ))}
-
-                        <div className="col-span-1 md:col-span-2 flex justify-end space-x-2 pt-4">
-                            <Button type="button" variant="outline" onClick={handleCloseModal} disabled={loading}>
-                                Later
-                            </Button>
-                            <Button type="submit" disabled={loading}>
-                                {loading ? 'Updating...' : 'Update Profile'}
-                            </Button>
-                        </div>
-                    </form>
-                </DialogContent>
-            </Dialog>
+        return REQUIRED_PROFILE_FIELDS.every(
+            (field) => {
+                const value = profileData[field];
+                return value !== null && value !== undefined && (typeof value !== 'string' || value.trim() !== '');
+            }
         );
+    };
+
+    // --- Effect to Sync Redux UserState with Local Mapped Profile Data ---
+    // This ensures `currentProfileDataMapped` and `localUser` are always up-to-date
+    // with changes from the Redux store.
+    useEffect(() => {
+        const mappedData = userState.isLoggedIn && userState.userId
+            ? mapUserStateToFormProfileData(userState)
+            : null;
+        setCurrentProfileDataMapped(mappedData);
+        setLocalUser(mappedData); // Keep localUser in sync for dismissal
+    }, [userState]); // Rerun whenever the Redux userState object changes
+
+
+    // --- Effect to Control Modal Visibility and Initialize Form Data ---
+    // This effect runs when login status, account type, or mapped profile data changes.
+    useEffect(() => {
+        // Only proceed if user is logged in and mapped profile data exists
+        if (userState.isLoggedIn && userState.accountType && currentProfileDataMapped) {
+            const needsUpdate = !checkIfProfileComplete(currentProfileDataMapped);
+            // Check localStorage to see if the modal was previously dismissed for this user
+            const dismissed = localStorage.getItem('dismissProfileModal_' + (currentProfileDataMapped.id || '')) === 'true';
+
+            if (needsUpdate && !dismissed) {
+                setIsModalOpen(true);
+
+                const initialFormData: { [K in keyof FormProfileData]?: string | null } = {};
+                const currentMissing: Array<keyof FormProfileData> = [];
+
+                // Iterate over required fields to populate formData and find missing ones
+                REQUIRED_PROFILE_FIELDS.forEach(field => {
+                    const value = currentProfileDataMapped[field]; // Access from the mapped profile data
+
+                    let formattedValue: string = ''; // Always initialize as string for form inputs
+                    if (value !== null && value !== undefined) {
+                        if (typeof value === 'string') {
+                            formattedValue = value.trim();
+                        } else if (typeof value === 'number') {
+                            formattedValue = String(value); // Convert numbers to string for input
+                        } else {
+                            formattedValue = String(value); // Fallback for other unexpected types
+                        }
+                    }
+                    initialFormData[field] = formattedValue; // Assign formatted string
+
+                    // Add field to missing list if its formatted value is empty
+                    if (formattedValue === '') {
+                        currentMissing.push(field);
+                    }
+                });
+                setFormData(initialFormData);
+                setMissingFields(currentMissing);
+
+            } else {
+                setIsModalOpen(false); // Close if complete or dismissed
+            }
+        } else {
+            setIsModalOpen(false); // Close modal if user logs out or not in a valid state
+        }
+    }, [userState.isLoggedIn, userState.accountType, currentProfileDataMapped]);
+
+
+    // --- Form Input Change Handler ---
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const {name, value} = e.target;
+        setFormData(prev => ({...prev, [name as keyof FormProfileData]: value})); // Type assertion for dynamic key
+    };
+
+
+    // --- Form Submission Handler ---
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+        setError(null);
+
+        try {
+            // Client-side validation for missing fields
+            const currentMissingFields = REQUIRED_PROFILE_FIELDS.filter(
+                field => {
+                    const value = formData[field];
+                    return value === undefined || value === null || (typeof value === 'string' && value.trim() === '');
+                }
+            );
+
+            if (currentMissingFields.length > 0) {
+                setError('Please fill in all required fields: ' + currentMissingFields.join(', '));
+                setLoading(false);
+                return;
+            }
+
+            // Construct API payload from formData.
+            // This assumes your backend API expects the FormProfileData shape (e.g., 'phone' as string).
+            // If the API expects 'phoneNumber' as a number, perform that conversion here.
+            const apiPayload: Partial<FormProfileData> = {
+                ...formData,
+                id: currentProfileDataMapped?.id, // Include ID for PUT request
+            };
+
+            // Example: Convert phone/business_phone back to numbers if backend needs them as numbers
+            // (Only if FormProfileData has them as strings but API needs numbers)
+            if (apiPayload.phone) {
+                (apiPayload as any).phone = parseInt(apiPayload.phone); // Cast to number for API
+            }
+            // if (apiPayload.business_phone) {
+            //     (apiPayload as any).business_phone = parseInt(apiPayload.business_phone); // Cast to number for API
+            // }
+
+            // Remove undefined or null values if your API prefers a cleaner payload
+            Object.keys(apiPayload).forEach(key => {
+                const value = apiPayload[key as keyof typeof apiPayload];
+                if (value === undefined || value === null) {
+                    delete apiPayload[key as keyof typeof apiPayload];
+                }
+            });
+
+
+            // Make the API call to update the user profile
+            const response = await AxiosApi('user', '', {}, true).put(`${backendUrl}/user-profile`, apiPayload);
+            const result = response.data;
+
+            if (response.status !== 200) {
+                throw new Error(result.message || 'Failed to update profile.');
+            }
+            type apiResponse = { id: number, name: string; email: string; phone: string | null };
+            const updatedProfileDataFromApi: apiResponse = result.data; // Assuming API returns FormProfileData shape
+
+            setLocalUser(updatedProfileDataFromApi); // Update local state for dismissal logic
+            setCurrentProfileDataMapped(updatedProfileDataFromApi); // Keep main mapped state updated
+
+
+            // --- Dispatch Update to Redux UserState ---
+            // Construct a payload that matches the direct properties of UserState.
+            // Convert FormProfileData fields back to UserState's types/names as needed.
+            dispatch(updateProfile({
+                firstName: updatedProfileDataFromApi.name?.split(' ')[0],
+                lastName: updatedProfileDataFromApi.name?.split(' ')[0],
+                email: updatedProfileDataFromApi.email,
+                phoneNumber: updatedProfileDataFromApi.phone ? parseInt(updatedProfileDataFromApi.phone) : null,
+            }));
+
+            // Re-check completion and close modal if now complete
+            const needsUpdateAfterSubmit = !checkIfProfileComplete(updatedProfileDataFromApi);
+            setIsModalOpen(needsUpdateAfterSubmit);
+
+            // Clear dismissal flag if profile is now complete
+            if (!needsUpdateAfterSubmit && updatedProfileDataFromApi.id) {
+                localStorage.removeItem('dismissProfileModal_' + updatedProfileDataFromApi.id);
+            }
+
+        } catch (err: any) {
+            console.error('Profile update error:', err);
+            setError(err.message || 'An unexpected error occurred during update.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // --- Modal Close and Dismissal Logic ---
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        // Store a flag in localStorage to prevent showing the modal again for this session/user
+        if (localUser && localUser.id) {
+            localStorage.setItem('dismissProfileModal_' + localUser.id, 'true');
+        }
+    };
+
+
+    // --- Conditional Rendering for the Modal ---
+    // The modal is only rendered if it's open, if we have valid profile data,
+    // and if there are still missing fields to complete.
+    if (!isModalOpen || !currentProfileDataMapped || missingFields.length === 0) {
+        // Provide loading/error messages based on Redux userState
+        if (userState.isLoading) {
+            return <div>Loading user profile...</div>;
+        }
+        if (userState.error) {
+            return <div>Error loading profile: {userState.error}</div>;
+        }
+        return null; // Don't render the modal if conditions aren't met
     }
-;
+
+    return (
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle>Complete Your Profile</DialogTitle>
+                    <DialogDescription>
+                        Please provide the missing information to complete your profile.
+                    </DialogDescription>
+                </DialogHeader>
+
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4"
+                         role="alert">
+                        <span className="block sm:inline">{error}</span>
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+                    {missingFields.map((field) => (
+                        <div key={field} className="space-y-2">
+                            <Label htmlFor={field} className="capitalize">
+                                {/* Format field name for display (e.g., 'firstName' -> 'First Name') */}
+                                {String(field).replace(/_/g, ' ')}
+                            </Label>
+                            {/* Conditional rendering for different input types based on field name */}
+                            {field === 'phone' ? (
+                                <Input
+                                    id={field}
+                                    name={field}
+                                    type="tel"
+                                    value={formData[field] || ''} // Fallback to empty string for display
+                                    onChange={handleChange}
+                                    required
+                                />
+                            ) : field === 'email' ? (
+                                <Input
+                                    id={field}
+                                    name={field}
+                                    type="email"
+                                    value={formData[field] || ''}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            ) : (
+                                <Input
+                                    id={field}
+                                    name={field}
+                                    type="text"
+                                    value={formData[field] || ''}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            )}
+                        </div>
+                    ))}
+
+                    <div className="col-span-1 md:col-span-2 flex justify-end space-x-2 pt-4">
+                        <Button type="button" variant="outline" onClick={handleCloseModal} disabled={loading}>
+                            Later
+                        </Button>
+                        <Button type="submit" disabled={loading}>
+                            {loading ? 'Updating...' : 'Update Profile'}
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+};
 
 export default RequestForUpdate;

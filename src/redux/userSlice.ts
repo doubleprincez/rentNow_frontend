@@ -1,8 +1,8 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
-import {User} from "@/features/admin/dashboard/api/userApi";
 
-export type UserState = {
+export interface UserState {
+    id?: number;
     isLoggedIn: boolean;
     isSubscribed?: boolean;
     firstName: string;
@@ -118,7 +118,7 @@ const userSlice = createSlice({
                 saveFormData('userState', JSON.stringify({...storedState, isSubscribed: action.payload}));
             }
         },
-        updateProfile: (state, action: PayloadAction<User>) => {
+        updateProfile: (state, action: PayloadAction<any>) => {
             const storedState = getFormData('userState') || {}
             saveFormData('userState', JSON.stringify({...storedState, ...action.payload}));
         },
