@@ -161,7 +161,7 @@ const Home: React.FC = () => {
         <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow relative">
             {
                 apartment?.new ? <span
-                    className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-1"}>New</span> : ''
+                    className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-0.5"}>New</span> : ''
             }
             <div className="aspect-video relative overflow-hidden rounded-lg">
 

@@ -29,7 +29,7 @@ const ApartmentCard = ({apartment, onClick}: { apartment: Apartment, onClick: (a
         <div className='flex flex-col gap-2 relative'>
             {
                 apartment?.new ? <span
-                    className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-1"}>New</span> : ''
+                    className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-0.5"}>New</span> : ''
             }
             <div className='flex w-full h-[150px] mdl:h-[200px] rounded-lg overflow-hidden'>
                 <img

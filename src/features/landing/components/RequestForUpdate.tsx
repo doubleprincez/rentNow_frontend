@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import {AxiosApi} from "@/lib/utils";
 import {updateProfile, UserState} from "@/redux/userSlice"; // Assuming updateProfile exists and handles partial UserState
-import {backendUrl} from "../../../../next.config"; // Path to your backend URL config
+import {baseURL} from "../../../../next.config"; // Path to your backend URL config
 
 
 // --- Local Type for Form Data ---
@@ -41,7 +41,7 @@ interface extendedUserState extends UserState {
 const RequestForUpdate: React.FC = () => {
     const dispatch = useDispatch();
     const preparedState = useSelector((state: RootState) => state.user); // Get the full UserState from Redux
-    const userState:extendedUserState = preparedState as extendedUserState;
+    const userState: extendedUserState = preparedState as extendedUserState;
 
     // --- Helper function to map UserState to FormProfileData ---
     // This transforms the Redux UserState structure (e.g., phoneNumber: number)
@@ -205,7 +205,7 @@ const RequestForUpdate: React.FC = () => {
 
 
             // Make the API call to update the user profile
-            const response = await AxiosApi('user', '', {}, true).put(`${backendUrl}/user-profile`, apiPayload);
+            const response = await AxiosApi('user', '', {}, true).put(`${baseURL}/user-profile`, apiPayload);
             const result = response.data;
 
             if (response.status !== 200) {
@@ -214,22 +214,31 @@ const RequestForUpdate: React.FC = () => {
             type apiResponse = { id: number, name: string; email: string; phone: string | null };
             const updatedProfileDataFromApi: apiResponse = result.data; // Assuming API returns FormProfileData shape
 
-            setLocalUser(updatedProfileDataFromApi); // Update local state for dismissal logic
-            setCurrentProfileDataMapped(updatedProfileDataFromApi); // Keep main mapped state updated
 
+            const splitFullName = updatedProfileDataFromApi.name?.trim().split(' ');
 
+            const checkingData: FormProfileData = {
+                id: updatedProfileDataFromApi.id,
+                firstName: splitFullName[0],
+                lastName: splitFullName[1],
+                email: updatedProfileDataFromApi.email,
+                phone: updatedProfileDataFromApi.phone ? parseInt(updatedProfileDataFromApi.phone) : null,
+            } as FormProfileData;
+
+            setLocalUser(checkingData); // Update local state for dismissal logic
+            setCurrentProfileDataMapped(checkingData); // Keep main mapped state updated
             // --- Dispatch Update to Redux UserState ---
             // Construct a payload that matches the direct properties of UserState.
             // Convert FormProfileData fields back to UserState's types/names as needed.
             dispatch(updateProfile({
-                firstName: updatedProfileDataFromApi.name?.split(' ')[0],
-                lastName: updatedProfileDataFromApi.name?.split(' ')[0],
+                firstName: splitFullName[0],
+                lastName: splitFullName[1],
                 email: updatedProfileDataFromApi.email,
                 phoneNumber: updatedProfileDataFromApi.phone ? parseInt(updatedProfileDataFromApi.phone) : null,
             }));
 
             // Re-check completion and close modal if now complete
-            const needsUpdateAfterSubmit = !checkIfProfileComplete(updatedProfileDataFromApi);
+            const needsUpdateAfterSubmit = !checkIfProfileComplete(checkingData);
             setIsModalOpen(needsUpdateAfterSubmit);
 
             // Clear dismissal flag if profile is now complete

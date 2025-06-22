@@ -103,7 +103,7 @@ const PointContact = ({apartments}: PointContactI) => {
                             onClick={() => handleApartmentClick(apartment)}  >
                             {
                                 apartment?.new ? <span
-                                    className={"absolute top-0.5 right-0.5 text-green-700 font-bold bg-white z-10 rotate-12 p-1"}>New</span> : ''
+                                    className={"absolute top-0.5 right-0.5 text-green-700 font-bold bg-white z-10 rotate-12 p-0.5"}>New</span> : ''
                             }
                             <div className='w-[30%] h-full rounded-lg md:rounded-xl overflow-hidden'>
                                 <img
