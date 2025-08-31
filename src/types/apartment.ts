@@ -1,3 +1,5 @@
+import {AxiosResponse} from "axios";
+
 export interface Image {
     name: string;
     file_name: string;
@@ -185,3 +187,16 @@ export const allStates = [
     {"Yobe": "Yobe"},
     {"Zamfara": "Zamfara"}
 ];
+
+
+
+export interface ApiError extends Error {
+    message: string;
+}
+
+export interface APIResponse extends AxiosResponse {
+    success?: boolean;
+    message?: string;
+    data: object;
+    [key: string]: unknown;
+}

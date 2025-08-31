@@ -486,11 +486,17 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
 
 
                             <div className='w-full grid grid-cols-1 sm:grid-cols-2 gap-2'>
+                                {/*isSubscribed === true ? : <div className='col-span-2  py-4 w-full'>*/}
+                                {/*<div className='text-xs'>Subscribe now to enjoy the full benefits of our*/}
+                                {/*    platform*/}
+                                {/*</div>*/}
+                                {/*<Button onClick={() => router.push('/subscribe')}*/}
+                                {/*        className='bg-orange-500 hover:bg-orange-600 text-white w-full mt-2'>Subscribe*/}
+                                {/*    Now</Button></div>*/}
                                 {
 
-                                    isLoggedIn ? isSubscribed === true ? <>
+                                    isLoggedIn ?<>
                                             {rentApartmentNow()}
-
                                             {bookVisitation()}
 
                                             {
@@ -501,13 +507,7 @@ export default function ApartmentClient({prevApartment}: ClientProps) {
                                                 />
                                             }
 
-                                        </> : <div className='col-span-2  py-4 w-full'>
-                                            <div className='text-xs'>Subscribe now to enjoy the full benefits of our
-                                                platform
-                                            </div>
-                                            <Button onClick={() => router.push('/subscribe')}
-                                                    className='bg-orange-500 hover:bg-orange-600 text-white w-full mt-2'>Subscribe
-                                                Now</Button></div>
+                                        </>
                                         : <div className="text-center col-span-2 py-4 w-full">
                                             <p className="text-gray-600 mb-4">
                                                 Please log in to continue

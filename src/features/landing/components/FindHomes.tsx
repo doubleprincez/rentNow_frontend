@@ -20,7 +20,6 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({apartment, onClick}) => (
                     className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-0.5"}>New</span> : ''
             }
             <div className="flex w-full h-[200px] rounded-lg overflow-hidden ">
-
                 <img
                     src={apartment?.images && Object.values(apartment?.images)[0]?.preview_url || '/placeholder.jpg'}
                     alt={apartment.title}
@@ -62,12 +61,16 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
     const [filterDir, setFilterDir] = useState<string>('eq');
     const [filterVal, setFilterVal] = useState<string>('');
 
+    // Debounced values
+    const [debouncedStateCode] = useDebounce(stateCodeFilter, 500);
+    const [debouncedCityCode] = useDebounce(cityCodeFilter, 500);
+
     const fetchApartments = useCallback(async () => {
         setIsLoading(true);
         let url = `${baseURL}/apartments?page=${page}&`; // Include pagination
 
-        if (stateCodeFilter) url += `state_code=${stateCodeFilter}&`;
-        if (cityCodeFilter) url += `city_code=${cityCodeFilter}&`;
+        if (debouncedStateCode) url += `state_code=${debouncedStateCode}&`;
+        if (debouncedCityCode) url += `city_code=${debouncedCityCode}&`;
         if (amenitiesFilter) url += `amenities=${amenitiesFilter}&`;
         if (filterName && filterDir && filterVal) url += `filter_name=${filterName}&filter_dir=${filterDir}&filter_val=${filterVal}&`;
 
@@ -91,9 +94,7 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
         } finally {
             setIsLoading(false);
         }
-    }, [page, stateCodeFilter, cityCodeFilter, amenitiesFilter, filterName, filterDir, filterVal]);
-
-    const [debouncedFetch] = useDebounce(fetchApartments, 300); // Adjust delay as needed
+    }, [page, debouncedStateCode, debouncedCityCode, amenitiesFilter, filterName, filterDir, filterVal]);
 
 
     useEffect(() => {
@@ -104,9 +105,8 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
             // setCategories(uniqueCategories);
             return;
         }
-
-        debouncedFetch(); // Use debounced fetch
-    }, [initialData, debouncedFetch]);
+        fetchApartments().then(r => r); // Use debounced fetch
+    }, [initialData, fetchApartments, debouncedStateCode, debouncedCityCode]);
 
     const handleApartmentClick = (apartment: Apartment) => {
         router.push(`/find-homes/${apartment.id}`);
@@ -114,6 +114,7 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
 
     const handleStateCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setStateCodeFilter(event.target.value);
+
         setPage(1); // Reset page on filter change
     };
 
@@ -148,33 +149,15 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
 
     useEffect(() => {
         if (page > 1) {
-            fetchApartments();
+            fetchApartments().then(r => r);
         }
     }, [page, fetchApartments]);
 
-    if (isLoading && apartments.length === 0) {
-        return (
-            <div className="w-full min-h-screen flex items-center justify-center">
-                <p className="text-gray-600">Loading apartments...</p>
-            </div>
-        );
-    }
 
-    if (error) {
-        return (
-            <div className="w-full min-h-screen flex items-center justify-center">
-                <p className="text-red-500">{error}</p>
-            </div>
-        );
-    }
-
-    return (
-        <div
-            className="w-full px-4 py-20 md:py-32 flex flex-col gap-2 md:gap-4 items-center justify-center bg-gray-100 overflow-hidden">
-            <p className="text-gray-700 text-[1.3em] text-center md:text-start md:text-[2em] font-semibold">
-                Find Your New Home
-            </p>
-
+    const headerSection = () => {
+        return <><p className="text-gray-700 text-[1.3em] text-center md:text-start md:text-[2em] font-semibold">
+            Find Your New Home
+        </p>
             <div className="">
                 <h3 className="text-lg font-semibold text-gray-700">Filter Options</h3>
                 <div className={"flex flex-wrap gap-3"}>
@@ -187,7 +170,7 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
                                     className="p-2 border rounded"/></div>
                         <div>
                             {/*<input type="text" placeholder="Amenities (e.g., pool, gym)" value={amenitiesFilter}*/}
-                            {/*       onChange={handleAmenitiesChange} className="p-2 border rounded"/>*/}
+                            {/* onChange={handleAmenitiesChange} className="p-2 border rounded"/>*/}
                             <select defaultValue={amenitiesFilter} onChange={handleAmenitiesChange}
                                     className="w-full border border-gray-300 rounded-lg px-4 py-2 text-black">
                                 <option value={""}>All Amenities</option>
@@ -224,47 +207,80 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
 
                 </div>
             </div>
+        </>
 
-            <Tabs defaultValue="all" className="w-full py-3 md:py-5 flex flex-col gap-8">
-                <TabsList className="w-full flex gap-4">
-                    <div
-                        className="w-[1000px] py-4 mx-auto flex gap-2 sm:gap-4 overflow-x-auto no-scrollbar md:justify-center">
-                        <TabsTrigger value="all" className="p-2 flex gap-2 shadow-md">All Properties</TabsTrigger>
-                        {categories.map((category) => (
-                            <TabsTrigger key={category} value={category}
-                                         className="p-2 flex gap-2 shadow-md">{category}</TabsTrigger>
-                        ))}
-                    </div>
-                </TabsList>
+    }
 
-                <TabsContent value="all">
-                    <div className="w-full grid grid-cols-1 sml:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {apartments.map((apt, id) => (
-                            <ApartmentCard key={id} apartment={apt} onClick={handleApartmentClick}/>
-                        ))}
-                    </div>
-                    {apartments.length > 0 && !isLoading && (
-                        <button onClick={loadMore} className="mt-4 bg-orange-400 text-white py-2 px-4 rounded">Load
-                            More</button>
-                    )}
-                </TabsContent>
 
-                {categories.map((category) => (
-                    <TabsContent key={category} value={category}>
-                        <div className="w-full grid grid-cols-1 sml:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                            {apartments
-                                .filter((apt) => apt.category === category)
-                                .map((apt) => (
-                                    <ApartmentCard key={apt.id} apartment={apt} onClick={handleApartmentClick}/>
+    if (error) {
+        return (
+            <div className="w-full min-h-screen flex flex-col items-center justify-center">
+                <p className="text-black">{error}</p>
+                <p className={"my-5"}>
+                    <button className={"text-red-500 font-bold"} onClick={() => fetchApartments()}>Reload</button>
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <div
+            className="w-full px-4 py-20 md:py-32 flex flex-col gap-2 md:gap-4 items-center justify-center bg-gray-100 overflow-hidden">
+
+            {
+                headerSection()
+            }
+            {
+                isLoading && apartments.length === 0 ?
+                    <div className="w-full min-h-screen flex items-center justify-center">
+                        <p className="text-gray-600">Loading apartments...</p>
+                    </div> :
+                    <Tabs defaultValue="all" className="w-full py-3 md:py-5 flex flex-col gap-8">
+                        <TabsList className="w-full flex gap-4">
+                            <div
+                                className="w-[1000px] py-4 mx-auto flex gap-2 sm:gap-4 overflow-x-auto no-scrollbar md:justify-center">
+                                <TabsTrigger value="all" className="p-2 flex gap-2 shadow-md">All
+                                    Properties</TabsTrigger>
+                                {categories.map((category) => (
+                                    <TabsTrigger key={category} value={category}
+                                                 className="p-2 flex gap-2 shadow-md">{category}</TabsTrigger>
                                 ))}
-                        </div>
-                        {apartments.filter((apt) => apt.category === category).length > 0 && !isLoading && (
-                            <button onClick={loadMore} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Load
-                                More</button>
-                        )}
-                    </TabsContent>
-                ))}
-            </Tabs>
+                            </div>
+                        </TabsList>
+
+                        <TabsContent value="all">
+                            <div
+                                className="w-full grid grid-cols-1 sml:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {apartments.map((apt, id) => (
+                                    <ApartmentCard key={id} apartment={apt} onClick={handleApartmentClick}/>
+                                ))}
+                            </div>
+                            {apartments.length > 0 && !isLoading && (
+                                <button onClick={loadMore}
+                                        className="mt-4 bg-orange-400 text-white py-2 px-4 rounded">Load
+                                    More</button>
+                            )}
+                        </TabsContent>
+
+                        {categories.map((category) => (
+                            <TabsContent key={category} value={category}>
+                                <div
+                                    className="w-full grid grid-cols-1 sml:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                    {apartments
+                                        .filter((apt) => apt.category === category)
+                                        .map((apt) => (
+                                            <ApartmentCard key={apt.id} apartment={apt} onClick={handleApartmentClick}/>
+                                        ))}
+                                </div>
+                                {apartments.filter((apt) => apt.category === category).length > 0 && !isLoading && (
+                                    <button onClick={loadMore}
+                                            className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Load
+                                        More</button>
+                                )}
+                            </TabsContent>
+                        ))}
+                    </Tabs>
+            }
         </div>
     );
 };

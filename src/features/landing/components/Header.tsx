@@ -169,8 +169,6 @@ const Header = () => {
                 <div onClick={() => setIsMenu(true)}>
                     <Menu className='w-7 h-7 text-orange-500'/>
                 </div>
-
-
                 {isMenu && (
                     <motion.div
                         initial={{x: 0, opacity: 0}}
