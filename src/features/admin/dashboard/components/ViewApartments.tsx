@@ -7,10 +7,12 @@ import {Input} from '@/components/ui/input';
 import {Dialog, DialogContent, DialogHeader, DialogTrigger,} from '@/components/ui/dialog';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
 import {type Apartment, deleteApartment, getAllApartments, updateApartment} from '../api/get-all-apartments';
-import {ChevronLeft, ChevronRight, Pencil, Search} from 'lucide-react';
+import {ChevronLeft, ChevronRight, Pencil, Search, Clock} from 'lucide-react';
 import Link from "next/link";
 import {DialogDescription} from '@radix-ui/react-dialog';
 import {RootState} from "@/redux/store";
+import {Badge} from "@/components/ui/badge";
+import {isRecentlyUploaded} from "@/lib/apartment-utils";
 
 const ViewApartment = () => {
     const [apartments, setApartments] = useState<Apartment[]>([]);
@@ -20,17 +22,24 @@ const ViewApartment = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
+    const [sortByRecent, setSortByRecent] = useState(false);
     const isLoggedIn = useSelector((state: any) => state.admin.isLoggedIn);
     const token = useSelector((state: RootState) => state.admin.token);
 
     const fetchApartments = async () => {
         try {
-            setLoading(()=>true);
-            const response = await getAllApartments(currentPage, searchTerm, token);
+            setLoading(() => true);
+            const response = await getAllApartments(currentPage, searchTerm, token, sortByRecent);
 
             if (response.success && response.data) {
-                setApartments(response.data.data);
-                setTotalPages(Math.ceil(response.data.total / 20));
+                // Convert object to array since server returns data as object with numeric keys
+                const apartmentData = Object.values(response.data.data) as Apartment[];
+                // console.log('data type is', typeof apartmentData, 'length:', apartmentData.length);
+                // Note: Client-side sorting is disabled for pagination to avoid conflicts
+                // Server should handle sorting by created_at when sortByRecent is true
+                
+                setApartments(apartmentData);
+                setTotalPages(response.data.last_page);
             } else {
                 throw new Error('Invalid response format');
             }
@@ -40,7 +49,7 @@ const ViewApartment = () => {
             setError(err.message || 'Failed to fetch apartments');
             setApartments([]);
         } finally {
-            setLoading(()=>false);
+            setLoading(() => false);
         }
     };
 
@@ -48,7 +57,7 @@ const ViewApartment = () => {
         if (isLoggedIn) {
             fetchApartments().then(r => r);
         }
-    }, [currentPage, searchTerm, isLoggedIn]);
+    }, [currentPage, searchTerm, isLoggedIn, sortByRecent]);
 
     const handleDelete = async (id: number) => {
         if (window.confirm('Are you sure you want to delete this apartment?')) {
@@ -91,14 +100,24 @@ const ViewApartment = () => {
     return (
         <div className="p-6">
             <div className="mb-6">
-                <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground"/>
-                    <Input
-                        placeholder="Search apartments..."
-                        className="pl-8"
-                        value={searchTerm}
-                        onChange={handleSearch}
-                    />
+                <div className="flex gap-4 items-center">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground"/>
+                        <Input
+                            placeholder="Search Apartments..."
+                            className="pl-8"
+                            value={searchTerm}
+                            onChange={handleSearch}
+                        />
+                    </div>
+                    <Button
+                        variant={sortByRecent ? "default" : "outline"}
+                        onClick={() => setSortByRecent(!sortByRecent)}
+                        className="flex items-center gap-2"
+                    >
+                        <Clock className="h-4 w-4" />
+                        {sortByRecent ? "Show All" : "Recent First"}
+                    </Button>
                 </div>
             </div>
 
@@ -117,6 +136,7 @@ const ViewApartment = () => {
                             <TableHead>Category</TableHead>
                             <TableHead>Location</TableHead>
                             <TableHead>Price</TableHead>
+                            <TableHead>Status</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -124,18 +144,17 @@ const ViewApartment = () => {
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center">
+                                <TableCell colSpan={7} className="text-center">
                                     Loading...
                                 </TableCell>
                             </TableRow>
                         ) : !Array.isArray(apartments) || apartments.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center">
+                                <TableCell colSpan={7} className="text-center">
                                     No apartments found
                                 </TableCell>
                             </TableRow>
-                        ) : (
-                            Object.values(apartments).map((apartment) => (
+                        ) : (apartments.map((apartment:Apartment) => (
                                 <TableRow key={apartment.id}>
                                     <TableCell>
                                         <div className='w-14 h-14 rounded-md overflow-hidden'>
@@ -152,8 +171,15 @@ const ViewApartment = () => {
                                                 <Button
                                                     variant="link"
                                                     onClick={() => setSelectedApartment(apartment)}
+                                                    className="flex items-center gap-2 p-0 h-auto"
                                                 >
                                                     {apartment.title}
+                                                    {apartment.created_at && isRecentlyUploaded(apartment.created_at) && (
+                                                        <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                                                            <Clock className="h-3 w-3 mr-1" />
+                                                            Recently Uploaded
+                                                        </Badge>
+                                                    )}
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
@@ -179,6 +205,23 @@ const ViewApartment = () => {
                                                             </p>
                                                             <p><strong>Agent:</strong> {apartment.agent}</p>
                                                             <p><strong>Agent Email:</strong> {apartment.agent_email}</p>
+                                                            {apartment.created_at && (
+                                                                <p>
+                                                                    <strong>Uploaded:</strong> {new Date(apartment.created_at).toLocaleDateString()} 
+                                                                    {isRecentlyUploaded(apartment.created_at) && (
+                                                                        <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 text-xs">
+                                                                            <Clock className="h-3 w-3 mr-1" />
+                                                                            Recently Uploaded
+                                                                        </Badge>
+                                                                    )}
+                                                                </p>
+                                                            )}
+                                                            <p>
+                                                                <strong>Status:</strong> 
+                                                                <Badge variant={apartment.published ? "default" : "secondary"} className="ml-2 text-xs">
+                                                                    {apartment.published ? "Published" : "Pending Review"}
+                                                                </Badge>
+                                                            </p>
                                                         </div>
                                                     </div>
                                                     <div>
@@ -192,6 +235,19 @@ const ViewApartment = () => {
                                     <TableCell>{apartment.category}</TableCell>
                                     <TableCell>{`${apartment.city_code}, ${apartment.state_code}`}</TableCell>
                                     <TableCell>{apartment.amount}</TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col gap-1">
+                                            <Badge variant={apartment.published ? "default" : "secondary"} className="text-xs">
+                                                {apartment.published ? "Published" : "Pending"}
+                                            </Badge>
+                                            {(apartment.created_at && isRecentlyUploaded(apartment.created_at)) ? (
+                                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
+                                                    <Clock className="h-3 w-3 mr-1" />
+                                                    New Upload
+                                                </Badge>
+                                            ) : null}
+                                        </div>
+                                    </TableCell>
                                     <TableCell className={'flex '}>
                                         <Link className={"mt-1"}
                                               href={"/admin/dashboard/edit-apartment/" + apartment.id}>

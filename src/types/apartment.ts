@@ -53,6 +53,7 @@ export interface Apartment {
     published?: string;
     can_rate?: string;
     can_advertise?: string;
+    created_at?: string;
     images?: { [key: string]: Image };
     videos?: { [key: string]: Video };
     thumbnail?: null | string;
