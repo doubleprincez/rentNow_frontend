@@ -11,6 +11,7 @@ import House3 from '@/components/assets/house3.jpeg';
 import House4 from '@/components/assets/house4.jpeg';
 import House5 from '@/components/assets/house5.jpeg';
 import {baseURL} from "@/../next.config";
+import {shouldShowAsNew} from "@/lib/apartment-utils";
 
 const tabs = [
     {image: House},
@@ -28,7 +29,7 @@ const ApartmentCard = ({apartment, onClick}: { apartment: Apartment, onClick: (a
     >
         <div className='flex flex-col gap-2 relative'>
             {
-                apartment?.new ? <span
+                shouldShowAsNew(apartment) ? <span
                     className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-0.5"}>New</span> : ''
             }
             <div className='flex w-full h-[150px] mdl:h-[200px] rounded-lg overflow-hidden'>

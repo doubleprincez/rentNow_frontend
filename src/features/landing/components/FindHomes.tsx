@@ -8,6 +8,7 @@ import type {Apartment, ApartmentCardProps, ApiResponse, FindHomesProps} from '@
 import {AVAILABLE_AMENITIES} from "@/types/apartment";
 import {AxiosApi} from '@/lib/utils';
 import {useDebounce} from 'use-debounce';
+import {shouldShowAsNew} from "@/lib/apartment-utils";
 
 const ApartmentCard: React.FC<ApartmentCardProps> = ({apartment, onClick}) => (
     <div
@@ -16,7 +17,7 @@ const ApartmentCard: React.FC<ApartmentCardProps> = ({apartment, onClick}) => (
     >
         <div className="flex flex-col gap-2 relative">
             {
-                apartment?.new ? <span
+                shouldShowAsNew(apartment) ? <span
                     className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-0.5"}>New</span> : ''
             }
             <div className="flex w-full h-[200px] rounded-lg overflow-hidden ">

@@ -16,6 +16,8 @@ export interface Apartment {
     published: boolean;
     can_rate: boolean;
     city_code: string;
+    created_at: string;
+    new: boolean;
     images: Record<string, {
         preview_url: string;
         original_url: string;
@@ -30,7 +32,7 @@ export interface PaginationData {
     last_page: number;
     per_page: number;
     total: number;
-    data: Apartment[];
+    data: Record<string, Apartment>; // Server returns object with numeric keys, not array
 }
 
 export interface ApiResponse {
@@ -39,7 +41,7 @@ export interface ApiResponse {
     data: PaginationData;
 }
 
-export const getAllApartments = async (page: number = 1, search: string = '', adminToken: string | null | undefined = null) => {
+export const getAllApartments = async (page: number = 1, search: string = '', adminToken: string | null | undefined = null, sortByRecent: boolean = false) => {
     try {
         let token: string | null | undefined = adminToken;
 
@@ -47,8 +49,9 @@ export const getAllApartments = async (page: number = 1, search: string = '', ad
             token = getFormData('adminToken');
         }
 
+        const sortParam = sortByRecent ? '&sort=created_at&order=desc' : '';
         const response = await axios.get<ApiResponse>(
-            baseURL + `/apartments?page=${page}&search=${search}`,
+            baseURL + `/apartments?page=${page}&search=${search}${sortParam}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

@@ -19,7 +19,7 @@ const ErrorInformation: React.FC = () => {
             <div className="max-w-md xl:max-w-lg">
                 <Image
                     src={errorThumbnail}
-                    alt={'Error '}
+                    alt={'Error'}
                     width={150}
                     height={150}
                 />

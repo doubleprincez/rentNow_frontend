@@ -14,6 +14,7 @@ import House3 from '@/components/assets/house4.jpeg';
 import House4 from '@/components/assets/house5.jpeg';
 
 import {useRouter} from 'next/navigation';
+import {shouldShowAsNew} from "@/lib/apartment-utils";
 
 const Home: React.FC = () => {
     const images = [
@@ -160,7 +161,7 @@ const Home: React.FC = () => {
     const ApartmentCard = ({apartment}: { apartment: Apartment }) => (
         <div className="flex flex-col gap-4 p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow relative">
             {
-                apartment?.new ? <span
+                shouldShowAsNew(apartment) ? <span
                     className={"absolute -top-1.5 -right-1.5 text-green-700 font-bold bg-white z-10 rotate-12 p-0.5"}>New</span> : ''
             }
             <div className="aspect-video relative overflow-hidden rounded-lg">

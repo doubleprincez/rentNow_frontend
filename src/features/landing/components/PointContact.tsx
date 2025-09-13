@@ -6,6 +6,7 @@ import {Banknote, Bed, Home, MapPin, Scaling} from 'lucide-react';
 import type {Apartment, ApiResponse} from '@/types/apartment';
 import Maps from './Maps';
 import {backendUrl, baseURL, frontendURL} from "@/../next.config";
+import {shouldShowAsNew} from "@/lib/apartment-utils";
 
 
 interface PointContactI {
@@ -102,7 +103,7 @@ const PointContact = ({apartments}: PointContactI) => {
                             className='w-full h-[100px] sm:h-[120px] bg-white p-2 md:p-4 rounded-xl md:rounded-2xl overflow-hidden shadow-md flex items-center gap-3 cursor-pointer hover:shadow-lg transition-shadow relative'
                             onClick={() => handleApartmentClick(apartment)}  >
                             {
-                                apartment?.new ? <span
+                                shouldShowAsNew(apartment) ? <span
                                     className={"absolute top-0.5 right-0.5 text-green-700 font-bold bg-white z-10 rotate-12 p-0.5"}>New</span> : ''
                             }
                             <div className='w-[30%] h-full rounded-lg md:rounded-xl overflow-hidden'>
