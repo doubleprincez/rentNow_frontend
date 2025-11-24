@@ -1,0 +1,14 @@
+# Allow all crawlers (including Facebook, Twitter, Google)
+User-agent: *
+Allow: /
+
+# Allow Facebook crawler specifically
+User-agent: facebookexternalhit/1.1
+Allow: /
+
+# Allow Twitter crawler
+User-agent: Twitterbot
+Allow: /
+
+# Sitemap location (update with your actual sitemap URL)
+Sitemap: https://rentnow.ng/sitemap.xml
