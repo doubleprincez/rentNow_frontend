@@ -4,42 +4,41 @@ import {frontendURL} from "../../next.config";
 import Metas from "@/features/metas";
 import Script from "next/script";
 
-const img = frontendURL + '/favicon.ico';
+const img = frontendURL + '/uploads/logo.png';
 export const metadata: any = {
-    title: "Welcome to Rent Now",
-    description: "Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria",
+    title: "Welcome to Rent Now - Find Your Perfect Home in Nigeria",
+    description: "Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria. Browse thousands of properties available for rent.",
     siteName: "RentNow.ng",
     openGraph: {
+        type: 'website',
         url: frontendURL,
-        title: "Welcome to Rent Now",
-        description: "Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria",
+        title: "Welcome to Rent Now - Find Your Perfect Home in Nigeria",
+        description: "Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria. Browse thousands of properties available for rent.",
+        siteName: "RentNow.ng",
+        locale: 'en_NG',
         images: [
             {
                 url: img,
-                width: 800,
-                height: 600,
-                alt: "RentNow.ng",
+                width: 1200,
+                height: 630,
+                alt: "RentNow.ng - Find Your Perfect Home",
                 type: "image/png",
             },
         ],
-        siteName: "RentNow.ng",
     },
     twitter: {
-        card: "summary_large_image", // Best card for large images
-        site: "@RentNowNG", // Twitter handle
-        title: "Welcome to Rent Now",
-        description: "Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria",
-        images: [{
-            url: frontendURL,
-            width: 800,
-            height: 600,
-            alt: "RentNow.ng",
-            type: "image/png",
-        }],
+        card: "summary_large_image",
+        site: "@RentNowNG",
+        title: "Welcome to Rent Now - Find Your Perfect Home in Nigeria",
+        description: "Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria. Browse thousands of properties available for rent.",
+        images: [img],
     },
     robots: {
         index: true,
-        follow: true, // Allow search engines to follow links
+        follow: true,
+    },
+    alternates: {
+        canonical: frontendURL,
     },
 }
 

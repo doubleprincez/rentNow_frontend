@@ -52,7 +52,7 @@ const Home: React.FC = () => {
     useEffect(() => {
         const fetchOptions = async () => {
             try {
-                const response = await fetch(baseURL + '/apartments');
+                const response = await fetch('/api/apartments');
                 const data: ApiResponse = await response.json();
 
                 if (data.success) {

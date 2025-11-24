@@ -65,3 +65,245 @@ body {
 .word-break{
   word-wrap: break-word;
 }
+
+/* ============================================================================
+   ProductMediaViewer - Responsive Behavior and Mobile Optimizations
+   ============================================================================ */
+
+/* Media Container - Scroll Snap Optimization */
+.media-container {
+  /* Enable hardware acceleration for smooth scrolling */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: scroll-position;
+  
+  /* Optimize touch scrolling on iOS */
+  -webkit-overflow-scrolling: touch;
+  
+  /* Hide scrollbar for cleaner appearance */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.media-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Media Item - Snap Points */
+.media-item {
+  /* Ensure proper snap alignment */
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  
+  /* Optimize rendering performance */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Reduced Motion Support - Disable animations for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .media-container {
+    scroll-behavior: auto !important;
+  }
+  
+  .media-item,
+  .product-info-overlay,
+  .progress-indicator {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================================
+   Responsive Breakpoints - Desktop/Mobile Layout Switching
+   ============================================================================ */
+
+/* Mobile Layout (< 667px) - Full-screen with overlay */
+@media (max-width: 667px) {
+  .product-media-viewer {
+    /* Full viewport on mobile */
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .media-container {
+    /* Full width on mobile */
+    width: 100% !important;
+  }
+  
+  /* Hide desktop info panel on mobile */
+  .product-info-panel {
+    display: none !important;
+  }
+  
+  /* Show mobile overlay */
+  .product-info-overlay {
+    display: block;
+  }
+  
+  /* Optimize touch interactions */
+  .media-item {
+    touch-action: pan-y; /* Allow vertical scrolling only */
+  }
+}
+
+/* Tablet Layout (668px - 1023px) */
+@media (min-width: 668px) and (max-width: 1023px) {
+  .product-media-viewer {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .media-container {
+    width: 60%;
+  }
+  
+  .product-info-panel {
+    width: 40%;
+    display: block;
+  }
+  
+  .product-info-overlay {
+    display: none !important;
+  }
+}
+
+/* Desktop Layout (>= 1024px) - Side-by-side */
+@media (min-width: 1024px) {
+  .product-media-viewer {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+  }
+  
+  .media-container {
+    width: 60%;
+    flex-shrink: 0;
+  }
+  
+  .product-info-panel {
+    width: 40%;
+    display: block;
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .product-info-overlay {
+    display: none !important;
+  }
+}
+
+/* ============================================================================
+   Performance Optimizations
+   ============================================================================ */
+
+/* GPU Acceleration for smooth animations */
+.product-media-viewer,
+.media-container,
+.media-item,
+.product-info-overlay {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+
+/* Optimize video rendering */
+video {
+  /* Enable hardware acceleration */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  
+  /* Optimize for playback */
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Optimize image rendering */
+img {
+  /* Enable hardware acceleration */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  
+  /* Improve image quality */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* ============================================================================
+   Touch Gesture Optimizations
+   ============================================================================ */
+
+/* Prevent text selection during swipe gestures */
+.product-info-overlay,
+.media-container {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  
+  /* Prevent callout on long press (iOS) */
+  -webkit-touch-callout: none;
+}
+
+/* Improve tap responsiveness */
+button,
+.clickable {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* ============================================================================
+   Accessibility Enhancements
+   ============================================================================ */
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #f7921e;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .media-container,
+  .product-info-panel,
+  .product-info-overlay {
+    border: 1px solid currentColor;
+  }
+}
+
+/* ============================================================================
+   Loading and Transition States
+   ============================================================================ */
+
+/* Smooth transitions for layout changes */
+.product-media-viewer,
+.media-container,
+.product-info-panel,
+.product-info-overlay {
+  transition-property: width, height, transform, opacity;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .product-media-viewer,
+  .media-container,
+  .product-info-panel,
+  .product-info-overlay {
+    transition: none !important;
+  }
+}

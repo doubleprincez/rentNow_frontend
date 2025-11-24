@@ -1,67 +1,107 @@
 import {Suspense} from 'react';
-import ApartmentClient from '@/features/landing/components/ApartmentClient';
+import ProductMediaViewerWrapper from '@/features/user/ProductMediaViewerWrapper';
 import {Loader2Icon} from 'lucide-react';
 import {AxiosApiServer} from "@/lib/server-utils";
-import {baseURL} from "@/../next.config";
+import {baseURL, frontendURL} from "@/../next.config";
 import {Apartment} from "@/types/apartment";
-import Metas from "@/features/metas";
-// import Head from "next/head";
-// import {Metadata} from "next";
-// import {metadata} from "@/app/layout";
+import {Metadata} from "next";
 
-export default async function Page({params}: any) {
-
+/**
+ * Generate metadata for individual apartment pages
+ * This is critical for social media sharing (Facebook, Twitter, WhatsApp, etc.)
+ */
+export async function generateMetadata({params}: any): Promise<Metadata> {
     const {id} = await params;
-    const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
-    const apartment: Apartment = response.data.data;
-    const defaultImage = '/uploads/logo.png';
-
-    if (apartment) {
-
-        // Dynamically update metadata based on fetched apartment data
-        const metadata: any = {
-            title: apartment?.title || "Apartment Details",
-            description: apartment?.description || "Explore this beautiful apartment available for rent.",
+    
+    try {
+        const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
+        const apartment: Apartment = response.data.data;
+        
+        // Get the first image or use default
+        const firstImage = apartment.images && Object.values(apartment.images)[0]?.preview_url;
+        const imageUrl = firstImage 
+            ? (firstImage.startsWith('http') ? firstImage : `${frontendURL}${firstImage}`)
+            : `${frontendURL}/uploads/logo.png`;
+        
+        const pageUrl = `${frontendURL}/find-homes/${id}`;
+        const title = apartment?.title || "Apartment Details - RentNow.ng";
+        const description = apartment?.description || "Explore this beautiful apartment available for rent on RentNow.ng";
+        
+        return {
+            title,
+            description,
             openGraph: {
-                url: `${baseURL}/apartment/${id}`,
-                title: apartment?.title || "Apartment Details",
-                description: apartment?.description || "Explore this beautiful apartment available for rent.",
+                type: 'website',
+                url: pageUrl,
+                title,
+                description,
+                siteName: "RentNow.ng",
+                locale: 'en_NG',
                 images: [
                     {
-                        url: apartment.images && Object.values(apartment.images)[0]?.preview_url || defaultImage, // Set a default image if not provided
-                        width: 800,
-                        height: 600,
+                        url: imageUrl,
+                        width: 1200,
+                        height: 630,
                         alt: apartment?.title || "Apartment Image",
                         type: 'image/jpeg',
                     },
                 ],
-                siteName: "RentNow.ng",
             },
             twitter: {
                 card: "summary_large_image",
                 site: "@RentNowNG",
-                title: apartment?.title || "Apartment Details",
-                description: apartment?.description || "Explore this beautiful apartment available for rent.",
+                title,
+                description,
+                images: [imageUrl],
+            },
+            // Additional metadata for better social sharing
+            alternates: {
+                canonical: pageUrl,
+            },
+            robots: {
+                index: true,
+                follow: true,
+            },
+        };
+    } catch (error) {
+        console.error('Error generating metadata:', error);
+        
+        // Fallback metadata if apartment fetch fails
+        return {
+            title: "Apartment Details - RentNow.ng",
+            description: "Explore beautiful apartments available for rent on RentNow.ng",
+            openGraph: {
+                type: 'website',
+                url: `${frontendURL}/find-homes/${id}`,
+                title: "Apartment Details - RentNow.ng",
+                description: "Explore beautiful apartments available for rent on RentNow.ng",
+                siteName: "RentNow.ng",
+                locale: 'en_NG',
                 images: [
                     {
-                        url: apartment.images && Object.values(apartment.images)[0]?.preview_url || defaultImage, // Correctly use `images` here
-                        width: 800,
-                        height: 600,
-                        alt: apartment?.title || "Apartment Image",
-                        type: 'image/png',
+                        url: `${frontendURL}/uploads/logo.png`,
+                        width: 1200,
+                        height: 630,
+                        alt: "RentNow.ng",
                     },
                 ],
             },
         };
+    }
+}
+
+export default async function Page({params}: any) {
+    const {id} = await params;
+    const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
+    const apartment: Apartment = response.data.data;
+
+    if (apartment) {
         return (
-            <>
-                <Metas metadata={metadata}/>
-                <Suspense fallback={<div className="flex justify-center items-center min-h-screen">
-                    <Loader2Icon className="animate-spin"/> &nbsp;Loading...
-                </div>}>
-                    <ApartmentClient prevApartment={apartment}/>
-                </Suspense>
-            </>
+            <Suspense fallback={<div className="flex justify-center items-center min-h-screen">
+                <Loader2Icon className="animate-spin"/> &nbsp;Loading...
+            </div>}>
+                <ProductMediaViewerWrapper apartment={apartment}/>
+            </Suspense>
         );
     } else {
         return <div className="flex justify-center items-center min-h-screen">

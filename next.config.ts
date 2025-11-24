@@ -17,7 +17,14 @@ export const baseURL = backendUrl + '/api';
 
 const nextConfig: NextConfig = {
     images: {
-        domains: ['images.unsplash.com', 'www.lummi.ai', 'www.rentnow.ng', 'api.rentnow.ng', "localhost"],
+        domains: [
+            'images.unsplash.com', 
+            'www.lummi.ai', 
+            'www.rentnow.ng', 
+            'api.rentnow.ng', 
+            'localhost',
+            'rent9ja-s3-storage.s3.eu-north-1.amazonaws.com'
+        ],
     },
     async headers() {
         return [
