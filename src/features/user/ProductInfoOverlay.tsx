@@ -29,6 +29,11 @@ import { baseURL, frontendURL } from '@/../next.config';
 import { AxiosApi, formatAmountNumber, saveFormData } from '@/lib/utils';
 import { EmailIcon, FacebookIcon, FacebookShareButton, WhatsappIcon, WhatsappShareButton } from 'react-share';
 import { useAlert } from '@/contexts/AlertContext';
+import AdGatedAgentDetails from '@/components/ad/AdGatedAgentDetails';
+import VideoAdModal from '@/components/ad/VideoAdModal';
+import AdSessionManager from '@/services/AdSessionManager';
+import { createAdConfiguration } from '@/utils/adConfig';
+import { trackAgentDetailsUnlocked } from '@/services/AdAnalytics';
 
 /**
  * Props for ProductInfoOverlay component
@@ -86,6 +91,12 @@ export default function ProductInfoOverlay({
   const [minDate, setMinDate] = useState('');
   const [dragOffset, setDragOffset] = useState(0);
 
+  // Ad Gate State Management
+  const [isAdModalOpen, setIsAdModalOpen] = useState(false);
+  const [isAgentDetailsUnlocked, setIsAgentDetailsUnlocked] = useState(false);
+  const [remainingUnlockTime, setRemainingUnlockTime] = useState(0);
+  const [adConfig] = useState(() => createAdConfiguration());
+
   // ============================================================================
   // Effects
   // ============================================================================
@@ -105,6 +116,33 @@ export default function ProductInfoOverlay({
     setApartment(initialApartment);
     setLikedApartment(initialApartment?.like_apartment ?? false);
   }, [initialApartment]);
+
+  // Ad Gate Effects
+  useEffect(() => {
+    // Check if agent details are already unlocked
+    const checkUnlockStatus = () => {
+      const isUnlocked = AdSessionManager.isUnlocked();
+      const remaining = AdSessionManager.getRemainingTime();
+      
+      setIsAgentDetailsUnlocked(isUnlocked);
+      setRemainingUnlockTime(remaining);
+    };
+
+    checkUnlockStatus();
+
+    // Update remaining time every second
+    const interval = setInterval(checkUnlockStatus, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Reset unlock state when apartment changes
+  useEffect(() => {
+    if (initialApartment?.id) {
+      const isUnlocked = AdSessionManager.isUnlocked();
+      setIsAgentDetailsUnlocked(isUnlocked);
+      setRemainingUnlockTime(AdSessionManager.getRemainingTime());
+    }
+  }, [initialApartment?.id]);
 
   // ============================================================================
   // Reduced Motion Support
@@ -224,6 +262,67 @@ export default function ProductInfoOverlay({
           "error"
         ));
     }
+  };
+
+  // ============================================================================
+  // Ad Gate Functionality
+  // ============================================================================
+
+  const handleUnlockAgentDetails = () => {
+    setIsAdModalOpen(true);
+  };
+
+  const handleAdComplete = () => {
+    // Set unlock state for 4 minutes
+    AdSessionManager.setUnlocked();
+    setIsAgentDetailsUnlocked(true);
+    setRemainingUnlockTime(AdSessionManager.getRemainingTime());
+    setIsAdModalOpen(false);
+    
+    // Track unlock event
+    const sessionId = AdSessionManager.getSessionId() || 'no-session';
+    trackAgentDetailsUnlocked(
+      apartment.id?.toString() || 'unknown',
+      sessionId,
+      'ad_watched',
+      isLoggedIn,
+      isSubscribed,
+      {
+        unlockMethod: 'ad_watched',
+        apartmentType: apartment.agent_type
+      }
+    );
+    
+    showAlert('Agent contact details unlocked for 4 minutes!', 'success');
+  };
+
+  const handleAdSkipped = (watchDuration: number) => {
+    // Set unlock state for 4 minutes even if skipped
+    AdSessionManager.setUnlocked();
+    setIsAgentDetailsUnlocked(true);
+    setRemainingUnlockTime(AdSessionManager.getRemainingTime());
+    setIsAdModalOpen(false);
+    
+    // Track unlock event
+    const sessionId = AdSessionManager.getSessionId() || 'no-session';
+    trackAgentDetailsUnlocked(
+      apartment.id?.toString() || 'unknown',
+      sessionId,
+      'ad_watched',
+      isLoggedIn,
+      isSubscribed,
+      {
+        unlockMethod: 'ad_watched',
+        apartmentType: apartment.agent_type,
+        watchDuration
+      }
+    );
+    
+    showAlert('Agent contact details unlocked for 4 minutes!', 'success');
+  };
+
+  const handleAdModalClose = () => {
+    setIsAdModalOpen(false);
   };
 
   // ============================================================================
@@ -588,73 +687,85 @@ export default function ProductInfoOverlay({
                 </div>
               </div>
 
-              {/* Agent/Business Information */}
-              <div className="space-y-3 pt-4 border-t">
-                {apartment?.agent_type === 'agent' ? (
-                  <>
-                    {apartment.agent && (
-                      <div className="flex items-center gap-2">
-                        <User className="text-orange-500 w-5 h-5" />
-                        <span className="text-gray-600 text-sm">
-                          {String(apartment.agent_type).toLocaleUpperCase()}: {apartment.agent}
-                        </span>
-                      </div>
-                    )}
-                    {isSubscribed && apartment?.agent_email && (
-                      <div className="flex items-center gap-2">
-                        <MailIcon className="text-orange-500 w-5 h-5" />
-                        <span className="text-gray-600 text-sm">Email: {apartment?.agent_email}</span>
-                      </div>
-                    )}
-                    {isSubscribed && apartment?.agent_phone && (
-                      <div className="flex items-center gap-2">
-                        <PhoneCallIcon className="text-orange-500 w-5 h-5" />
-                        <span className="text-gray-600 text-sm">Phone: {apartment?.agent_phone}</span>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <div className="flex justify-start space-x-2">
-                      {apartment?.business_logo && (
+              {/* Agent/Business Information - Ad Gated */}
+              {isSubscribed ? (
+                // Subscribed users see details immediately
+                <div className="space-y-3 pt-4 border-t">
+                  <h3 className="text-base font-semibold text-gray-800">Agent Information</h3>
+                  {apartment?.agent_type === 'agent' ? (
+                    <>
+                      {apartment.agent && (
                         <div className="flex items-center gap-2">
-                          <img 
-                            src={apartment?.business_logo}
-                            alt="Business logo"
-                            className="w-24 rounded-lg hover:shadow-lg"
-                          />
-                        </div>
-                      )}
-                      {apartment?.business_name && (
-                        <div className="flex items-center gap-2">
-                          <BuildingIcon className="text-orange-500 w-5 h-5" />
+                          <User className="text-orange-500 w-5 h-5" />
                           <span className="text-gray-600 text-sm">
-                            {String(apartment.agent_type).toLocaleUpperCase()}: {apartment?.business_name}
+                            {String(apartment.agent_type).toLocaleUpperCase()}: {apartment.agent}
                           </span>
                         </div>
                       )}
-                    </div>
-                    {isSubscribed && apartment?.business_address && (
-                      <div className="flex items-center gap-2">
-                        <GlobeIcon className="text-orange-500 w-5 h-5" />
-                        <span className="text-gray-600 text-sm">Address: {apartment?.business_address}</span>
+                      {apartment?.agent_email && (
+                        <div className="flex items-center gap-2">
+                          <MailIcon className="text-orange-500 w-5 h-5" />
+                          <span className="text-gray-600 text-sm">Email: {apartment?.agent_email}</span>
+                        </div>
+                      )}
+                      {apartment?.agent_phone && (
+                        <div className="flex items-center gap-2">
+                          <PhoneCallIcon className="text-orange-500 w-5 h-5" />
+                          <span className="text-gray-600 text-sm">Phone: {apartment?.agent_phone}</span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-start space-x-2">
+                        {apartment?.business_logo && (
+                          <div className="flex items-center gap-2">
+                            <img 
+                              src={apartment?.business_logo}
+                              alt="Business logo"
+                              className="w-24 rounded-lg hover:shadow-lg"
+                            />
+                          </div>
+                        )}
+                        {apartment?.business_name && (
+                          <div className="flex items-center gap-2">
+                            <BuildingIcon className="text-orange-500 w-5 h-5" />
+                            <span className="text-gray-600 text-sm">
+                              {String(apartment.agent_type).toLocaleUpperCase()}: {apartment?.business_name}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {isSubscribed && apartment?.business_email && (
-                      <div className="flex items-center gap-2">
-                        <EmailIcon className="text-orange-500 w-5 h-5" />
-                        <span className="text-gray-600 text-sm">Email: {apartment?.business_email}</span>
-                      </div>
-                    )}
-                    {isSubscribed && apartment?.business_phone && (
-                      <div className="flex items-center gap-2">
-                        <PhoneCallIcon className="text-orange-500 w-5 h-5" />
-                        <span className="text-gray-600 text-sm">Phone: {apartment?.business_phone}</span>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
+                      {apartment?.business_address && (
+                        <div className="flex items-center gap-2">
+                          <GlobeIcon className="text-orange-500 w-5 h-5" />
+                          <span className="text-gray-600 text-sm">Address: {apartment?.business_address}</span>
+                        </div>
+                      )}
+                      {apartment?.business_email && (
+                        <div className="flex items-center gap-2">
+                          <EmailIcon className="text-orange-500 w-5 h-5" />
+                          <span className="text-gray-600 text-sm">Email: {apartment?.business_email}</span>
+                        </div>
+                      )}
+                      {apartment?.business_phone && (
+                        <div className="flex items-center gap-2">
+                          <PhoneCallIcon className="text-orange-500 w-5 h-5" />
+                          <span className="text-gray-600 text-sm">Phone: {apartment?.business_phone}</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              ) : (
+                // Non-subscribed users see ad-gated version
+                <AdGatedAgentDetails
+                  apartment={apartment}
+                  onUnlock={handleUnlockAgentDetails}
+                  isUnlocked={isAgentDetailsUnlocked}
+                  remainingTime={remainingUnlockTime}
+                />
+              )}
 
               {/* Description */}
               <div className="pt-4 border-t">
@@ -738,6 +849,16 @@ export default function ProductInfoOverlay({
           </div>
         </div>
       </div>
+
+      {/* Video Ad Modal */}
+      <VideoAdModal
+        isOpen={isAdModalOpen}
+        onClose={handleAdModalClose}
+        onAdComplete={handleAdComplete}
+        onAdSkipped={handleAdSkipped}
+        adConfig={adConfig}
+        apartmentId={apartment.id?.toString() || 'unknown'}
+      />
     </>
   );
 }
