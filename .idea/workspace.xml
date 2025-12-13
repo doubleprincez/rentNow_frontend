@@ -5,198 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1bca6898-3e55-4b0f-8423-76a8632eaecc" name="Changes" comment="added google adsense">
-      <change afterPath="$PROJECT_DIR$/.kiro/specs/admin-dashboard-new-listings-highlight/IMPLEMENTATION_COMPLETE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.kiro/specs/admin-dashboard-new-listings-highlight/design.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.kiro/specs/admin-dashboard-new-listings-highlight/tasks.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ADMIN_DASHBOARD_FEATURES.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/AD_SYSTEM_SETUP.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CONFIG_REFACTOR_SUMMARY.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/ads.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/advertisement.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/public/google-ads.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/ViewApartments.old.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Conversations/ConversationInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Conversations/ConversationRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Transaction/BankTransfer/BankTransferInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Transaction/BankTransfer/BankTransferRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Transaction/Paystack/PaystackInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Transaction/Paystack/PaystackRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Transaction/TransactionInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Transaction/TransactionRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Visitation/VisitationInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Repositories/Visitation/VisitationRepository.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Services/BankTransferService.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Services/ConversationService.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Services/NotificationService.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Services/TransactionService.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Services/UserService.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Services/VisitationService.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Classes/Traits/CanPayTrait.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Console/Commands/Apartment/ArchiveUnconfirmed.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Console/Commands/Apartment/ArchiveUnconfirmedAvailability.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Console/Commands/Apartment/CheckApartmentAvailability.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Console/Commands/CheckExpiringSubscriptions.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Console/Commands/DeletedExpiredSubscription.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Console/Commands/Subscription/PaymentStatusChecker.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Contracts/PaymentGatewayInterface.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Enums/NotificationTypesEnum.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Enums/TransactionStatusEnum.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/BankTransferUpdateEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/NewConversationEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/NewFollowerEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/NewSubscriptionEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/NewUserEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/POPForTransferEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/RentPaymentConfirmationEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/SubscriptionActivatedEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/SubscriptionDeniedEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/SubscriptionExpiryNoticeEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/SubscriptionProofEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Events/VisitationBookedEvent.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/ExtendedMedia/ExtendedUrlGenerator.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Help/helper.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Controllers/Apis/Conversation/ConversationController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Controllers/Apis/Other/ContactController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Controllers/Apis/Transaction/BankTransferController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Controllers/Apis/Transaction/TransactionController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Controllers/Apis/User/UserController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Controllers/Apis/Visitation/VisitationController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Middleware/EnsureEmailIsVerified.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Middleware/TokenAuthenticate.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Requests/Auth/RegisterAgentRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Requests/Auth/UpgradeToAgentRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Requests/Conversation/NewConversationRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Requests/Rent/ApartmentTypeRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/BankTransferUpdateListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/NewConversationListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/NewFollowerListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/NewSubscriptionListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/NewUserListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/POPForTransferListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/RentPaymentConfirmationListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/SubscriptionActivatedListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/SubscriptionDeniedListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/SubscriptionExpiryNoticeListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/SubscriptionProofListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Listeners/VisitationBookedListener.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Mail/AdminContactEmail.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Mail/UpdatedSystemMailer.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/AgentFollower.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/BankAccount.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/BankTransfer.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/Conversation.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/Like.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/NotificationSetting.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/Paystack.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/TransactionHistory.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/UserNotification.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/UserSetting.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Models/Visitation.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/Admin/NewRentNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/Admin/NewSubscriptionNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/Admin/PaystackPaymentNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/Admin/ProofOfPaymentNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/Admin/RentConfirmNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/Admin/RentProofNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/Apartment/ConfirmAvailability.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/NewSubscriptionNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/SubscriptionActivatedNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/SubscriptionDeniedNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/SubscriptionProofNotifer.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Notifications/User/ForgotVerificationNotifier.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Observers/ApartmentObserver.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Observers/BankTransferObserver.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Observers/ConversationObserver.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Observers/FollowingAgentObserver.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Observers/PaystackObserver.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Observers/RentObserver.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/app/Observers/UserObserver.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/factories/BankAccountFactory.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/factories/ConversationFactory.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/factories/RentFactory.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2024_03_06_184004_create_bank_accounts_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2024_03_08_105648_create_bank_transfers_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_02_04_140000_add_indexes_to_apartments_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_02_04_211146_create_notification_settings_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_02_04_211201_create_user_settings_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_02_04_211224_create_user_notifications_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_02_05_121605_create_agent_followers_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_02_06_081617_create_jobs_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_02_06_161119_alter_users_table_add_address.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_02_10_111948_create_conversations_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_03_08_081107_create_transaction_histories_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_03_08_084351_create_paystacks_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_03_21_083531_create_likes_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_05_06_010747_alter_paystack_add_attributes.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_05_09_022840_alter_transaction_histories_add_expiry_info.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_05_09_131035_create_cache_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_05_13_095419_create_visitations_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/migrations/2025_05_13_200649_alter_apartments_add_availability_check.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/seeders/AccountsTableSeeder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/seeders/ApartmentsTableSeeder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/seeders/BankAccountsTableSeeder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/seeders/CategoriesTableSeeder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/seeders/ConversationsTableSeeder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/seeders/NotificationsTableSeeder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/seeders/PlansTableSeeder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/seeders/RentsTableSeeder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/database/seeders/UsersTableSeeder.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/error_log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/lang/en/emails.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/lang/vendor/world/az/country.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/lang/vendor/world/az/response.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/lang/vendor/world/hy/country.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/lang/vendor/world/hy/response.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/lang/vendor/world/ne/country.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/lang/vendor/world/ne/response.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/lang/vendor/world/sw/country.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/lang/vendor/world/sw/response.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/.gitkeep" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/admin_contact_message.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/admins/admin_contact_message.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/admins/new_rent_to_admins.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/admins/rent_confirm.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/admins/rent_proof.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/admins/subscription_created_admin.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/admins/subscription_proof_admin.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/apartment_availability_check.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/apartment_deleted_for_followers.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/apartment_deleted_for_owner.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/apartment_updated_for_followers.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/apartment_updated_for_owner.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/forgot_password.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/login_notification.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/new_apartment_for_followers.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/new_apartment_for_owner.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/new_conversation.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/new_follower.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/new_rent_to_agents.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/new_rent_to_client.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/rent_confirm.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/rent_proof_for_agent.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/subscription_activated.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/subscription_created.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/subscription_expiry_notice.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/subscription_proof.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/subscription_rejected.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/visitation_booking.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/welcome_for_agents.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/contents/welcome_for_tenants.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/footer.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/resources/views/emails/head.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/robots.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/routes/apis/bank.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/routes/apis/conversations.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/routes/apis/transactions.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/routes/apis/users.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/routes/apis/visitation.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/storage/media-library/temp/bk51Rx7LPHMyUUus4N1NvqAco25nhQiW/B84XXTuz0ZC0lxMyk45WftazDqW1rR7c.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/storage/media-library/temp/bk51Rx7LPHMyUUus4N1NvqAco25nhQiW/Z5Xo3jozEsK9oCJ9Enk3MtrcqEAAEVGkpreview.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/storage/media-library/temp/n1YPydnGEzVDtTFeGL3ArvOwVjskgIpF/CbvqtYqiTpkmtMwkGsllFqG8Rzm5OtnN.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../rentnow_back/storage/media-library/temp/n1YPydnGEzVDtTFeGL3ArvOwVjskgIpF/PJYV3Gj8b1oRyEjCa1JmmCgNWOk5EL6xpreview.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/next-env.d.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/CustomVideoAdProvider.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/CustomVideoAdProvider.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -307,7 +117,7 @@
       <workItem from="1765219300653" duration="4694000" />
       <workItem from="1765253333372" duration="2074000" />
       <workItem from="1765265404694" duration="19000" />
-      <workItem from="1765630773223" duration="5305000" />
+      <workItem from="1765630773223" duration="5744000" />
     </task>
     <task id="LOCAL-00001" summary="Reloading Data from Git Repo">
       <created>1756656876590</created>
@@ -347,7 +157,15 @@
       <option name="project" value="LOCAL" />
       <updated>1765638171702</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="added google adsense">
+      <option name="closed" value="true" />
+      <created>1765641468913</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1765641468913</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

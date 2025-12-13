@@ -110,7 +110,7 @@ export class GoogleIMAProvider implements AdProvider {
       }
 
       // Configure IMA settings
-      window.google.ima.settings.setVpaidMode(window.google.ima.ImaSdkSettings?.VpaidMode?.ENABLED || 0);
+      window.google.ima.settings.setVpaidMode((window.google.ima as any).ImaSdkSettings?.VpaidMode?.ENABLED || 0);
       window.google.ima.settings.setDisableCustomPlaybackForIOS10Plus(true);
 
       this.isInitialized = true;
@@ -139,12 +139,12 @@ export class GoogleIMAProvider implements AdProvider {
 
       // Create ad display container
       this.adDisplayContainer = new window.google.ima.AdDisplayContainer(
-        this.adContainer,
-        this.videoElement
+        this.videoElement,
+        this.adContainer
       );
 
       // Create ads loader
-      this.adsLoader = new window.google.ima.AdsLoader(this.adDisplayContainer);
+      this.adsLoader = new window.google.ima.AdsLoader();
 
       // Add event listeners
       this.adsLoader.addEventListener(

@@ -10,7 +10,7 @@ export class CustomVideoAdProvider implements AdProvider {
   private videoElement: HTMLVideoElement | null = null;
   private isDestroyed = false;
   private startTime = 0;
-  private isCompleted = false;
+  private completed = false;
   private isSkipped = false;
 
   // Event callbacks
@@ -64,7 +64,7 @@ export class CustomVideoAdProvider implements AdProvider {
     // Handle video ended
     const handleEnded = () => {
       if (!this.isSkipped) {
-        this.isCompleted = true;
+        this.completed = true;
         this.onCompleteCallback?.();
       }
     };
@@ -245,14 +245,14 @@ export class CustomVideoAdProvider implements AdProvider {
    * Check if video is completed
    */
   isCompleted(): boolean {
-    return this.isCompleted;
+    return this.completed;
   }
 
   /**
    * Skip the current ad
    */
   skip(): void {
-    if (this.isDestroyed || this.isCompleted || this.isSkipped) return;
+    if (this.isDestroyed || this.completed || this.isSkipped) return;
 
     this.isSkipped = true;
     
