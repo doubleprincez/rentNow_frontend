@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 // LOCAL
-export const frontendURL = 'http://localhost:3000';
-export const backendUrl = 'http://localhost:8000';
-export const PAYSTACK_PUBLIC_KEY = "pk_test_d196b71372349b838d7a0aa834a9d359874f1ac3"
+// export const frontendURL = 'http://localhost:3000';
+// export const backendUrl = 'http://localhost:8000';
+// export const PAYSTACK_PUBLIC_KEY = "pk_test_d196b71372349b838d7a0aa834a9d359874f1ac3"
 
-// export const   frontendURL = 'https://rentnow.ng';
-// export const     backendUrl = 'https://app.rentnow.ng';
-// export const     PAYSTACK_PUBLIC_KEY = "pk_live_eeefde6e6c7a8c005b5d1ec9eeef98550543d535"
+export const   frontendURL = 'https://rentnow.ng';
+export const     backendUrl = 'https://app.rentnow.ng';
+export const     PAYSTACK_PUBLIC_KEY = "pk_live_eeefde6e6c7a8c005b5d1ec9eeef98550543d535"
 
 export const MAILCHIMP_API_KEY = "9f9e0b3216195985c0d179ad071dc65a"
 export const MAILCHIMP_AUDIENCE_ID = "c7f48b07e2"
@@ -26,12 +26,12 @@ export const GOOGLE_IMA_SDK_URL = 'https://imasdk.googleapis.com/js/sdkloader/im
 // Google AdSense Client ID (format: ca-pub-XXXXXXXXXXXXXXXX)
 // Get this from: https://www.google.com/adsense/
 // Leave empty to use fallback video
-export const GOOGLE_ADSENSE_CLIENT_ID = 'ca-pub-7043611219112469';
+export const GOOGLE_ADSENSE_CLIENT_ID = 'ca-pub-3051384019314375';
 
 // Google Ad Manager Network Code (8-10 digit number)
 // Get this from: https://admanager.google.com/
 // Leave empty to use fallback video
-export const GOOGLE_AD_MANAGER_NETWORK_CODE = '';
+export const GOOGLE_AD_MANAGER_NETWORK_CODE = '134-671-0282';
 
 // Custom Ad Endpoint (your own video URL)
 // Example: 'https://yourdomain.com/videos/promo.mp4'
