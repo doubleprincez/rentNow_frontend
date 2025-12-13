@@ -64,7 +64,7 @@ export async function generateMetadata({params}: any): Promise<Metadata> {
             },
         };
     } catch (error) {
-        console.error('Error generating metadata:', error);
+        // console.error('Error generating metadata:', error);
         
         // Fallback metadata if apartment fetch fails
         return {

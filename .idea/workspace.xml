@@ -5,9 +5,67 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1bca6898-3e55-4b0f-8423-76a8632eaecc" name="Changes" comment="Update product view system">
+      <change afterPath="$PROJECT_DIR$/.idea/blade.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/laravel-idea-personal.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/laravel-idea.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.example" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/rentNaija.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/rentNaija.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/user/ProductInfoOverlay.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/ProductInfoOverlay.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/user/ProductInfoPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/ProductInfoPanel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.kiro/specs/video-ad-gate-agent-details/design.md" beforeDir="false" afterPath="$PROJECT_DIR$/.kiro/specs/video-ad-gate-agent-details/design.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.kiro/specs/video-ad-gate-agent-details/tasks.md" beforeDir="false" afterPath="$PROJECT_DIR$/.kiro/specs/video-ad-gate-agent-details/tasks.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/find-homes/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/find-homes/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/api/get-all-apartments.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/api/get-all-apartments.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/ViewApartments.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/ViewApartments.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/user/VideoPlayer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/VideoPlayer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/hooks/useNetworkStatus.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/hooks/useNetworkStatus.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/apartment-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/apartment-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/AdSessionManager.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/AdSessionManager.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/adConfig.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/adConfig.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/.gitattributes" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/app/Http/Middleware/VerifyCsrfToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/app/Http/Middleware/VerifyCsrfToken.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/artisan" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/artisan" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/bootstrap/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/bootstrap/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/bootstrap/cache/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/bootstrap/cache/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/config/app.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/config/app.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/config/fortify.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/config/jetstream.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/config/larupload.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/config/world.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/config/world.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/database/migrations/2019_05_20_150317_create_ffmpeg_queue_table.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/lang/en/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/lang/en/auth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/lang/en/pagination.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/lang/en/pagination.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/lang/en/passwords.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/lang/en/passwords.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/lang/en/validation.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/lang/en/validation.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/phpunit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/phpunit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/public/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/public/.htaccess" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/public/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/public/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/public/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/public/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/public/robots.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/public/robots.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/storage/app/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/storage/app/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/storage/app/public/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/storage/app/public/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/storage/framework/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/storage/framework/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/storage/framework/cache/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/storage/framework/cache/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/storage/framework/sessions/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/storage/framework/sessions/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/storage/framework/testing/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/storage/framework/testing/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/storage/framework/views/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/storage/framework/views/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/storage/logs/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/storage/logs/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/tests/CreatesApplication.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/tests/CreatesApplication.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/tests/Feature/Auth/AuthenticationTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/tests/Feature/Auth/AuthenticationTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/tests/Feature/Auth/EmailVerificationTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/tests/Feature/Auth/EmailVerificationTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/tests/Feature/Auth/PasswordResetTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/tests/Feature/Auth/PasswordResetTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/tests/Feature/Auth/RegistrationTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/tests/Feature/Auth/RegistrationTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/tests/Feature/ExampleTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/tests/Feature/ExampleTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/tests/TestCase.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/tests/TestCase.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_back/tests/Unit/ExampleTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_back/tests/Unit/ExampleTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,6 +78,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;martin-adenekan-moneta&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:doubleprincez/rentNow_frontend.git&quot;,
+    &quot;accountId&quot;: &quot;413c8323-35e4-4860-8f5d-eb9991bb775b&quot;
+  }
+}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
@@ -33,26 +103,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/xampp/htdocs/max/rentnow_back",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.standard": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.standard": "",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "terminal",
-    "ts.external.directory.path": "C:\\xampp\\htdocs\\max\\rentnow\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/xampp/htdocs/max/rentnow_back&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\xampp\\htdocs\\max\\rentnow\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
@@ -100,6 +172,9 @@
       <workItem from="1763978126613" duration="2588000" />
       <workItem from="1764071152547" duration="6000" />
       <workItem from="1764535026809" duration="1245000" />
+      <workItem from="1765219300653" duration="4694000" />
+      <workItem from="1765253333372" duration="2074000" />
+      <workItem from="1765265404694" duration="19000" />
     </task>
     <task id="LOCAL-00001" summary="Reloading Data from Git Repo">
       <created>1756656876590</created>

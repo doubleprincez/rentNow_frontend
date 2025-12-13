@@ -50,6 +50,12 @@ export default function RootLayout({children}: Readonly<{
         <Script id="mcjs" dangerouslySetInnerHTML={{
             __html: `!function(c,h,i,m,p){m=c.createElement(h),p=c.getElementsByTagName(h)[0],m.async=1,m.src=i,p.parentNode.insertBefore(m,p)}(document,"script","https://chimpstatic.com/mcjs-connected/js/users/0feba5ce7cae39884be450679/7d38f0ddc4c0fa64073bc0bba.js");`}} >
         </Script>
+        <Script
+            async
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3051384019314375"
+            crossOrigin="anonymous"
+            strategy="afterInteractive"
+        />
         <Metas metadata={metadata}/>
         <body className="w-full flex flex-col">
         <Providers>

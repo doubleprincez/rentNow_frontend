@@ -32,6 +32,8 @@ export interface PaginationData {
     last_page: number;
     per_page: number;
     total: number;
+    filtered_count?: number; // Count after filters applied
+    total_count?: number; // Total count before filters
     data: Record<string, Apartment>; // Server returns object with numeric keys, not array
 }
 
@@ -41,7 +43,13 @@ export interface ApiResponse {
     data: PaginationData;
 }
 
-export const getAllApartments = async (page: number = 1, search: string = '', adminToken: string | null | undefined = null, sortByRecent: boolean = false) => {
+export const getAllApartments = async (
+    page: number = 1,
+    search: string = '',
+    adminToken: string | null | undefined = null,
+    sortByRecent: boolean = false,
+    dateFilter: 'all' | '24h' | '7d' | '30d' = 'all'
+) => {
     try {
         let token: string | null | undefined = adminToken;
 
@@ -50,8 +58,10 @@ export const getAllApartments = async (page: number = 1, search: string = '', ad
         }
 
         const sortParam = sortByRecent ? '&sort=created_at&order=desc' : '';
+        const dateParam = dateFilter !== 'all' ? `&date_filter=${dateFilter}` : '';
+        
         const response = await axios.get<ApiResponse>(
-            baseURL + `/apartments?page=${page}&search=${search}${sortParam}`,
+            baseURL + `/apartments?page=${page}&search=${search}${sortParam}${dateParam}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

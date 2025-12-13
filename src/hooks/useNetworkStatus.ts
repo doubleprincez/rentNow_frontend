@@ -282,12 +282,14 @@ export function isConnectionSuitableForVideo(networkStatus: NetworkStatus): bool
 /**
  * Get recommended video quality based on connection
  */
-export function getRecommendedVideoQuality(networkStatus: NetworkStatus): 'low' | 'medium' | 'high' {
+export function getRecommendedVideoQuality(networkStatus: NetworkStatus): 'low' | 'medium' | 'high' |'vhigh'{
   if (!networkStatus.isOnline || networkStatus.isSlowConnection) {
     return 'low';
   }
 
   switch (networkStatus.effectiveType) {
+    case '5g':
+      return 'vhigh';
     case '4g':
       return 'high';
     case '3g':

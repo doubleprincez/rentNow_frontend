@@ -5,27 +5,28 @@
  */
 
 import { AdConfiguration, AdConfig } from '@/types/ad';
-
-// Default configuration values
-const DEFAULT_CONFIG: AdConfig = {
-  GOOGLE_IMA_SDK_URL: 'https://imasdk.googleapis.com/js/sdkloader/ima3.js',
-  AD_SKIP_DELAY: 5, // 5 seconds
-  SESSION_DURATION: 240, // 4 minutes in seconds
-  ANALYTICS_ENDPOINT: '/api/ad-analytics'
-};
+import {
+  GOOGLE_IMA_SDK_URL,
+  GOOGLE_ADSENSE_CLIENT_ID,
+  GOOGLE_AD_MANAGER_NETWORK_CODE,
+  CUSTOM_AD_ENDPOINT,
+  AD_SKIP_DELAY,
+  AD_SESSION_DURATION,
+  ANALYTICS_ENDPOINT
+} from '@/../next.config';
 
 /**
- * Get ad configuration from environment variables
+ * Get ad configuration from next.config.ts constants
  */
 export function getAdConfig(): AdConfig {
   return {
-    GOOGLE_IMA_SDK_URL: process.env.NEXT_PUBLIC_GOOGLE_IMA_SDK_URL || DEFAULT_CONFIG.GOOGLE_IMA_SDK_URL,
-    GOOGLE_ADSENSE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_CLIENT_ID,
-    GOOGLE_AD_MANAGER_NETWORK_CODE: process.env.NEXT_PUBLIC_GOOGLE_AD_MANAGER_NETWORK_CODE,
-    CUSTOM_AD_ENDPOINT: process.env.NEXT_PUBLIC_CUSTOM_AD_ENDPOINT,
-    AD_SKIP_DELAY: parseInt(process.env.NEXT_PUBLIC_AD_SKIP_DELAY || '5'),
-    SESSION_DURATION: parseInt(process.env.NEXT_PUBLIC_AD_SESSION_DURATION || '240'),
-    ANALYTICS_ENDPOINT: process.env.NEXT_PUBLIC_ANALYTICS_ENDPOINT || DEFAULT_CONFIG.ANALYTICS_ENDPOINT
+    GOOGLE_IMA_SDK_URL,
+    GOOGLE_ADSENSE_CLIENT_ID: GOOGLE_ADSENSE_CLIENT_ID || undefined,
+    GOOGLE_AD_MANAGER_NETWORK_CODE: GOOGLE_AD_MANAGER_NETWORK_CODE || undefined,
+    CUSTOM_AD_ENDPOINT: CUSTOM_AD_ENDPOINT || undefined,
+    AD_SKIP_DELAY,
+    SESSION_DURATION: AD_SESSION_DURATION,
+    ANALYTICS_ENDPOINT
   };
 }
 
@@ -91,7 +92,7 @@ export function validateAdConfiguration(config: AdConfiguration): boolean {
 export function getFallbackConfiguration(): AdConfiguration {
   return {
     provider: 'fallback',
-    skipDelay: DEFAULT_CONFIG.AD_SKIP_DELAY,
+    skipDelay: AD_SKIP_DELAY,
     fallbackContent: {
       videoUrl: '/videos/platform-promo.mp4',
       title: 'Welcome to RentNow.ng',

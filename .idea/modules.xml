@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../rentnow_back/.idea/laravel_rent_naija.iml" filepath="$PROJECT_DIR$/../rentnow_back/.idea/laravel_rent_naija.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/rentNaija.iml" filepath="$PROJECT_DIR$/.idea/rentNaija.iml" />
     </modules>
   </component>

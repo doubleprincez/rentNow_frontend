@@ -1,448 +1,578 @@
-# Design Document
+# Design Document: Video Ad Gate for Agent Details
 
 ## Overview
 
-The Video Ad Gate for Agent Details feature implements a monetization strategy that requires guest users to watch video advertisements before accessing agent contact information. This system integrates with existing authentication flows while providing a seamless experience for both guest and authenticated users.
+This feature implements a pre-roll video advertisement system that gates access to agent contact details for guest (non-authenticated) users. The system uses Google IMA SDK with VAST-compliant video ads, integrated through Video.js player in a Next.js/React environment. Authenticated users bypass the ad gate entirely.
 
 ## Architecture
 
-### High-Level Architecture
+### High-Level Flow
 
-```mermaid
-graph TB
-    A[User] --> B[Property Page]
-    B --> C{Is Logged In?}
-    C -->|No| D[Guest User - Show Ad Gate]
-    C -->|Yes| E{Has Active Subscription?}
-    E -->|Yes| F[Show Agent Details]
-    E -->|No| G[Authenticated User - Show Ad Gate]
-    D --> H[User Clicks View Details]
-    G --> H
-    H --> I[Ad Player Modal]
-    I --> J[Load Video Ad]
-    J --> K{Ad Completed?}
-    K -->|Yes| L[Unlock Agent Details for 4 minutes]
-    K -->|No| M[Keep Details Gated]
-    L --> N[Store Session State]
-    N --> O[Show Agent Details]
-    
-    P[Ad Provider] --> J
-    Q[Analytics Service] --> R[Track Events]
-    I --> R
-    K --> R
-    L --> R
-    R --> S[Admin Stats Dashboard]
+```
+User Views Property Listing
+    ↓
+Check Authentication Status
+    ↓
+┌─────────────────┴─────────────────┐
+│                                   │
+Authenticated User          Guest User
+│                                   │
+Show Agent Details          Show Blurred/Hidden Details
+Immediately                         │
+                                    │
+                            User Clicks "View Details"
+                                    │
+                            Check Session Storage
+                                    │
+                    ┌───────────────┴───────────────┐
+                    │                               │
+            Session Valid                   Session Expired
+            (< 30 min)                              │
+                    │                               │
+            Unlock Details                  Show Video Ad Modal
+                                                    │
+                                            Load VAST Ad via IMA SDK
+                                                    │
+                                            User Watches Ad
+                                                    │
+                                            Ad Completes/Skipped
+                                                    │
+                                            Store Session (30 min)
+                                                    │
+                                            Unlock Agent Details
+                                                    │
+                                            Log Ad Event
 ```
 
-### Component Architecture
+### Technology Stack
 
-```mermaid
-graph LR
-    A[ProductInfoPanel] --> B[AgentDetailsSection]
-    B --> C{isSubscribed?}
-    C -->|Yes| D[DirectAgentDetails]
-    C -->|No| E[AdGatedAgentDetails]
-    E --> F[AdGateButton]
-    E --> G[BlurredAgentPreview]
-    F --> H[VideoAdModal]
-    H --> I[VideoAdPlayer]
-    I --> J[AdProvider Integration]
-    
-    K[SessionManager] --> E
-    L[AnalyticsTracker] --> H
-```
+**Frontend (Next.js/React)**:
+- Video.js 8.x - Base video player
+- videojs-contrib-ads - Ad framework for Video.js
+- videojs-ima - Google IMA SDK integration
+- Session Storage API - Temporary unlock state
+- React Context/Redux - Global state management
+
+**Backend (Laravel)**:
+- Ad event logging API endpoint
+- Analytics aggregation
+- Configuration management
+
+**Ad Serving**:
+- Google Ad Manager (GAM) - Primary ad source
+- VAST 4.x compliant tags
+- Fallback to custom promotional videos
 
 ## Components and Interfaces
 
-### 1. AdGatedAgentDetails Component
+### 1. Frontend Components
 
-**Purpose**: Manages the display state of agent details for guest users
+#### 1.1 VideoAdPlayer Component
 
-**Props**:
-```typescript
-interface AdGatedAgentDetailsProps {
-  apartment: Apartment;
-  onUnlock: () => void;
-  isUnlocked: boolean;
-}
-```
+**Location**: `src/components/ads/VideoAdPlayer.tsx`
 
-**Features**:
-- Displays blurred/hidden agent contact information
-- Shows "View Contact Details" button with ad icon
-- Manages unlock state from session storage
-- Displays countdown timer for remaining unlock time
-
-### 2. VideoAdModal Component
-
-**Purpose**: Full-screen modal for video advertisement playback
-
-**Props**:
-```typescript
-interface VideoAdModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onAdComplete: () => void;
-  onAdSkipped: (watchDuration: number) => void;
-  adConfig: AdConfiguration;
-}
-```
-
-**Features**:
-- Full-screen overlay with video player
-- Skip button (disabled for first 5 seconds)
-- Progress indicator
-- Error handling and fallback content
-- Analytics event tracking
-
-### 3. VideoAdPlayer Component
-
-**Purpose**: Handles video ad playback with multiple provider support
+**Purpose**: Wrapper component for Video.js with IMA SDK integration
 
 **Props**:
 ```typescript
 interface VideoAdPlayerProps {
-  adConfig: AdConfiguration;
-  onComplete: () => void;
-  onSkipped: (duration: number) => void;
-  onError: (error: Error) => void;
+  vastTagUrl: string;
+  onAdComplete: () => void;
+  onAdSkipped: (watchDuration: number) => void;
+  onAdError: (error: Error) => void;
+  onAdImpression: () => void;
 }
 ```
 
-**Integration Options**:
-- Google IMA SDK for VAST/VPAID ads
-- Direct video URL playback
-- Custom ad network integration
-- Fallback promotional content
+**Key Features**:
+- Initializes Video.js player with IMA plugin
+- Handles VAST tag loading
+- Manages ad playback lifecycle
+- Enforces 5-second skip delay
+- Cleans up resources on unmount
 
-### 4. AdSessionManager Service
+**Dependencies**:
+```bash
+npm install video.js videojs-contrib-ads videojs-ima
+npm install --save-dev @types/video.js
+```
 
-**Purpose**: Manages ad viewing sessions and unlock states
+#### 1.2 AgentDetailsGate Component
 
-**Interface**:
+**Location**: `src/components/property/AgentDetailsGate.tsx`
+
+**Purpose**: Manages the ad gate logic and UI state
+
+**Props**:
 ```typescript
-interface AdSessionManager {
-  isUnlocked(): boolean;
-  setUnlocked(duration: number): void;
-  getRemainingTime(): number;
-  clearSession(): void;
+interface AgentDetailsGateProps {
+  agent: Agent;
+  isAuthenticated: boolean;
+  apartmentId: string;
 }
 ```
 
-**Storage**: Browser sessionStorage for temporary unlock state
+**State Management**:
+```typescript
+interface GateState {
+  isUnlocked: boolean;
+  showAdModal: boolean;
+  unlockExpiresAt: number | null;
+  remainingTime: number;
+}
+```
 
-### 5. AdAnalytics Service
+**Key Features**:
+- Checks authentication status
+- Manages session storage for unlock state
+- Displays countdown timer
+- Triggers ad modal
+- Shows/hides agent contact details
 
-**Purpose**: Tracks ad-related events for analytics
+#### 1.3 AgentContactDetails Component
 
-**Events**:
-- `ad_impression`: When ad modal opens
-- `ad_started`: When video playback begins
-- `ad_completed`: When ad plays to completion
-- `ad_skipped`: When user skips after minimum duration
-- `agent_details_unlocked`: When contact details become available
+**Location**: `src/components/property/AgentContactDetails.tsx`
+
+**Purpose**: Displays agent contact information with conditional visibility
+
+**Props**:
+```typescript
+interface AgentContactDetailsProps {
+  agent: Agent;
+  isUnlocked: boolean;
+  onUnlockClick: () => void;
+}
+```
+
+**Display States**:
+- **Locked (Guest)**: Blurred contact info with "View Contact Details" button
+- **Unlocked (Guest)**: Full contact details with countdown timer
+- **Authenticated**: Full contact details, no restrictions
+
+#### 1.4 AdModal Component
+
+**Location**: `src/components/ads/AdModal.tsx`
+
+**Purpose**: Full-screen modal for video ad playback
+
+**Features**:
+- Full-screen overlay
+- Video ad player integration
+- Loading states
+- Error handling with retry
+- Close button (disabled during ad)
+
+### 2. Backend Components
+
+#### 2.1 Ad Event Logging API
+
+**Endpoint**: `POST /api/ad-events`
+
+**Request Body**:
+```json
+{
+  "event_type": "ad_impression" | "ad_completed" | "ad_skipped" | "agent_details_unlocked",
+  "apartment_id": "123",
+  "watch_duration": 15,
+  "user_agent": "Mozilla/5.0...",
+  "ip_address": "192.168.1.1",
+  "session_id": "abc123"
+}
+```
+
+**Response**:
+```json
+{
+  "success": true,
+  "message": "Event logged successfully"
+}
+```
+
+**Database Table**: `ad_events`
+
+```sql
+CREATE TABLE ad_events (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    event_type ENUM('ad_impression', 'ad_completed', 'ad_skipped', 'agent_details_unlocked'),
+    apartment_id BIGINT,
+    watch_duration INT NULL,
+    user_agent TEXT,
+    ip_address VARCHAR(45),
+    session_id VARCHAR(255),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    INDEX idx_apartment_id (apartment_id),
+    INDEX idx_event_type (event_type),
+    INDEX idx_created_at (created_at)
+);
+```
+
+#### 2.2 Ad Configuration API
+
+**Endpoint**: `GET /api/ad-config`
+
+**Response**:
+```json
+{
+  "vast_tag_url": "https://pubads.g.doubleclick.net/gampad/ads?...",
+  "fallback_video_url": "https://cdn.rentnow.ng/promo.mp4",
+  "skip_delay_seconds": 5,
+  "session_duration_minutes": 30,
+  "enabled": true
+}
+```
+
+**Environment Variables**:
+```env
+AD_SYSTEM_ENABLED=true
+AD_VAST_TAG_URL=https://pubads.g.doubleclick.net/gampad/ads?...
+AD_FALLBACK_VIDEO_URL=https://cdn.rentnow.ng/promo.mp4
+AD_SKIP_DELAY_SECONDS=5
+AD_SESSION_DURATION_MINUTES=30
+```
+
+### 3. Session Management
+
+#### 3.1 Session Storage Schema
+
+**Key**: `rentnow_ad_unlock_session`
+
+**Value**:
+```json
+{
+  "unlocked": true,
+  "expiresAt": 1704123456789,
+  "apartmentIds": ["123", "456"],
+  "sessionId": "abc123xyz"
+}
+```
+
+**Functions**:
+```typescript
+// Check if session is valid
+function isSessionValid(): boolean
+
+// Store unlock session
+function storeUnlockSession(apartmentId: string): void
+
+// Get remaining time
+function getRemainingTime(): number
+
+// Clear expired session
+function clearExpiredSession(): void
+```
+
+### 4. Video.js IMA Integration
+
+#### 4.1 Player Initialization
+
+```typescript
+import videojs from 'video.js';
+import 'videojs-contrib-ads';
+import 'videojs-ima';
+
+const player = videojs('video-ad-player', {
+  controls: true,
+  autoplay: false,
+  preload: 'auto',
+});
+
+player.ima({
+  adTagUrl: vastTagUrl,
+  disableCustomPlaybackForIOS10Plus: true,
+  showControlsForJSAds: true,
+  debug: process.env.NODE_ENV === 'development',
+});
+```
+
+#### 4.2 Event Handlers
+
+```typescript
+// Ad started
+player.ima.addEventListener('ads-manager-loaded', () => {
+  onAdImpression();
+});
+
+// Ad completed
+player.ima.addEventListener('ads-ad-ended', () => {
+  onAdComplete();
+});
+
+// Ad skipped
+player.ima.addEventListener('ads-ad-skipped', () => {
+  const duration = player.ima.getCurrentTime();
+  onAdSkipped(duration);
+});
+
+// Ad error
+player.ima.addEventListener('ads-error', (error) => {
+  onAdError(error);
+});
+```
 
 ## Data Models
 
-### AdConfiguration
+### Frontend Types
 
 ```typescript
-interface AdConfiguration {
-  provider: 'google_ima' | 'google_adsense' | 'custom' | 'fallback';
-  vastTag?: string;
-  adUnitId?: string;
-  customVideoUrl?: string;
-  skipDelay: number; // seconds before skip is allowed
-  fallbackContent?: {
-    videoUrl: string;
-    title: string;
-    description: string;
-  };
+// Agent information
+interface Agent {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  whatsapp: string;
+  profile_picture: string;
 }
-```
 
-### AdSession
-
-```typescript
-interface AdSession {
-  unlockedAt: number; // timestamp
-  expiresAt: number; // timestamp
-  sessionId: string;
+// Ad configuration
+interface AdConfig {
+  vastTagUrl: string;
+  fallbackVideoUrl: string;
+  skipDelaySeconds: number;
+  sessionDurationMinutes: number;
+  enabled: boolean;
 }
-```
 
-### AdEvent
-
-```typescript
+// Ad event
 interface AdEvent {
-  eventType: 'impression' | 'started' | 'completed' | 'skipped' | 'unlocked';
-  timestamp: number;
-  sessionId: string;
+  eventType: 'ad_impression' | 'ad_completed' | 'ad_skipped' | 'agent_details_unlocked';
   apartmentId: string;
   watchDuration?: number;
-  adProvider?: string;
+  sessionId: string;
 }
 ```
 
-## Integration Points
+### Backend Models
 
-### 1. Google IMA SDK Integration
+**AdEvent Model** (`app/Models/AdEvent.php`):
+```php
+class AdEvent extends Model
+{
+    protected $fillable = [
+        'event_type',
+        'apartment_id',
+        'watch_duration',
+        'user_agent',
+        'ip_address',
+        'session_id',
+    ];
 
-**Implementation**:
-- Load IMA SDK via CDN or npm package
-- Initialize AdDisplayContainer and AdsLoader
-- Handle VAST tag requests and ad playback
-- Manage ad events and completion callbacks
+    protected $casts = [
+        'watch_duration' => 'integer',
+    ];
 
-**Code Structure**:
-```typescript
-class GoogleIMAProvider implements AdProvider {
-  private adsLoader: google.ima.AdsLoader;
-  private adsManager: google.ima.AdsManager;
-  
-  async loadAd(vastTag: string): Promise<void>;
-  play(): void;
-  pause(): void;
-  destroy(): void;
+    public function apartment()
+    {
+        return $this->belongsTo(Apartment::class);
+    }
 }
 ```
-
-### 2. Video.js Integration (Alternative)
-
-**Implementation**:
-- Use Video.js with videojs-contrib-ads plugin
-- Add videojs-ima plugin for Google IMA support
-- Configure player with ad settings
-- Handle ad lifecycle events
-
-### 3. Custom Video Ad Support
-
-**Implementation**:
-- Direct HTML5 video element
-- Custom controls and skip functionality
-- Manual event tracking
-- Fallback for when ad networks are unavailable
-
-## User Experience Flow
-
-### Guest User Journey
-
-1. **Initial State**: User sees property page with agent name and profile picture visible, contact details blurred/hidden
-2. **Call-to-Action**: "View Contact Details" button with ad icon and tooltip
-3. **Ad Modal**: Full-screen modal opens with video advertisement
-4. **Ad Playback**: Video plays with skip button disabled for 5 seconds
-5. **Completion**: After ad completion or skip, contact details unlock for 4 minutes
-6. **Session Persistence**: Unlocked state maintained across property pages during session
-7. **Subscription Access**: Must register/login to access subscription features
-
-### Authenticated Non-Subscribed User Journey
-
-1. **Initial State**: User sees property page with agent name and profile picture visible, contact details blurred/hidden
-2. **Call-to-Action**: "View Contact Details" button with ad icon and tooltip
-3. **Ad Modal**: Full-screen modal opens with video advertisement
-4. **Ad Playback**: Video plays with skip button disabled for 5 seconds
-5. **Completion**: After ad completion or skip, contact details unlock for 4 minutes
-6. **Session Persistence**: Unlocked state maintained across property pages during session
-
-### Subscribed User Journey
-
-1. **Direct Access**: All agent contact details immediately visible (only for logged-in users with active subscription)
-2. **No Ad Gate**: No "View Contact Details" button shown
-3. **Full Functionality**: Phone, email, WhatsApp buttons fully accessible
 
 ## Error Handling
 
 ### Ad Loading Failures
 
-- **Network Issues**: Show retry button with fallback content
-- **Ad Blocker Detection**: Display message explaining ad requirement
-- **Provider Unavailable**: Fall back to promotional video about platform
-- **VAST Errors**: Log error and show alternative ad or fallback
+1. **VAST Tag Error**: Fallback to promotional video
+2. **Network Error**: Show retry button with error message
+3. **IMA SDK Error**: Log error and show manual unlock option (with warning)
 
-### Session Management Errors
+### Session Storage Failures
 
-- **Storage Unavailable**: Graceful degradation to per-page unlocks
-- **Corrupted Session**: Clear session and require new ad view
-- **Expired Session**: Smooth transition back to gated state
+1. **Storage Quota Exceeded**: Use in-memory fallback
+2. **Private Browsing**: Warn user and require ad per page view
+3. **Storage Disabled**: Graceful degradation to per-view ads
 
-## Testing Strategy
+### Video Player Errors
 
-### Unit Tests
-
-- AdSessionManager session storage operations
-- AdConfiguration validation and provider selection
-- VideoAdPlayer event handling and state management
-- Analytics event tracking accuracy
-
-### Integration Tests
-
-- Complete ad viewing flow from gate to unlock
-- Session persistence across page navigation
-- Provider fallback mechanisms
-- Authentication state transitions
-
-### End-to-End Tests
-
-- Guest user complete journey (view ad → unlock details)
-- Authenticated user bypass flow
-- Ad blocker scenarios
-- Mobile responsive behavior
-
-### Performance Tests
-
-- Ad loading time measurements
-- Video playback performance
-- Session storage impact
-- Analytics event batching
+1. **Codec Not Supported**: Show alternative ad format
+2. **Autoplay Blocked**: Show play button with instructions
+3. **Player Initialization Failed**: Fallback to image ad or skip
 
 ## Security Considerations
 
 ### Client-Side Validation
 
-- Session tampering prevention
-- Ad completion verification
-- Analytics event integrity
+- Session storage can be manipulated - backend should not rely on it for critical decisions
+- Ad completion events logged to backend for analytics
+- IP-based rate limiting to prevent abuse
 
 ### Privacy Compliance
 
-- No personal data in ad events
-- Session-only storage (no persistent tracking)
-- GDPR-compliant analytics collection
+- No PII collected without consent
+- Session IDs are random UUIDs
+- IP addresses hashed for analytics
+- GDPR-compliant ad providers only
 
-### Ad Fraud Prevention
+### Rate Limiting
 
-- Unique session identifiers
-- Completion verification
-- Rate limiting for unlock attempts
+- Max 10 ad views per IP per hour
+- Max 50 unlock events per session per day
+- Suspicious patterns flagged for review
 
-## Admin Stats Dashboard
-
-### Dashboard Features
-
-**Purpose**: Provides administrators with comprehensive analytics on ad performance and user engagement
-
-**Key Metrics**:
-- Total ad impressions (daily, weekly, monthly)
-- Ad completion rates vs skip rates
-- Average watch duration for skipped ads
-- Agent details unlock events
-- User engagement patterns (guest vs authenticated)
-- Revenue impact metrics
-
-**Dashboard Components**:
-```typescript
-interface AdStatsDashboard {
-  impressions: {
-    total: number;
-    daily: number[];
-    weekly: number[];
-    monthly: number[];
-  };
-  completionRate: number;
-  skipRate: number;
-  averageWatchDuration: number;
-  unlockEvents: {
-    total: number;
-    byMethod: {
-      ad_watched: number;
-      subscribed: number;
-    };
-  };
-  userBreakdown: {
-    guest: number;
-    authenticated: number;
-    subscribed: number;
-  };
-}
-```
-
-**Visualizations**:
-- Line charts for impression trends
-- Pie charts for completion vs skip rates
-- Bar charts for user type breakdown
-- Heat maps for peak usage times
-
-## Configuration Management
-
-### Environment Variables
-
-```typescript
-interface AdConfig {
-  GOOGLE_IMA_SDK_URL: string;
-  GOOGLE_ADSENSE_CLIENT_ID?: string;
-  GOOGLE_AD_MANAGER_NETWORK_CODE?: string;
-  CUSTOM_AD_ENDPOINT?: string;
-  AD_SKIP_DELAY: number;
-  SESSION_DURATION: number; // 240 seconds (4 minutes)
-  ANALYTICS_ENDPOINT: string;
-}
-```
-
-### Admin Configuration
-
-- Ad provider selection (Google AdSense, Ad Manager, Custom)
-- VAST tag URLs configuration
-- Skip delay timing adjustment
-- Session duration settings (4 minutes default)
-- Fallback content management
-- Analytics dashboard access controls
-
-## Performance Optimization
+## Performance Considerations
 
 ### Lazy Loading
 
-- Ad SDK loaded only when needed
-- Video preloading for faster playback
-- Component code splitting
+- Video.js and IMA SDK loaded only when ad modal opens
+- VAST tags prefetched on page load for faster ad display
+- Agent details pre-rendered but hidden (no additional API calls)
 
-### Caching Strategy
+### Caching
 
-- Ad configuration caching
-- Video content caching where possible
-- Session state optimization
+- Ad configuration cached for 1 hour
+- VAST responses cached by browser
+- Session state in memory + storage for fast access
 
-### Analytics Batching
+### Bundle Size
 
-- Event batching to reduce API calls
-- Offline event queuing
-- Retry mechanisms for failed events
+- Video.js: ~250KB (gzipped)
+- IMA SDK: ~150KB (gzipped)
+- Total impact: ~400KB additional bundle size
+- Loaded asynchronously to not block initial render
 
-## Accessibility
+## Testing Strategy
 
-### Screen Reader Support
+### Unit Tests
 
-- Proper ARIA labels for ad gate elements
-- Announcement of unlock state changes
-- Skip button accessibility
+**VideoAdPlayer Component**:
+- Initializes Video.js correctly
+- Loads VAST tag
+- Fires callbacks on ad events
+- Cleans up on unmount
 
-### Keyboard Navigation
+**AgentDetailsGate Component**:
+- Shows details for authenticated users
+- Hides details for guests
+- Manages session storage correctly
+- Countdown timer updates
 
-- Tab navigation through ad controls
-- Enter/Space key activation
-- Escape key to close modal
+### Integration Tests
 
-### Visual Accessibility
+**Ad Flow**:
+- Guest user sees blurred details
+- Clicking "View Details" opens ad modal
+- Ad plays and completes
+- Details unlock after ad
+- Session persists for 30 minutes
 
+**Authentication Flow**:
+- Authenticated users see details immediately
+- No ad modal shown
+- No session storage used
+
+### E2E Tests
+
+**Complete User Journey**:
+1. Visit property page as guest
+2. Click "View Contact Details"
+3. Watch video ad
+4. Verify details unlocked
+5. Navigate to another property
+6. Verify session still valid
+7. Wait 30 minutes
+8. Verify session expired
+
+## Implementation Notes
+
+### Google Ad Manager Setup
+
+1. Create GAM account
+2. Create ad unit for "Property Listing - Agent Details"
+3. Generate VAST tag URL
+4. Configure targeting (geography, device, etc.)
+5. Set up creative (video ads)
+6. Test with Google IMA Inspector
+
+### VAST Tag Example
+
+```
+https://pubads.g.doubleclick.net/gampad/ads?
+  iu=/21775744923/external/single_ad_samples
+  &sz=640x480
+  &cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear
+  &ciu_szs=300x250
+  &gdfp_req=1
+  &output=vast
+  &unviewed_position_start=1
+  &env=vp
+  &impl=s
+  &correlator=
+```
+
+### Fallback Video Requirements
+
+- Format: MP4 (H.264 + AAC)
+- Resolution: 1280x720 or 1920x1080
+- Duration: 15-30 seconds
+- Size: < 5MB
+- Content: Platform promotional video
+
+### Browser Compatibility
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+- Mobile browsers (iOS Safari 14+, Chrome Mobile 90+)
+
+### Accessibility
+
+- Keyboard navigation support
+- Screen reader announcements
+- Closed captions on promotional videos
+- Skip button clearly labeled
 - High contrast mode support
-- Reduced motion preferences
-- Clear visual indicators for unlock state
 
-## Mobile Considerations
+## Monitoring and Analytics
 
-### Responsive Design
+### Key Metrics
 
-- Full-screen ad modal on mobile
-- Touch-friendly controls
-- Optimized video player for mobile
+- Ad impression rate
+- Ad completion rate
+- Ad skip rate (after 5 seconds)
+- Average watch duration
+- Unlock conversion rate
+- Session duration distribution
 
-### Performance
+### Dashboards
 
-- Reduced video quality options for slower connections
-- Progressive loading
-- Battery usage optimization
+- Real-time ad performance
+- Revenue estimates (if monetized)
+- User behavior patterns
+- Error rates and types
+- Browser/device breakdown
 
-### iOS/Android Specific
+### Alerts
 
-- Autoplay policy compliance
-- Full-screen video handling
-- Back button behavior in modal
+- Ad error rate > 5%
+- VAST tag loading failures
+- Unusual skip patterns
+- Session storage failures
+
+## Migration Path
+
+### Phase 1: Infrastructure Setup
+- Install Video.js and IMA SDK
+- Create ad event logging system
+- Set up Google Ad Manager account
+
+### Phase 2: Component Development
+- Build VideoAdPlayer component
+- Create AgentDetailsGate component
+- Implement session management
+
+### Phase 3: Integration
+- Update ProductMediaViewer to use AgentDetailsGate
+- Add ad modal to property pages
+- Connect to backend logging API
+
+### Phase 4: Testing & Optimization
+- Test across browsers and devices
+- Optimize bundle size
+- A/B test ad duration and skip delay
+
+### Phase 5: Launch
+- Enable for 10% of users
+- Monitor metrics
+- Gradual rollout to 100%

@@ -1,45 +1,62 @@
 'use client'
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo} from 'react';
 import {useSelector} from 'react-redux';
 import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Dialog, DialogContent, DialogHeader, DialogTrigger,} from '@/components/ui/dialog';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {type Apartment, deleteApartment, getAllApartments, updateApartment} from '../api/get-all-apartments';
-import {ChevronLeft, ChevronRight, Pencil, Search, Clock} from 'lucide-react';
+import {ChevronLeft, ChevronRight, Pencil, Search, Clock, Sparkles, AlertCircle, Calendar} from 'lucide-react';
 import Link from "next/link";
 import {DialogDescription} from '@radix-ui/react-dialog';
 import {RootState} from "@/redux/store";
 import {Badge} from "@/components/ui/badge";
-import {isRecentlyUploaded} from "@/lib/apartment-utils";
+import {getApartmentBadge, formatRelativeTime, formatFullDateTime} from "@/lib/apartment-utils";
+import {useDebounce} from 'use-debounce';
 
-const ViewApartment = () => {
+interface DateFilterOption {
+    value: 'all' | '24h' | '7d' | '30d';
+    label: string;
+    description: string;
+}
+
+const dateFilterOptions: DateFilterOption[] = [
+    { value: 'all', label: 'All Time', description: 'Show all apartments' },
+    { value: '24h', label: 'Last 24 Hours', description: 'Show new uploads' },
+    { value: '7d', label: 'Last 7 Days', description: 'Show recent uploads' },
+    { value: '30d', label: 'Last 30 Days', description: 'Show this month' },
+];
+
+const ViewApartmentEnhanced = () => {
     const [apartments, setApartments] = useState<Apartment[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
     const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
-    const [sortByRecent, setSortByRecent] = useState(false);
+    const [sortByRecent, setSortByRecent] = useState(true); // Default to newest first
+    const [dateFilter, setDateFilter] = useState<'all' | '24h' | '7d' | '30d'>('all');
+    const [filteredCount, setFilteredCount] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
+    
     const isLoggedIn = useSelector((state: any) => state.admin.isLoggedIn);
     const token = useSelector((state: RootState) => state.admin.token);
 
     const fetchApartments = async () => {
         try {
             setLoading(() => true);
-            const response = await getAllApartments(currentPage, searchTerm, token, sortByRecent);
+            const response = await getAllApartments(currentPage, debouncedSearchTerm, token, sortByRecent, dateFilter);
 
             if (response.success && response.data) {
-                // Convert object to array since server returns data as object with numeric keys
                 const apartmentData = Object.values(response.data.data) as Apartment[];
-                // console.log('data type is', typeof apartmentData, 'length:', apartmentData.length);
-                // Note: Client-side sorting is disabled for pagination to avoid conflicts
-                // Server should handle sorting by created_at when sortByRecent is true
-                
                 setApartments(apartmentData);
                 setTotalPages(response.data.last_page);
+                setFilteredCount(response.data.filtered_count || response.data.total);
+                setTotalCount(response.data.total_count || response.data.total);
             } else {
                 throw new Error('Invalid response format');
             }
@@ -57,7 +74,7 @@ const ViewApartment = () => {
         if (isLoggedIn) {
             fetchApartments().then(r => r);
         }
-    }, [currentPage, searchTerm, isLoggedIn, sortByRecent]);
+    }, [currentPage, debouncedSearchTerm, isLoggedIn, sortByRecent, dateFilter]);
 
     const handleDelete = async (id: number) => {
         if (window.confirm('Are you sure you want to delete this apartment?')) {
@@ -76,15 +93,39 @@ const ViewApartment = () => {
                 await updateApartment(id, {published: dir});
                 await fetchApartments();
             } catch (err: any) {
-                setError(err.message || 'Failed to delete apartment');
+                setError(err.message || 'Failed to update apartment');
             }
         }
     };
 
-
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
         setCurrentPage(1);
+    };
+
+    const handleDateFilterChange = (value: string) => {
+        setDateFilter(value as 'all' | '24h' | '7d' | '30d');
+        setCurrentPage(1);
+    };
+
+    // Get row styling based on badge type
+    const getRowClassName = (apartment: Apartment) => {
+        const badgeInfo = getApartmentBadge(apartment.created_at, apartment.published);
+        
+        switch (badgeInfo.type) {
+            case 'new':
+                return 'bg-green-50/50 hover:bg-green-100/50';
+            case 'urgent':
+                return 'bg-red-50/50 hover:bg-red-100/50';
+            default:
+                return 'hover:bg-gray-50';
+        }
+    };
+
+    // Get title styling based on badge type
+    const getTitleClassName = (apartment: Apartment) => {
+        const badgeInfo = getApartmentBadge(apartment.created_at, apartment.published);
+        return badgeInfo.type === 'new' || badgeInfo.type === 'urgent' ? 'font-bold' : 'font-normal';
     };
 
     if (!isLoggedIn) {
@@ -99,9 +140,9 @@ const ViewApartment = () => {
 
     return (
         <div className="p-6">
-            <div className="mb-6">
-                <div className="flex gap-4 items-center">
-                    <div className="relative flex-1">
+            <div className="mb-6 space-y-4">
+                <div className="flex gap-4 items-center flex-wrap">
+                    <div className="relative flex-1 min-w-[200px]">
                         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground"/>
                         <Input
                             placeholder="Search Apartments..."
@@ -110,15 +151,39 @@ const ViewApartment = () => {
                             onChange={handleSearch}
                         />
                     </div>
+                    
+                    <Select value={dateFilter} onValueChange={handleDateFilterChange}>
+                        <SelectTrigger className="w-[180px]">
+                            <Calendar className="h-4 w-4 mr-2" />
+                            <SelectValue placeholder="Filter by date" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {dateFilterOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                    <div className="flex flex-col">
+                                        <span>{option.label}</span>
+                                        <span className="text-xs text-muted-foreground">{option.description}</span>
+                                    </div>
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    
                     <Button
                         variant={sortByRecent ? "default" : "outline"}
                         onClick={() => setSortByRecent(!sortByRecent)}
                         className="flex items-center gap-2"
                     >
                         <Clock className="h-4 w-4" />
-                        {sortByRecent ? "Show All" : "Recent First"}
+                        {sortByRecent ? "Newest First" : "Sort by Date"}
                     </Button>
                 </div>
+                
+                {!loading && (
+                    <div className="text-sm text-muted-foreground">
+                        Showing <span className="font-semibold">{filteredCount}</span> of <span className="font-semibold">{totalCount}</span> apartments
+                    </div>
+                )}
             </div>
 
             {error && (
@@ -137,6 +202,7 @@ const ViewApartment = () => {
                             <TableHead>Location</TableHead>
                             <TableHead>Price</TableHead>
                             <TableHead>Status</TableHead>
+                            <TableHead>Uploaded</TableHead>
                             <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -144,18 +210,23 @@ const ViewApartment = () => {
                     <TableBody>
                         {loading ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="text-center">
+                                <TableCell colSpan={8} className="text-center">
                                     Loading...
                                 </TableCell>
                             </TableRow>
                         ) : !Array.isArray(apartments) || apartments.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="text-center">
+                                <TableCell colSpan={8} className="text-center">
                                     No apartments found
                                 </TableCell>
                             </TableRow>
-                        ) : (apartments.map((apartment:Apartment) => (
-                                <TableRow key={apartment.id}>
+                        ) : (apartments.map((apartment:Apartment) => {
+                            const badgeInfo = getApartmentBadge(apartment.created_at, apartment.published);
+                            const relativeTime = formatRelativeTime(apartment.created_at);
+                            const fullDateTime = formatFullDateTime(apartment.created_at);
+                            
+                            return (
+                                <TableRow key={apartment.id} className={getRowClassName(apartment)}>
                                     <TableCell>
                                         <div className='w-14 h-14 rounded-md overflow-hidden'>
                                             <img
@@ -171,21 +242,24 @@ const ViewApartment = () => {
                                                 <Button
                                                     variant="link"
                                                     onClick={() => setSelectedApartment(apartment)}
-                                                    className="flex items-center gap-2 p-0 h-auto"
+                                                    className={`flex items-center gap-2 p-0 h-auto ${getTitleClassName(apartment)}`}
                                                 >
                                                     {apartment.title}
-                                                    {apartment.created_at && isRecentlyUploaded(apartment.created_at) && (
-                                                        <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
-                                                            <Clock className="h-3 w-3 mr-1" />
-                                                            Recently Uploaded
-                                                        </Badge>
-                                                    )}
                                                 </Button>
                                             </DialogTrigger>
                                             <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                                                 <DialogHeader>
-                                                    <DialogDescription>{apartment.title} </DialogDescription>
-                                                    {/* <DialogTitle>{apartment.title}</DialogTitle> */}
+                                                    <DialogDescription className="flex items-center gap-2">
+                                                        {apartment.title}
+                                                        {badgeInfo.type !== 'none' && (
+                                                            <Badge variant={badgeInfo.variant} className={`${badgeInfo.className} text-xs`}>
+                                                                {badgeInfo.type === 'new' && <Sparkles className="h-3 w-3 mr-1" />}
+                                                                {badgeInfo.type === 'urgent' && <AlertCircle className="h-3 w-3 mr-1 animate-pulse" />}
+                                                                {badgeInfo.type === 'recent' && <Clock className="h-3 w-3 mr-1" />}
+                                                                {badgeInfo.label}
+                                                            </Badge>
+                                                        )}
+                                                    </DialogDescription>
                                                 </DialogHeader>
                                                 <div className="grid gap-4 py-4">
                                                     <div className="grid grid-cols-2 gap-4">
@@ -206,14 +280,8 @@ const ViewApartment = () => {
                                                             <p><strong>Agent:</strong> {apartment.agent}</p>
                                                             <p><strong>Agent Email:</strong> {apartment.agent_email}</p>
                                                             {apartment.created_at && (
-                                                                <p>
-                                                                    <strong>Uploaded:</strong> {new Date(apartment.created_at).toLocaleDateString()} 
-                                                                    {isRecentlyUploaded(apartment.created_at) && (
-                                                                        <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800 text-xs">
-                                                                            <Clock className="h-3 w-3 mr-1" />
-                                                                            Recently Uploaded
-                                                                        </Badge>
-                                                                    )}
+                                                                <p title={fullDateTime}>
+                                                                    <strong>Uploaded:</strong> {relativeTime}
                                                                 </p>
                                                             )}
                                                             <p>
@@ -240,23 +308,30 @@ const ViewApartment = () => {
                                             <Badge variant={apartment.published ? "default" : "secondary"} className="text-xs">
                                                 {apartment.published ? "Published" : "Pending"}
                                             </Badge>
-                                            {(apartment.created_at && isRecentlyUploaded(apartment.created_at)) ? (
-                                                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 text-xs">
-                                                    <Clock className="h-3 w-3 mr-1" />
-                                                    New Upload
+                                            {badgeInfo.type !== 'none' && (
+                                                <Badge variant={badgeInfo.variant} className={`${badgeInfo.className} text-xs flex items-center gap-1`}>
+                                                    {badgeInfo.type === 'new' && <Sparkles className="h-3 w-3" />}
+                                                    {badgeInfo.type === 'urgent' && <AlertCircle className="h-3 w-3 animate-pulse" />}
+                                                    {badgeInfo.type === 'recent' && <Clock className="h-3 w-3" />}
+                                                    {badgeInfo.label}
                                                 </Badge>
-                                            ) : null}
+                                            )}
                                         </div>
                                     </TableCell>
-                                    <TableCell className={'flex '}>
+                                    <TableCell>
+                                        <div className="text-sm" title={fullDateTime}>
+                                            {relativeTime}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className={'flex gap-2'}>
                                         <Link className={"mt-1"}
                                               href={"/admin/dashboard/edit-apartment/" + apartment.id}>
-                                            <Pencil/>
+                                            <Pencil className="h-4 w-4"/>
                                         </Link>
                                         <Button
                                             variant="destructive"
                                             size="sm"
-                                            className='bg-red-500 text-white px-4 py-1 mx-3 rounded-md'
+                                            className='bg-red-500 text-white px-4 py-1 rounded-md'
                                             onClick={() => handleDelete(apartment.id)}
                                         >
                                             Delete
@@ -265,23 +340,23 @@ const ViewApartment = () => {
                                             !apartment.published ? <Button
                                                 variant="outline"
                                                 size="sm"
-                                                className='bg-green-500 text-white px-4 py-1 mx-3 rounded-md'
+                                                className='bg-green-500 text-white px-4 py-1 rounded-md'
                                                 onClick={() => handlePublish(apartment.id, true)}
                                             >
                                                 Publish
                                             </Button> : <Button
                                                 variant="outline"
                                                 size="sm"
-                                                className='bg-red-500 text-white px-4 py-1 mx-3 rounded-md'
+                                                className='bg-red-500 text-white px-4 py-1 rounded-md'
                                                 onClick={() => handlePublish(apartment.id, false)}
                                             >
                                                 UnPublish
                                             </Button>
                                         }
-
                                     </TableCell>
                                 </TableRow>
-                            ))
+                            );
+                        })
                         )}
                     </TableBody>
                 </Table>
@@ -312,4 +387,4 @@ const ViewApartment = () => {
     );
 };
 
-export default ViewApartment;
+export default ViewApartmentEnhanced;

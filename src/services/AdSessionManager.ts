@@ -30,7 +30,7 @@ export class AdSessionManager {
       const now = Date.now();
       return now < session.expiresAt;
     } catch (error) {
-      console.warn('Error checking unlock status:', error);
+      // console.warn('Error checking unlock status:', error);
       this.clearSession();
       return false;
     }
@@ -53,7 +53,7 @@ export class AdSessionManager {
         sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
       }
     } catch (error) {
-      console.warn('Error setting unlock state:', error);
+      // console.warn('Error setting unlock state:', error);
     }
   }
 
@@ -70,7 +70,7 @@ export class AdSessionManager {
       const remaining = session.expiresAt - now;
       return Math.max(0, remaining);
     } catch (error) {
-      console.warn('Error getting remaining time:', error);
+      // console.warn('Error getting remaining time:', error);
       return 0;
     }
   }
@@ -97,7 +97,7 @@ export class AdSessionManager {
         sessionStorage.removeItem(this.SESSION_KEY);
       }
     } catch (error) {
-      console.warn('Error clearing session:', error);
+      // console.warn('Error clearing session:', error);
     }
   }
 
@@ -124,7 +124,7 @@ export class AdSessionManager {
 
       return session;
     } catch (error) {
-      console.warn('Error retrieving session:', error);
+      // console.warn('Error retrieving session:', error);
       this.clearSession();
       return null;
     }
@@ -181,7 +181,7 @@ export class AdSessionManager {
         sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
       }
     } catch (error) {
-      console.warn('Error extending session:', error);
+      // console.warn('Error extending session:', error);
     }
   }
 
