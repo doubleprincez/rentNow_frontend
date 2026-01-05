@@ -36,7 +36,7 @@ export const GOOGLE_AD_MANAGER_NETWORK_CODE = '134-671-0282';
 // Custom Ad Endpoint (your own video URL)
 // Example: 'https://yourdomain.com/videos/promo.mp4'
 // Leave empty to use fallback video
-export const CUSTOM_AD_ENDPOINT = '';
+export const CUSTOM_AD_ENDPOINT = 'https://rent9ja-s3-storage.s3.eu-north-1.amazonaws.com/default.mp4';
 
 // Ad skip delay in seconds (how long before user can skip)
 export const AD_SKIP_DELAY = 5;
@@ -45,7 +45,7 @@ export const AD_SKIP_DELAY = 5;
 export const AD_SESSION_DURATION = 240; // 4 minutes
 
 // Analytics endpoint for tracking ad events
-export const ANALYTICS_ENDPOINT = '/api/ad-analytics';
+export const ANALYTICS_ENDPOINT = backendUrl+'/api/ad-analytics';
 
 // ============================================
 
