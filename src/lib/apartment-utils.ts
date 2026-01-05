@@ -94,27 +94,41 @@ export const getApartmentBadge = (
  * @returns Human-readable relative time string
  */
 export const formatRelativeTime = (timestamp: string | undefined): string => {
-  if (!timestamp) return 'Unknown';
+  if (!timestamp || timestamp === 'null' || timestamp === '' || timestamp === 'undefined') {
+    return 'Unknown';
+  }
 
-  const now = new Date();
-  const date = new Date(timestamp);
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  try {
+    const now = new Date();
+    const date = new Date(timestamp);
+    
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      console.warn('Invalid date format:', timestamp);
+      return 'Invalid date';
+    }
+    
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return 'Just now';
-  if (diffInSeconds < 3600) {
-    const minutes = Math.floor(diffInSeconds / 60);
-    return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) {
+      const minutes = Math.floor(diffInSeconds / 60);
+      return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    }
+    if (diffInSeconds < 86400) {
+      const hours = Math.floor(diffInSeconds / 3600);
+      return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    }
+    if (diffInSeconds < 604800) {
+      const days = Math.floor(diffInSeconds / 86400);
+      return `${days} day${days !== 1 ? 's' : ''} ago`;
+    }
+    
+    return date.toLocaleDateString();
+  } catch (error) {
+    console.error('Error formatting relative time:', error, 'timestamp:', timestamp);
+    return 'Unknown';
   }
-  if (diffInSeconds < 86400) {
-    const hours = Math.floor(diffInSeconds / 3600);
-    return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
-  }
-  if (diffInSeconds < 604800) {
-    const days = Math.floor(diffInSeconds / 86400);
-    return `${days} day${days !== 1 ? 's' : ''} ago`;
-  }
-  
-  return date.toLocaleDateString();
 };
 
 /**
@@ -123,14 +137,28 @@ export const formatRelativeTime = (timestamp: string | undefined): string => {
  * @returns Formatted date and time string
  */
 export const formatFullDateTime = (timestamp: string | undefined): string => {
-  if (!timestamp) return 'Unknown';
+  if (!timestamp || timestamp === 'null' || timestamp === '' || timestamp === 'undefined') {
+    return 'Unknown';
+  }
   
-  const date = new Date(timestamp);
-  return date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  try {
+    const date = new Date(timestamp);
+    
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+      console.warn('Invalid date format:', timestamp);
+      return 'Invalid date';
+    }
+    
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch (error) {
+    console.error('Error formatting full date time:', error, 'timestamp:', timestamp);
+    return 'Unknown';
+  }
 };

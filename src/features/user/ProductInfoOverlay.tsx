@@ -691,31 +691,8 @@ export default function ProductInfoOverlay({
               {isSubscribed ? (
                 // Subscribed users see details immediately
                 <div className="space-y-3 pt-4 border-t">
-                  <h3 className="text-base font-semibold text-gray-800">Agent Information</h3>
-                  {apartment?.agent_type === 'agent' ? (
-                    <>
-                      {apartment.agent && (
-                        <div className="flex items-center gap-2">
-                          <User className="text-orange-500 w-5 h-5" />
-                          <span className="text-gray-600 text-sm">
-                            {String(apartment.agent_type).toLocaleUpperCase()}: {apartment.agent}
-                          </span>
-                        </div>
-                      )}
-                      {apartment?.agent_email && (
-                        <div className="flex items-center gap-2">
-                          <MailIcon className="text-orange-500 w-5 h-5" />
-                          <span className="text-gray-600 text-sm">Email: {apartment?.agent_email}</span>
-                        </div>
-                      )}
-                      {apartment?.agent_phone && (
-                        <div className="flex items-center gap-2">
-                          <PhoneCallIcon className="text-orange-500 w-5 h-5" />
-                          <span className="text-gray-600 text-sm">Phone: {apartment?.agent_phone}</span>
-                        </div>
-                      )}
-                    </>
-                  ) : (
+                  <h3 className="text-base font-semibold text-gray-800">{String(apartment.agent_type).toLocaleUpperCase()} Information</h3>
+                    {(
                     <>
                       <div className="flex justify-start space-x-2">
                         {apartment?.business_logo && (

@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Play, Pause, SkipForward, Loader2 } from 'lucide-react';
+import { Play, SkipForward, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { VideoAdPlayerProps, AdPlaybackState } from '@/types/ad';
 import { trackAdStarted, trackAdCompleted, trackAdSkipped } from '@/services/AdAnalytics';
@@ -15,6 +15,7 @@ import AdSessionManager from '@/services/AdSessionManager';
  * - Ad completion and skip event handling
  * - Progress indicator for ad playback
  * - Video loading, play, pause, and error states
+ * - Play button hidden during ad playback to prevent interruption
  */
 export default function VideoAdPlayer({
   adConfig,
@@ -278,21 +279,17 @@ export default function VideoAdPlayer({
         </div>
       )}
 
-      {/* Controls Overlay */}
-      {!playbackState.isLoading && !playbackState.isCompleted && (
+      {/* Controls Overlay - Only show play button when paused, hidden during playback */}
+      {!playbackState.isLoading && !playbackState.isCompleted && !playbackState.isPlaying && (
         <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
           <Button
             onClick={handlePlayPause}
             variant="ghost"
             size="lg"
             className="bg-black/50 hover:bg-black/70 text-white rounded-full p-4"
-            aria-label={playbackState.isPlaying ? 'Pause ad' : 'Play ad'}
+            aria-label="Play ad"
           >
-            {playbackState.isPlaying ? (
-              <Pause className="w-8 h-8" />
-            ) : (
-              <Play className="w-8 h-8" />
-            )}
+            <Play className="w-8 h-8" />
           </Button>
         </div>
       )}

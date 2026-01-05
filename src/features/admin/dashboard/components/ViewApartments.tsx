@@ -53,6 +53,12 @@ const ViewApartmentEnhanced = () => {
 
             if (response.success && response.data) {
                 const apartmentData = Object.values(response.data.data) as Apartment[];
+                
+                // Debug: Log the first apartment to see the data structure
+                if (apartmentData.length > 0) {
+                    console.log('Sample apartment data:', apartmentData[0]);
+                    console.log('created_at field:', apartmentData[0].created_at);
+                }
                 setApartments(apartmentData);
                 setTotalPages(response.data.last_page);
                 setFilteredCount(response.data.filtered_count || response.data.total);
