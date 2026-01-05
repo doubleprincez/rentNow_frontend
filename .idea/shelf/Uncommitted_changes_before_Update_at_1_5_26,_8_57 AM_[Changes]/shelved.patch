@@ -1,0 +1,144 @@
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+new file mode 100644
+--- /dev/null	(date 1767574649679)
++++ b/.idea/modules.xml	(date 1767574649679)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ProjectModuleManager">
++    <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/rentnow_frontend.iml" filepath="$PROJECT_DIR$/.idea/rentnow_frontend.iml" />
++    </modules>
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/php.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/php.xml b/.idea/php.xml
+new file mode 100644
+--- /dev/null	(date 1767574649687)
++++ b/.idea/php.xml	(date 1767574649687)
+@@ -0,0 +1,19 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="MessDetectorOptionsConfiguration">
++    <option name="transferred" value="true" />
++  </component>
++  <component name="PHPCSFixerOptionsConfiguration">
++    <option name="transferred" value="true" />
++  </component>
++  <component name="PHPCodeSnifferOptionsConfiguration">
++    <option name="highlightLevel" value="WARNING" />
++    <option name="transferred" value="true" />
++  </component>
++  <component name="PhpStanOptionsConfiguration">
++    <option name="transferred" value="true" />
++  </component>
++  <component name="PsalmOptionsConfiguration">
++    <option name="transferred" value="true" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1767574649695)
++++ b/.idea/vcs.xml	(date 1767574649695)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1767574606507)
++++ b/.idea/.gitignore	(date 1767574606507)
+@@ -0,0 +1,8 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+Index: .idea/whisperer_for_laravel.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/whisperer_for_laravel.xml b/.idea/whisperer_for_laravel.xml
+new file mode 100644
+--- /dev/null	(date 1767574649703)
++++ b/.idea/whisperer_for_laravel.xml	(date 1767574649703)
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Settings">
++    <option name="inertiaPageRootPath" value="resources/js/Pages;" />
++    <option name="moduleSrcDirectoryPath" value="app" />
++    <option name="modulesDirectoryPath" value="Modules" />
++    <option name="projectDirectoryPath" value="" />
++    <option name="projectType" value="Standard Application" />
++    <option name="routeNotFoundAnnotatorWarning" value="true" />
++    <option name="suppressRealTimeFacadeWarnings" value="true" />
++    <option name="translationKeyNotFoundAnnotatorWarning" value="true" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/inspectionProfiles/Project_Default.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/inspectionProfiles/Project_Default.xml b/.idea/inspectionProfiles/Project_Default.xml
+new file mode 100644
+--- /dev/null	(date 1767574649391)
++++ b/.idea/inspectionProfiles/Project_Default.xml	(date 1767574649391)
+@@ -0,0 +1,6 @@
++<component name="InspectionProjectProfileManager">
++  <profile version="1.0">
++    <option name="myName" value="Project Default" />
++    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
++  </profile>
++</component>
+\ No newline at end of file
+Index: .idea/rentnow_frontend.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/rentnow_frontend.iml b/.idea/rentnow_frontend.iml
+new file mode 100644
+--- /dev/null	(date 1767574649671)
++++ b/.idea/rentnow_frontend.iml	(date 1767574649671)
+@@ -0,0 +1,8 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module type="WEB_MODULE" version="4">
++  <component name="NewModuleRootManager">
++    <content url="file://$MODULE_DIR$" />
++    <orderEntry type="inheritedJdk" />
++    <orderEntry type="sourceFolder" forTests="false" />
++  </component>
++</module>
+\ No newline at end of file
