@@ -189,7 +189,7 @@ const RequestForUpdate: React.FC = () => {
             // Example: Convert phone/business_phone back to numbers if backend needs them as numbers
             // (Only if FormProfileData has them as strings but API needs numbers)
             if (apiPayload.phone) {
-                (apiPayload as any).phone = parseInt(apiPayload.phone); // Cast to number for API
+                (apiPayload as any).phone = apiPayload.phone.replaceAll(' ',''); // Remove space in phone for API
             }
             // if (apiPayload.business_phone) {
             //     (apiPayload as any).business_phone = parseInt(apiPayload.business_phone); // Cast to number for API
