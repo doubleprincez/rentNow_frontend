@@ -92,20 +92,49 @@ export async function generateMetadata({params}: any): Promise<Metadata> {
 
 export default async function Page({params}: any) {
     const {id} = await params;
-    const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
-    const apartment: Apartment = response.data.data;
+    
+    try {
+        const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
+        const apartment: Apartment = response.data.data;
 
-    if (apartment) {
+        if (apartment) {
+            return (
+                <Suspense fallback={<div className="flex justify-center items-center min-h-screen">
+                    <Loader2Icon className="animate-spin"/> &nbsp;Loading...
+                </div>}>
+                    <ProductMediaViewerWrapper apartment={apartment}/>
+                </Suspense>
+            );
+        } else {
+            return (
+                <div className="flex flex-col justify-center items-center min-h-screen">
+                    <h1 className="text-2xl font-bold text-gray-800 mb-4">Apartment Not Found</h1>
+                    <p className="text-gray-600 mb-6">The apartment you're looking for doesn't exist or has been removed.</p>
+                    <a href="/find-homes" className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                        Browse Other Apartments
+                    </a>
+                </div>
+            );
+        }
+    } catch (error: any) {
+        // Handle API errors (404, 500, etc.)
+        const isNotFound = error?.response?.status === 404;
+        
         return (
-            <Suspense fallback={<div className="flex justify-center items-center min-h-screen">
-                <Loader2Icon className="animate-spin"/> &nbsp;Loading...
-            </div>}>
-                <ProductMediaViewerWrapper apartment={apartment}/>
-            </Suspense>
+            <div className="flex flex-col justify-center items-center min-h-screen">
+                <h1 className="text-2xl font-bold text-gray-800 mb-4">
+                    {isNotFound ? 'Apartment Not Found' : 'Something Went Wrong'}
+                </h1>
+                <p className="text-gray-600 mb-6">
+                    {isNotFound 
+                        ? "The apartment you're looking for doesn't exist or has been removed."
+                        : "We're having trouble loading this apartment. Please try again later."
+                    }
+                </p>
+                <a href="/find-homes" className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                    Browse Other Apartments
+                </a>
+            </div>
         );
-    } else {
-        return <div className="flex justify-center items-center min-h-screen">
-            <Loader2Icon className="animate-spin"/> &nbsp;Loading...
-        </div>;
     }
 }
