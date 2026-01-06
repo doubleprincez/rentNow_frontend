@@ -464,7 +464,7 @@ export default function ProductInfoPanel({
   // ============================================================================
   
   return (
-    <div className="hidden md:block fixed right-0 top-0 w-[40%] h-screen bg-white overflow-y-auto z-40">
+    <div className="hidden md:block fixed right-0 top-0 w-[40%] h-screen bg-white overflow-y-auto z-40 pb-[100px]">
       <div className="p-6 space-y-4">
         {/* Product Header */}
         <div>
