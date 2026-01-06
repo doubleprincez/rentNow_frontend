@@ -523,7 +523,7 @@ export default function ProductInfoPanel({
         </div>
 
         {/* Agent/Business Information - Ad Gated */}
-        {isSubscribed ? (
+        {(isSubscribed||isAgentDetailsUnlocked) ? (
           // Subscribed users see details immediately
           <div className="space-y-3 pt-4 border-t">
             <h3 className="text-lg font-semibold text-gray-800">Agent Information</h3>
