@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
-import {AxiosApi} from "@/lib/utils";
+import {AxiosApi, getFormData} from "@/lib/utils";
 import {updateProfile, UserState} from "@/redux/userSlice"; // Assuming updateProfile exists and handles partial UserState
 import {baseURL} from "../../../../next.config"; // Path to your backend URL config
 
@@ -204,8 +204,14 @@ const RequestForUpdate: React.FC = () => {
             });
 
 
+            // Check if user is authenticated
+            const userToken = userState.token;
+            if (!userToken) {
+                throw new Error('You must be logged in to update your profile. Please log in and try again.');
+            }
+
             // Make the API call to update the user profile
-            const response = await AxiosApi('user', '', {}, true).put(`${baseURL}/user-profile`, apiPayload);
+            const response = await AxiosApi().put(`${baseURL}/user-profile`, apiPayload);
             const result = response.data;
 
             if (response.status !== 200) {
