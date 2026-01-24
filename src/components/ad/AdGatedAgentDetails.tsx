@@ -77,8 +77,8 @@ export default function AdGatedAgentDetails({
                     <span className={`text-gray-600 transition-all duration-300 ${
                         showDetails ? '' : 'blur-sm select-none'
                     }`}>
-              Email: {showDetails ? apartment?.business_email || 'Not provided' : '••••••@••••••.com'}
-            </span>
+                        Email: {showDetails ? apartment?.business_email || 'Not provided' : '••••••@••••••.com'}
+                    </span>
                     {!showDetails && (
                         <EyeOff className="w-3 h-3 text-gray-400 ml-1"/>
                     )}
@@ -90,8 +90,8 @@ export default function AdGatedAgentDetails({
                     <span className={`text-gray-600 transition-all duration-300 ${
                         showDetails ? '' : 'blur-sm select-none'
                     }`}>
-              Phone: {showDetails ? apartment?.business_phone || 'Not provided' : '+234 ••• ••• ••••'}
-                </span>
+                        Phone: {showDetails ? apartment?.business_phone || 'Not provided' : '+234 ••• ••• ••••'}
+                    </span>
                     {!showDetails && (
                         <EyeOff className="w-3 h-3 text-gray-400 ml-1"/>
                     )}
