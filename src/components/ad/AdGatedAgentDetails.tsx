@@ -60,8 +60,14 @@ export default function AdGatedAgentDetails({
           {apartment.agent && (
             <div className="flex items-center gap-2">
               <User className="text-orange-500 w-4 h-4" />
-              <span className="text-gray-600">
-                {String(apartment.agent_type).toLocaleUpperCase()}: {apartment.agent}
+              <span className={`text-gray-600 transition-all duration-300 ${
+              showDetails ? '' : 'blur-sm select-none'}`}>
+                {
+                  showDetails ?
+                  <>{String(apartment.agent_type).toLocaleUpperCase()}: {apartment.agent}</>:
+                  <>{String(apartment.agent_type).toLocaleUpperCase()}: ...... ...... ......</>
+                }
+                
               </span>
             </div>
           )}
@@ -99,8 +105,14 @@ export default function AdGatedAgentDetails({
           {apartment?.business_name && (
             <div className="flex items-center gap-2">
               <BuildingIcon className="text-orange-500 w-4 h-4" />
-              <span className="text-gray-600">
-                {String(apartment.agent_type).toLocaleUpperCase()}: {apartment?.business_name}
+              <span  className={`text-gray-600 transition-all duration-300 ${
+              showDetails ? '' : 'blur-sm select-none'}`}>
+                {
+                  showDetails?
+                  <>{String(apartment.agent_type).toLocaleUpperCase()}: {apartment?.business_name}</>:
+                  <>{String(apartment.agent_type).toLocaleUpperCase()}: ...... ...... ......</>
+                }
+                
               </span>
             </div>
           )}
