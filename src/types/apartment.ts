@@ -65,6 +65,7 @@ export interface Apartment {
 }
 
 
+
 export const AVAILABLE_AMENITIES = [
     // 'WiFi',
     // 'Air Conditioning',

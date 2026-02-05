@@ -13,8 +13,10 @@ import House2 from '@/components/assets/house2.jpeg';
 import House3 from '@/components/assets/house4.jpeg';
 import House4 from '@/components/assets/house5.jpeg';
 
+
 import {useRouter} from 'next/navigation';
 import {shouldShowAsNew} from "@/lib/apartment-utils";
+import {getApartments} from "@/features/landing/api/apartments";
 
 const Home: React.FC = () => {
     const images = [
@@ -50,13 +52,14 @@ const Home: React.FC = () => {
 
     // Modified fetchOptions to only get categories and states
     useEffect(() => {
+        
         const fetchOptions = async () => {
             try {
-                const response = await fetch('/api/apartments');
-                const data: ApiResponse = await response.json();
+                const response =  (await getApartments().then(r=>r));
+
+                const data:ApiResponse = response;
 
                 if (data.success) {
-
                     const uniqueStates = [...new Set(data.data.data.map(apt => apt.state_code))]
                         .filter((category): category is string => category !== undefined);
 
@@ -136,10 +139,11 @@ const Home: React.FC = () => {
             if (searchParams.state !== 'all') queryParams.append('state_code', searchParams.state);
             // Always include country_code=NGA
             queryParams.append('country_code', 'NGA');
+            
+            const response = await getApartments(queryParams).then(r=>r);
+            const data:ApiResponse = response;
 
-            const response = await fetch(`${baseURL}/apartments${queryParams.toString() ? `?${queryParams.toString()}` : ''}`);
-            const data: ApiResponse = await response.json();
-
+            console.log('with query ',data);
             if (data.success) {
                 setSearchResults(data.data.data);
                 setIsDialogOpen(true);

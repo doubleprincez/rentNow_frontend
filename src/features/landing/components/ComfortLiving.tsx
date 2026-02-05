@@ -75,6 +75,7 @@ const ComfortLiving = ({initialData}: { initialData?: ApiResponse }) => {
                 setIsLoading(true);
                 const response = await fetch(baseURL + '/apartments');
                 const data: ApiResponse = await response.json();
+
                 if (data.success) {
                     setApartments(data.data.data);
                     const uniqueCategories = [...new Set(data.data.data.map(apt => apt.category))]

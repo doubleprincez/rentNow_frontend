@@ -1,32 +1,15 @@
-import {NextResponse} from 'next/server';
-import axios from 'axios';
 import {baseURL} from "@/../next.config";
 import {AxiosApi} from "@/lib/utils";
 import {ApiSubscriptionResponse} from "@/types/subscription";
+import {ApiResponse} from "@/types/apartment";
 
-export async function GET() {
+
+export async function getApartments(queryParams:any=null) {
     try {
-        const response = await axios({
-            method: 'GET',
-            url: baseURL + '/apartments',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
-
-        return NextResponse.json(response.data, {
-            status: 200,
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-    } catch (error: any) {
-        //console.error('Error fetching apartments:', error);
-        return NextResponse.json(
-            {error: error.response?.data?.message || 'Failed to fetch apartments'},
-            {status: error.response?.status || 500}
-        );
+        const response = await fetch(`${baseURL}/apartments${queryParams.toString() ? `?${queryParams.toString()}` : ''}`);
+        return response.json();
+    } catch (error) {
+        throw error;
     }
 }
 

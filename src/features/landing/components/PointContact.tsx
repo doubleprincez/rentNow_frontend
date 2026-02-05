@@ -13,12 +13,32 @@ interface PointContactI {
     apartments: Apartment[]
 }
 
-const PointContact = ({apartments}: PointContactI) => {
-    const [displayedApartments, setDisplayedApartments] = useState<Apartment[]>(apartments);
+const PointContact = () => {
+
+    const [aparmtents,setApartments]= useState<Apartment[]>([]);
+    const [displayedApartments, setDisplayedApartments] = useState<Apartment[]>();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
+    useEffect(()=>{
+        const fetchApartments =async()=>{
+            try{
+                const response = await fetch(baseURL + '/apartments');
+                const data: ApiResponse = await response.json();
+            
+                setApartments(data.data.data);
+            }catch(e){
+
+            }finally{
+                setIsLoading(false)
+            }
+                
+
+        }
+        fetchApartments();
+    }
+    ,[]);
     // useEffect(() => {
     //     const fetchAndProcessApartments = async () => {
     //         try {
@@ -97,7 +117,7 @@ const PointContact = ({apartments}: PointContactI) => {
                 </p>
 
                 <div className='mt-4 w-full flex flex-col gap-2'>
-                    {displayedApartments.map((apartment) => (
+                    {aparmtents&&aparmtents?.map((apartment) => (
                         <div
                             key={apartment.id}
                             className='w-full h-[100px] sm:h-[120px] bg-white p-2 md:p-4 rounded-xl md:rounded-2xl overflow-hidden shadow-md flex items-center gap-3 cursor-pointer hover:shadow-lg transition-shadow relative'

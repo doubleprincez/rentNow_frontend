@@ -32,7 +32,15 @@ const REQUIRED_PROFILE_FIELDS: Array<keyof FormProfileData> = [
     // Add other fields from FormProfileData that are mandatory for this form's completion check
     // e.g., 'business_name', 'country', 'state', 'city', 'business_email', 'business_phone', 'business_address'
 ];
+// --- Valid Account Types ---
+// Define the valid account types that can update their profiles
+const VALID_ACCOUNT_TYPES = ['users', 'agents', 'admins'] as const;
+type ValidAccountType = typeof VALID_ACCOUNT_TYPES[number];
 
+// --- Type Guard for Account Types ---
+const isValidAccountType = (accountType: string | undefined): accountType is ValidAccountType => {
+    return accountType !== undefined && VALID_ACCOUNT_TYPES.includes(accountType as ValidAccountType);
+};
 interface extendedUserState extends UserState {
     isLoading?: false,
     error?: null,
@@ -106,7 +114,10 @@ const RequestForUpdate: React.FC = () => {
     // This effect runs when login status, account type, or mapped profile data changes.
     useEffect(() => {
         // Only proceed if user is logged in and mapped profile data exists
-        if (userState.isLoggedIn && userState.accountType && currentProfileDataMapped) {
+        // Support all authenticated user types: users, agents, and admins
+        if (userState.isLoggedIn && 
+            isValidAccountType(userState.accountType) && 
+            currentProfileDataMapped) {
             const needsUpdate = !checkIfProfileComplete(currentProfileDataMapped);
             // Check localStorage to see if the modal was previously dismissed for this user
             const dismissed = localStorage.getItem('dismissProfileModal_' + (currentProfileDataMapped.id || '')) === 'true';
@@ -204,10 +215,14 @@ const RequestForUpdate: React.FC = () => {
             });
 
 
-            // Check if user is authenticated
+            // Check if user is authenticated and has valid account type
             const userToken = userState.token;
             if (!userToken) {
                 throw new Error('You must be logged in to update your profile. Please log in and try again.');
+            }
+            
+            if (!isValidAccountType(userState.accountType)) {
+                throw new Error('Invalid account type. Please contact support.');
             }
 
             // Make the API call to update the user profile
@@ -290,7 +305,7 @@ const RequestForUpdate: React.FC = () => {
                 <DialogHeader>
                     <DialogTitle>Complete Your Profile</DialogTitle>
                     <DialogDescription>
-                        Please provide the missing information to complete your profile.
+                        Please provide the missing information to complete your profile. This applies to all authenticated users including regular users, agents, and admins.
                     </DialogDescription>
                 </DialogHeader>
 

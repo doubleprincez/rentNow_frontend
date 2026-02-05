@@ -4,7 +4,7 @@ import {clientRequestGateway} from "@/services/backend-api";
 export const apartmentApiRequests = {
     getApartments: () => {
         return clientRequestGateway.get(
-            `/apartment`
+            `/apartments`
         )
     },
     showApartment: (payload: object) => {
