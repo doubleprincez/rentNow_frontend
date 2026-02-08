@@ -37,6 +37,9 @@ export const AxiosApiServer = (tokenFor = 'user') => {
         token = getServerFormData('adminToken');
     }
 
+    if(!token){
+          token = getServerFormData('token')??getServerFormData('agentToken')?? getServerFormData('adminToken')??null;
+    }
     if (token) {
         instance.defaults.headers.Authorization = `Bearer ${token}`;
     }

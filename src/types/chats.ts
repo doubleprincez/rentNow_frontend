@@ -1,6 +1,5 @@
 import { User } from "@/features/admin/dashboard/api/conversationApi";
 import { PaginationLink } from "./apartment";
-import {UserState} from "@/redux/userSlice";
 
 export interface ChatDialogProps {
     agentId: number;
@@ -19,9 +18,6 @@ export interface Message {
 }
 
 
-export interface RootState {
-    user: UserState;
-}
 
 
 export interface ApiUserChatResponse{

@@ -144,7 +144,7 @@ const loadInitialState = (): AgentState => {
     return initialState;
 };
 
-export const loginAgent = createAsyncThunk(
+export const login = createAsyncThunk(
     'agent/login',
     async ({email, password, account_id}: {
         email: string;
@@ -202,7 +202,7 @@ export const loginAgent = createAsyncThunk(
 );
 
 
-export const logoutAgent = createAsyncThunk(
+export const agentLogout = createAsyncThunk(
     'agent/logout',
     async (_, {rejectWithValue}) => {
         try {
@@ -247,11 +247,11 @@ const agentSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loginAgent.pending, (state) => {
+            .addCase(login.pending, (state) => {
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(loginAgent.fulfilled, (state, action) => {
+            .addCase(login.fulfilled, (state, action) => {
                 state.isLoggedIn = true;
                 state.isLoading = false;
                 state.token = action.payload.token;
@@ -266,12 +266,12 @@ const agentSlice = createSlice({
                 state.rentedApartments = action.payload.rentedApartments;
                 state.businessDetails = action.payload.businessDetails;
             })
-            .addCase(loginAgent.rejected, (state, action) => {
+            .addCase(login.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
                 state.isLoggedIn = false;
             })
-            .addCase(logoutAgent.fulfilled, (state) => {
+            .addCase(agentLogout.fulfilled, (state) => {
                 Object.assign(state, initialState);
             });
     }

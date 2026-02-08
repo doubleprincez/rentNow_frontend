@@ -1,6 +1,5 @@
-import axios from 'axios';
+import {AxiosApi} from "@/lib/utils";
 import {baseURL} from "@/../next.config";
-import {getFormData} from "@/lib/utils";
 
 // Types
 export interface User {
@@ -25,7 +24,6 @@ export interface User {
     };
 }
 
-
 export interface PaginatedResponse {
     current_page: number;
     data: User[];
@@ -34,19 +32,10 @@ export interface PaginatedResponse {
 }
 
 // API functions
-const getAuthHeaders = () => {
-    const token = getFormData('adminToken');
-    return {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-    };
-};
-
 export const getUsers = async (page = 1, search = '', accountType: 'users' | 'agents' = 'users') => {
-    const response = await axios.get<{ data: PaginatedResponse }>(
+    const response = await AxiosApi("admin").get<{ data: PaginatedResponse }>(
         `${baseURL}/users`,
         {
-            headers: getAuthHeaders(),
             params: {
                 page,
                 per_page: 20,
@@ -59,43 +48,31 @@ export const getUsers = async (page = 1, search = '', accountType: 'users' | 'ag
 };
 
 export const getUser = async (id: number) => {
-    const response = await axios.get<{ data: User }>(
-        `${baseURL}/user/${id}`,
-        {
-            headers: getAuthHeaders(),
-        }
+    const response = await AxiosApi("admin").get<{ data: User }>(
+        `${baseURL}/user/${id}`
     );
     return response.data.data;
 };
 
 export const createUser = async (userData: Partial<User>) => {
-    const response = await axios.post(
+    const response = await AxiosApi("admin").post(
         `${baseURL}/user`,
-        userData,
-        {
-            headers: getAuthHeaders(),
-        }
+        userData
     );
     return response.data;
 };
 
 export const updateUser = async (id: number, userData: Partial<User>) => {
-    const response = await axios.put(
+    const response = await AxiosApi("admin").put(
         `${baseURL}/user/${id}`,
-        userData,
-        {
-            headers: getAuthHeaders(),
-        }
+        userData
     );
     return response.data;
 };
 
 export const deleteUser = async (id: number) => {
-    const response = await axios.delete(
-        `${baseURL}/user/${id}`,
-        {
-            headers: getAuthHeaders(),
-        }
+    const response = await AxiosApi("admin").delete(
+        `${baseURL}/user/${id}`
     );
     return response.data;
 };

@@ -25,7 +25,7 @@ import PendingInvoice from './PendingInvoice';
 
 const UserSubscription = () => {
 
-    const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn); 
+    const isLoggedIn = useSelector((state: any) => state.auth.isLoggedIn); 
       
     const [subscriptions, setSubscriptions] = useState<SubscriptionInterface[] | any>()
     const [loading, setLoading] = useState(false);

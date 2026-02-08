@@ -12,7 +12,7 @@ import Logo from '@/components/assets/logo/logo.png'
 const DashHead = () => {
   const router = useRouter();
   // const [isMenu, setIsMenu] = React.useState(false);
-  const user = useSelector((state: RootState) => state.agent);
+  const user = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (!user.isLoggedIn) {

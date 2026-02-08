@@ -32,7 +32,7 @@ export default function RentedApartments() {
   const [error, setError] = useState<string | null>(null);
   
   const router = useRouter();
-  const { isLoggedIn, token } = useSelector((state: any) => state.user);
+  const { isLoggedIn, token } = useSelector((state: any) => state.auth);
 
   useEffect(() => {
     if (!isLoggedIn || !token) {

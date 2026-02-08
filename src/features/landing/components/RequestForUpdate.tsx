@@ -7,13 +7,13 @@ import {Label} from "@/components/ui/label";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "@/redux/store";
 import {AxiosApi, getFormData} from "@/lib/utils";
-import {updateProfile, UserState} from "@/redux/userSlice"; // Assuming updateProfile exists and handles partial UserState
+import {updateProfile, AuthState} from "@/redux/authSlice";
 import {baseURL} from "../../../../next.config"; // Path to your backend URL config
 
 
 // --- Local Type for Form Data ---
 // This interface defines the exact shape of the data that this form will manage.
-// It maps the properties from UserState to suit form inputs (e.g., 'phone' as string).
+// It maps the properties from AuthState to suit form inputs (e.g., 'phone' as string).
 export interface FormProfileData {
     id?: null | string | number; // Optional ID for existing users
     firstName?: string | null;
@@ -41,22 +41,19 @@ type ValidAccountType = typeof VALID_ACCOUNT_TYPES[number];
 const isValidAccountType = (accountType: string | undefined): accountType is ValidAccountType => {
     return accountType !== undefined && VALID_ACCOUNT_TYPES.includes(accountType as ValidAccountType);
 };
-interface extendedUserState extends UserState {
-    isLoading?: false,
-    error?: null,
-}
 
 const RequestForUpdate: React.FC = () => {
     const dispatch = useDispatch();
-    const preparedState = useSelector((state: RootState) => state.user); // Get the full UserState from Redux
-    const userState: extendedUserState = preparedState as extendedUserState;
+    const preparedState = useSelector((state: RootState) => state.auth); // Get the full AuthState from Redux
+    const userState: AuthState = preparedState;
 
-    // --- Helper function to map UserState to FormProfileData ---
-    // This transforms the Redux UserState structure (e.g., phoneNumber: number)
+    // --- Helper function to map AuthState to FormProfileData ---
+    // This transforms the Redux AuthState structure (e.g., phoneNumber: number)
     // into the FormProfileData structure (e.g., phone: string).
-    const mapUserStateToFormProfileData = (state: UserState): FormProfileData => {
+    const mapAuthStateToFormProfileData = (state: AuthState): FormProfileData => {
+        console.log('user state',state);
         return {
-            id: state.userId ?? undefined, // userId from UserState maps to id in FormProfileData
+            id: state.userId ?? undefined, // userId from AuthState maps to id in FormProfileData
             firstName: state.firstName,
             lastName: state.lastName,
             email: state.email,
@@ -71,7 +68,7 @@ const RequestForUpdate: React.FC = () => {
     // This state holds the current profile data formatted for the form.
     const [currentProfileDataMapped, setCurrentProfileDataMapped] = useState<FormProfileData | null>(
         userState.isLoggedIn && userState.userId // Only map if user is considered logged in
-            ? mapUserStateToFormProfileData(userState)
+            ? mapAuthStateToFormProfileData(userState)
             : null
     );
 
@@ -98,12 +95,12 @@ const RequestForUpdate: React.FC = () => {
         );
     };
 
-    // --- Effect to Sync Redux UserState with Local Mapped Profile Data ---
+    // --- Effect to Sync Redux AuthState with Local Mapped Profile Data ---
     // This ensures `currentProfileDataMapped` and `localUser` are always up-to-date
     // with changes from the Redux store.
     useEffect(() => {
         const mappedData = userState.isLoggedIn && userState.userId
-            ? mapUserStateToFormProfileData(userState)
+            ? mapAuthStateToFormProfileData(userState)
             : null;
         setCurrentProfileDataMapped(mappedData);
         setLocalUser(mappedData); // Keep localUser in sync for dismissal
@@ -113,10 +110,12 @@ const RequestForUpdate: React.FC = () => {
     // --- Effect to Control Modal Visibility and Initialize Form Data ---
     // This effect runs when login status, account type, or mapped profile data changes.
     useEffect(() => {
+
+        console.log('user code ',useState);
         // Only proceed if user is logged in and mapped profile data exists
         // Support all authenticated user types: users, agents, and admins
         if (userState.isLoggedIn && 
-            isValidAccountType(userState.accountType) && 
+            isValidAccountType(userState.accountType ?? undefined) && 
             currentProfileDataMapped) {
             const needsUpdate = !checkIfProfileComplete(currentProfileDataMapped);
             // Check localStorage to see if the modal was previously dismissed for this user
@@ -221,12 +220,12 @@ const RequestForUpdate: React.FC = () => {
                 throw new Error('You must be logged in to update your profile. Please log in and try again.');
             }
             
-            if (!isValidAccountType(userState.accountType)) {
+            if (!isValidAccountType(userState.accountType ?? undefined)) {
                 throw new Error('Invalid account type. Please contact support.');
             }
 
             // Make the API call to update the user profile
-            const response = await AxiosApi().put(`${baseURL}/user-profile`, apiPayload);
+            const response = await AxiosApi('user', userToken).put(`${baseURL}/user-profile`, apiPayload);
             const result = response.data;
 
             if (response.status !== 200) {
@@ -248,14 +247,14 @@ const RequestForUpdate: React.FC = () => {
 
             setLocalUser(checkingData); // Update local state for dismissal logic
             setCurrentProfileDataMapped(checkingData); // Keep main mapped state updated
-            // --- Dispatch Update to Redux UserState ---
-            // Construct a payload that matches the direct properties of UserState.
-            // Convert FormProfileData fields back to UserState's types/names as needed.
+            // --- Dispatch Update to Redux AuthState ---
+            // Construct a payload that matches the direct properties of AuthState.
+            // Convert FormProfileData fields back to AuthState's types/names as needed.
             dispatch(updateProfile({
                 firstName: splitFullName[0],
                 lastName: splitFullName[1],
                 email: updatedProfileDataFromApi.email,
-                phoneNumber: updatedProfileDataFromApi.phone ? parseInt(updatedProfileDataFromApi.phone) : null,
+                phoneNumber: updatedProfileDataFromApi.phone ? String(updatedProfileDataFromApi.phone) : null,
             }));
 
             // Re-check completion and close modal if now complete
@@ -289,13 +288,6 @@ const RequestForUpdate: React.FC = () => {
     // The modal is only rendered if it's open, if we have valid profile data,
     // and if there are still missing fields to complete.
     if (!isModalOpen || !currentProfileDataMapped || missingFields.length === 0) {
-        // Provide loading/error messages based on Redux userState
-        if (userState.isLoading) {
-            return <div>Loading user profile...</div>;
-        }
-        if (userState.error) {
-            return <div>Error loading profile: {userState.error}</div>;
-        }
         return null; // Don't render the modal if conditions aren't met
     }
 

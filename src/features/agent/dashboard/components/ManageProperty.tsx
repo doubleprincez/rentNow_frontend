@@ -71,7 +71,7 @@ const ManageProperty: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-    const token = useSelector((state: any) => state.agent.token);
+    const token = useSelector((state: any) => state.auth.token);
 
     useEffect(() => {
         const fetchProperties = async () => {

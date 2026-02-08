@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useDispatch } from "react-redux"; 
-import { updateSubscription } from "@/redux/userSlice";
+import { updateSubscription } from "@/redux/authSlice";
 import {useAppDispatch} from "@/redux/hook";
 
 const useSubscriptionListener = (userId: number | null) => {

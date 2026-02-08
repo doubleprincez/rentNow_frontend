@@ -12,7 +12,7 @@ import Link from 'next/link';
 
 const PendingInvoice = () => {
 
-    const {isLoggedIn, token} = useSelector((state: any) => state.user);
+    const {isLoggedIn, token} = useSelector((state: any) => state.auth);
 
     const [loadingPending, setLoadingPending] = useState(false);
     const [pendingSubs, setPendingsubs] = useState<TransactionHistory[]>();

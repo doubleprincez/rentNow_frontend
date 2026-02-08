@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {AxiosApi} from "@/lib/utils";
 import {baseURL} from "@/../next.config";
 import {getFormData} from "@/lib/utils";
 
@@ -113,7 +114,7 @@ export const conversationApi = {
 
     // Other methods remain the same...
     deleteConversation: async (id: number) => {
-        await axios.delete(
+        await AxiosApi("admin").delete(
             `${baseURL}/conversation/${id}`,
             getAuthHeader()
         );

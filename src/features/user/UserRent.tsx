@@ -22,7 +22,7 @@ const UserRent = () => {
     // print out
 
 
-    const isLoggedIn = useSelector((state: any) => state.user.isLoggedIn);
+    const isLoggedIn = useSelector((state: any) => state.auth.isLoggedIn);
 
     const [rents, setRents] = useState<RentInterface[] | any>()
     const [rentLoading, setRentLoading] = useState(false);

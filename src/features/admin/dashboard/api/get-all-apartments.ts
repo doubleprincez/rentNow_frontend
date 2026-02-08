@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {AxiosApi} from "@/lib/utils";
 import {baseURL} from "@/../next.config";
 import {getFormData} from "@/lib/utils";
 
@@ -83,7 +84,7 @@ export const deleteApartment = async (id: number) => {
             throw new Error('No authentication token found');
         }
 
-        const response = await axios.delete(
+        const response = await AxiosApi("admin").delete(
             baseURL + `/apartment/${id}`,
             {
                 headers: {
@@ -105,7 +106,7 @@ export const updateApartment = async (id: number, data: object) => {
             throw new Error('No authentication token found');
         }
 
-        const response = await axios.put(
+        const response = await AxiosApi("admin").put(
             baseURL + `/apartment/${id}`,
             data,
             {

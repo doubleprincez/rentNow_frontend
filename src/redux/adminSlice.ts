@@ -2,7 +2,7 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {baseURL} from "@/../next.config";
 import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
-import {UserState} from "@/redux/userSlice";
+import {AuthState} from "@/redux/authSlice";
 
 interface AdminState {
     isLoggedIn: boolean;
@@ -81,13 +81,13 @@ const removeFromStorage = (key: string): void => {
 // Load initial state from localStorage
 const loadInitialState = (): AdminState => {
     const token = getFromStorage('adminToken') as string;
-    const savedState = getFromStorage('adminState') as UserState;
+    const savedState = getFromStorage('adminState') as AuthState;
 
     if (token && savedState) {
         try {
             return {
                 ...initialState,
-                ...(savedState),
+                ...(savedState as any),
                 token,
                 isLoading: false,
                 error: null
@@ -99,7 +99,7 @@ const loadInitialState = (): AdminState => {
     return initialState;
 };
 
-export const loginAdmin = createAsyncThunk(
+export const login = createAsyncThunk(
     'admin/login',
     async ({email, password, account_id}: {
         email: string;
@@ -146,7 +146,7 @@ export const loginAdmin = createAsyncThunk(
     }
 );
 
-export const logoutAdmin = createAsyncThunk(
+export const adminLogout = createAsyncThunk(
     'admin/logout',
     async (_, {rejectWithValue}) => {
         try {
@@ -189,11 +189,11 @@ const adminSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            .addCase(loginAdmin.pending, (state) => {
+            .addCase(login.pending, (state) => {
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(loginAdmin.fulfilled, (state, action) => {
+            .addCase(login.fulfilled, (state, action) => {
                 state.isLoggedIn = true;
                 state.isLoading = false;
                 state.token = action.payload.token;
@@ -204,12 +204,12 @@ const adminSlice = createSlice({
                 state.accountType = action.payload.accountType;
                 state.role = action.payload.role;
             })
-            .addCase(loginAdmin.rejected, (state, action) => {
+            .addCase(login.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload as string;
                 state.isLoggedIn = false;
             })
-            .addCase(logoutAdmin.fulfilled, (state) => {
+            .addCase(adminLogout.fulfilled, (state) => {
                 Object.assign(state, initialState);
             });
     }

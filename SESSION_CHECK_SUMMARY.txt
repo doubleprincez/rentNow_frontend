@@ -1,0 +1,45 @@
+╔══════════════════════════════════════════════════════════════╗
+║            SESSION CHECK FEATURE - COMPLETE              ║
+╚══════════════════════════════════════════════════════════════╝
+
+✅ AUTOMATIC SESSION VALIDATION
+
+Checks user session every:
+• 5 minutes (background)
+• When user returns to browser tab
+• When window regains focus
+• On app mount
+
+✅ SMART LOGOUT
+
+On 401 response:
+1. Clears all tokens
+2. Redirects to correct login:
+   - Users → /auth/login
+   - Agents → /agents/auth/login
+   - Admins → /admin/auth/login
+
+✅ WORKS ALONGSIDE 401 INTERCEPTOR
+
+This provides a backup layer:
+- Interceptor catches API errors immediately
+- Session check validates periodically
+- Both work together for maximum reliability
+
+✅ FILES CREATED
+
+Frontend:
+• src/hooks/useSessionCheck.ts
+• src/components/SessionChecker.tsx
+• src/app/providers.tsx (updated)
+
+Backend:
+• Uses existing /api/me endpoint
+
+✅ ZERO CONFIGURATION NEEDED
+
+Automatically active for all logged-in users.
+
+╔══════════════════════════════════════════════════════════════╗
+║                    READY TO USE                          ║
+╚══════════════════════════════════════════════════════════════╝

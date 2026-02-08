@@ -6,7 +6,7 @@ import { RootState } from '@/redux/store';
 
 const AdminHome = () => {
     const router = useRouter();
-    const { isLoggedIn, token } = useSelector((state: RootState) => state.admin);
+    const { isLoggedIn, token } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         if (isLoggedIn && token) {

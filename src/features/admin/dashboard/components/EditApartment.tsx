@@ -16,7 +16,7 @@ const EditApartment: React.FC = () => {
     const [apartment, setApartment] = useState<PropertyFormData>();
     const [pageState, setPageState] = useState('loading');
     const [loading, setLoading] = useState(false);
-    const token = useSelector((state: RootState) => state.admin.token);
+    const token = useSelector((state: RootState) => state.auth.token);
 
 
     useEffect(() => {

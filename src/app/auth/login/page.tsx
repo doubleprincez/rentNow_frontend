@@ -1,12 +1,14 @@
+'use client';
+import dynamic from 'next/dynamic';
 import React from 'react';
-import Login from '@/features/auth/components/Login';
+
+const Login = dynamic(
+  () => import('@/features/auth/components/Login').then(mod => ({ default: () => <mod.default isPageVisible={true} /> })),
+  { ssr: false }
+);
 
 const page = () => {
-  return (
-    <div>
-      <Login isPageVisible={true}/>
-    </div>
-  )
+  return <div><Login /></div>;
 }
 
 export default page

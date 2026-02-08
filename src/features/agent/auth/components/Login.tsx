@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import {useRouter} from "next/navigation";
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '@/redux/store';
-import {loginAgent} from '@/redux/agentSlice';
+import {login} from '@/redux/authSlice';
 import Link from "next/link";
 import {useAlert} from '@/contexts/AlertContext';
 import {DialogContent, DialogTrigger} from "@/components/ui/dialog";
@@ -30,7 +30,7 @@ const Login: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const result = await dispatch(loginAgent({email, password, account_id})).unwrap();
+            const result = await dispatch(login({email, password, account_id})).unwrap();
 
             if (result.accountType !== "agents") {
                 showAlert("Access denied. This login is for agents only. Please register as an agent or use the appropriate login page.", "error");
@@ -180,7 +180,7 @@ export default Login;
 // import { useRouter } from "next/navigation";
 // import { useDispatch } from 'react-redux';
 // import { AppDispatch } from '@/redux/store';
-// import { loginAgent } from '@/redux/agentSlice';
+// import { login } from '@/redux/authSlice';
 // import Link from "next/link";
 // import { useAlert } from '@/contexts/AlertContext'; 
 
@@ -197,7 +197,7 @@ export default Login;
 //     setError(null);
 
 //     try {
-//       const result = await dispatch(loginAgent({ email, password })).unwrap();
+//       const result = await dispatch(login({ email, password })).unwrap();
 //       showAlert("Login successful. Welcome!", "success")
 //       navigate.push("/agents/dashboard");
 //     } catch (err: any) {

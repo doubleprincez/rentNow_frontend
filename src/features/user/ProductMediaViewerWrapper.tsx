@@ -14,7 +14,7 @@ interface ProductMediaViewerWrapperProps {
  * the wrapper handles client-side user state from Redux
  */
 export default function ProductMediaViewerWrapper({ apartment }: ProductMediaViewerWrapperProps) {
-  const { isLoggedIn, token, isSubscribed } = useSelector((state: any) => state.user);
+  const { isLoggedIn, token, isSubscribed } = useSelector((state: any) => state.auth);
 
   return (
     <ProductMediaViewer

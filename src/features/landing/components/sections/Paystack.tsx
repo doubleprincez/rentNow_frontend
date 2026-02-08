@@ -22,7 +22,7 @@ const Paystack = ({ plan, onCompleted }: PaystackI) => {
 
     const { showAlert } = useAlert();
     const router = useRouter();
-    const user = useSelector((state: any) => state.user);
+    const user = useSelector((state: any) => state.auth);
     const publicKey = PAYSTACK_PUBLIC_KEY;
 
     const [loading, setLoading] = useState(false);

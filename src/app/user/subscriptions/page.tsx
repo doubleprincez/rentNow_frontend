@@ -1,12 +1,5 @@
-import React from 'react';
-import UserSubscription from '@/features/user/UserSubscription';
-
-const page = () => {
-    return (
-        <div>
-            <UserSubscription/>
-        </div>
-    )
-}
-
+'use client';
+import dynamic from 'next/dynamic';
+const UserSubscription = dynamic(() => import('@/features/user/UserSubscription'), { ssr: false });
+const page = () => <div><UserSubscription/></div>;
 export default page

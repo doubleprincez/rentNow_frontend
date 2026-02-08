@@ -1,4 +1,5 @@
 'use client'
+import {AxiosApi} from "@/lib/utils";
 import React, {useEffect, useRef, useState} from 'react';
 import {Tabs, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Card, CardContent} from "@/components/ui/card";
@@ -28,7 +29,7 @@ const Messages = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [searchTerm, setSearchTerm] = useState('');
     const {toast} = useToast();
-    const {userId, isLoggedIn} = useSelector((state: RootState) => state.admin);
+    const {userId, isLoggedIn} = useSelector((state: RootState) => state.auth);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [messagePollingInterval, setMessagePollingInterval] = useState<NodeJS.Timeout | null>(null);
@@ -62,7 +63,7 @@ const Messages = () => {
     const fetchMessages = async () => {
         if (selectedUser?.id) {
             try {
-                const response = await axios.get(
+                const response = await AxiosApi("admin").get(
                     `${baseURL}/conversation/${selectedUser.id}`,
                     {
                         ...getAuthHeader(),

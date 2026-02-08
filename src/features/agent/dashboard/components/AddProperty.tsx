@@ -47,7 +47,7 @@ const AddProperty: React.FC = () => {
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-    const token = useSelector((state: any) => state.agent.token);
+    const token = useSelector((state: any) => state.auth.token);
 
     const {register, handleSubmit, formState: {errors}, setValue, watch, reset, trigger} = useForm<PropertyFormData>({
         defaultValues: {

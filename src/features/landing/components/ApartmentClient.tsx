@@ -38,7 +38,7 @@ interface ClientProps {
 export default function ApartmentClient({prevApartment}: ClientProps) {
 
     const router = useRouter();
-    const {isLoggedIn, token, isSubscribed} = useSelector((state: any) => state.user);
+    const {isLoggedIn, token, isSubscribed} = useSelector((state: any) => state.auth);
     const {showAlert} = useAlert();
 
     const [isLoading, setIsLoading] = useState(false);

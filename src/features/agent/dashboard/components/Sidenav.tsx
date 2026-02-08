@@ -6,7 +6,7 @@ import {BookOpenText, Building2Icon, CirclePlus, Globe, Home, Mail} from 'lucide
 import Image from 'next/image';
 import Logo from '@/components/assets/logo/logo.png'
 import {useDispatch, useSelector} from 'react-redux';
-import {logoutAgent} from '@/redux/agentSlice';
+import {logout} from '@/redux/authSlice';
 import {RootState} from "@/redux/store";
 import {useAlert} from "@/contexts/AlertContext";
 import {useAppDispatch} from "@/redux/hook";
@@ -17,7 +17,7 @@ const Sidenav = () => {
     const router = useRouter();
     const {showAlert} = useAlert();
 
-    const agent = useSelector((state: RootState) => state.agent);
+    const agent = useSelector((state: RootState) => state.auth);
 
     const links = [
         {
@@ -60,7 +60,7 @@ const Sidenav = () => {
 
     const handleLogout = async () => {
         try {
-            await dispatch(logoutAgent()).unwrap();
+            await dispatch(logout()).unwrap();
             showAlert('Logged out successfully', 'success');
             router.push('/agents/auth/login');
         } catch (error: any) {

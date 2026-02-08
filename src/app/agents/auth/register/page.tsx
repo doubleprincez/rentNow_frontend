@@ -8,8 +8,8 @@ import { RootState } from '@/redux/store';
 
 const page = () => {
   const router = useRouter();
-  const user = useSelector((state: RootState) => state.agent);
-  const { isLoggedIn, firstName, lastName } = useSelector((state: RootState) => state.agent);
+  const user = useSelector((state: RootState) => state.auth);
+  const { isLoggedIn, firstName, lastName } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     if (isLoggedIn) {

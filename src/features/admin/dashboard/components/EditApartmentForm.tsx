@@ -85,7 +85,7 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
 
-    const token = useSelector((state: any) => state.admin.token);
+    const token = useSelector((state: any) => state.auth.token);
 
     const {
         register,

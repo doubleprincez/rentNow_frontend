@@ -27,7 +27,7 @@ const Messages = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [adminId, setAdminId] = useState<number | null>(null);
     const {toast} = useToast();
-    const {userId, isLoggedIn} = useSelector((state: RootState) => state.admin);
+    const {userId, isLoggedIn} = useSelector((state: RootState) => state.auth);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [messages, setMessages] = useState<any[]>([]);
     const [messagePollingInterval, setMessagePollingInterval] = useState<NodeJS.Timeout | null>(null);

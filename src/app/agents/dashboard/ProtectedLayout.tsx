@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { ACCOUNT_TYPES } from '@/lib/authUtils';
 
 export default function ProtectedLayout({
   children,
@@ -10,13 +11,13 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
     const router = useRouter();
-    const { isLoggedIn } = useSelector((state: RootState) => state.agent);
+    const { isLoggedIn, account_id } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
-        if (!isLoggedIn) {
-        router.push('/agents/auth/login');
+        if (!isLoggedIn || account_id !== ACCOUNT_TYPES.AGENT) {
+            router.push('/agents/auth/login');
         }
-    }, [isLoggedIn, router]);
+    }, [isLoggedIn, account_id, router]);
 
-    return isLoggedIn ? <>{children}</> : null;
+    return (isLoggedIn && account_id === ACCOUNT_TYPES.AGENT) ? <>{children}</> : null;
 }

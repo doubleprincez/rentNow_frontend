@@ -1,13 +1,5 @@
-import ViewSubscriptions from '@/features/admin/dashboard/components/ViewSubscriptions'
-import React from 'react' 
-
-
-const page = () => {
-  return (
-    <div className='w-full'>
-        <ViewSubscriptions/>
-    </div>
-  )
-}
-
+'use client';
+import dynamic from 'next/dynamic';
+const ViewSubscriptions = dynamic(() => import('@/features/admin/dashboard/components/ViewSubscriptions'), { ssr: false });
+const page = () => <div className='w-full'><ViewSubscriptions/></div>;
 export default page

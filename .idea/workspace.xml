@@ -5,13 +5,81 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="40655083-c67c-4337-ba24-203a7d4b2a4e" name="Changes" comment="added google adsense">
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/public/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/public/.htaccess" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/rentNaija.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/rentNaija.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/landing/api/apartments.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/api/apartments.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/features/landing/components/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/components/Home.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/admin/dashboard/AdminRoute.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/dashboard/AdminRoute.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/admin/dashboard/access-rents/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/dashboard/access-rents/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/admin/dashboard/messages/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/dashboard/messages/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/admin/dashboard/view-agents/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/dashboard/view-agents/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/admin/dashboard/view-apartments/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/dashboard/view-apartments/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/admin/dashboard/view-subscriptions/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/dashboard/view-subscriptions/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/admin/dashboard/view-users/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/dashboard/view-users/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/admin/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/admin/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/agents/auth/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/agents/auth/login/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/agents/auth/register/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/agents/auth/register/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/agents/dashboard/ProtectedLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/agents/dashboard/ProtectedLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/agents/dashboard/add-property/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/agents/dashboard/add-property/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/agents/dashboard/manage-property/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/agents/dashboard/manage-property/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/agents/dashboard/manage-rent/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/agents/dashboard/manage-rent/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/agents/dashboard/messages/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/agents/dashboard/messages/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/agents/dashboard/profile/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/agents/dashboard/profile/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/auth/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/auth/login/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/auth/signup/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/auth/signup/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/providers.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/providers.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/user/chat/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/user/chat/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/user/rent/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/user/rent/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/user/subscriptions/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/user/subscriptions/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/custom/PersistLogin.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/custom/PersistLogin.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/auth/components/AdminLogin.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/auth/components/AdminLogin.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/DashHead.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/DashHead.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/EditApartment.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/EditApartment.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/EditApartmentForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/EditApartmentForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/Home.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/Messages.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/Messages.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/Sidenav.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/Sidenav.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/ViewApartments.old.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/ViewApartments.old.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/ViewApartments.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/ViewApartments.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/admin/dashboard/components/subscriptionTabs/SubTransactions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/admin/dashboard/components/subscriptionTabs/SubTransactions.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/auth/components/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/auth/components/Login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/AddProperty.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/AddProperty.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/AgentMessages.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/AgentMessages.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/BottomNav.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/BottomNav.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/DashHead.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/DashHead.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/Home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/Home.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/ManageProperty.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/ManageProperty.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/ManageRent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/ManageRent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/Messages.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/Messages.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/ProfilePage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/ProfilePage.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/dashboard/components/Sidenav.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/dashboard/components/Sidenav.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/agent/landing/AgentHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/agent/landing/AgentHeader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/auth/components/Login.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/auth/components/Login.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/landing/components/ApartmentClient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/components/ApartmentClient.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/landing/components/ChatDialog.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/components/ChatDialog.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/landing/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/components/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/landing/components/RentApartment.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/components/RentApartment.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/features/landing/components/RequestForUpdate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/components/RequestForUpdate.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/apartment-api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/apartment-api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/apartment.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/apartment.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/landing/components/sections/BankTransfer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/components/sections/BankTransfer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/landing/components/sections/Paystack.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/components/sections/Paystack.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/landing/components/sections/Subscribe.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/landing/components/sections/Subscribe.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/user/BookApartment.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/BookApartment.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/user/PendingInvoice.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/PendingInvoice.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/user/ProductMediaViewerWrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/ProductMediaViewerWrapper.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/user/Transaction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/Transaction.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/user/UserChat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/UserChat.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/user/UserRent.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/UserRent.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/features/user/UserSubscription.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/features/user/UserSubscription.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/server-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/server-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/accountRefresher.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/accountRefresher.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/adminSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/adminSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/agentSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/agentSlice.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/redux/store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/store.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/chats.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/chats.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,6 +173,8 @@
       <workItem from="1770306588336" duration="515000" />
       <workItem from="1770308739863" duration="2278000" />
       <workItem from="1770311446487" duration="88000" />
+      <workItem from="1770499884121" duration="3226000" />
+      <workItem from="1770508529547" duration="589000" />
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />

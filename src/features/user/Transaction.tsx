@@ -22,7 +22,7 @@ const Transaction = ({reference}: TransactionI) => {
     const [loading, setLoading] = useState(false);
     const [proofFile, setProofFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false); // Prevents multiple uploads
-    const user = useSelector((state: any) => state.user);
+    const user = useSelector((state: any) => state.auth);
 
 
     const fetchTransaction = async () => {

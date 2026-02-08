@@ -23,8 +23,8 @@ const ViewApartment = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
     const [sortByRecent, setSortByRecent] = useState(false);
-    const isLoggedIn = useSelector((state: any) => state.admin.isLoggedIn);
-    const token = useSelector((state: RootState) => state.admin.token);
+    const isLoggedIn = useSelector((state: any) => state.auth.isLoggedIn);
+    const token = useSelector((state: RootState) => state.auth.token);
 
     const fetchApartments = async () => {
         try {

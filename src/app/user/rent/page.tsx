@@ -1,12 +1,5 @@
-import React from 'react';
-import UserRent from '@/features/user/UserRent';
-
-const page = () => {
-    return (
-        <div>
-            <UserRent/>
-        </div>
-    )
-}
-
+'use client';
+import dynamic from 'next/dynamic';
+const UserRent = dynamic(() => import('@/features/user/UserRent'), { ssr: false });
+const page = () => <div><UserRent/></div>;
 export default page

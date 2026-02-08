@@ -12,7 +12,7 @@ import Logo from '@/components/assets/logo/logo.png'
 const Header = () => {
   const pathname = usePathname();
   const [ isMenu, setIsMenu ] = useState(false);
-  const agent = useSelector((state: RootState) => state.agent);
+  const agent = useSelector((state: RootState) => state.auth);
 
   const links = [
     { title: 'Home', link: '/' },

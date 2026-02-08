@@ -27,7 +27,7 @@ interface GatewayI {
 
 const Subscribe = ({plans}: CheckoutI) => {
     const router = useRouter();
-    const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+    const isLoggedIn = useSelector((state: RootState) => state.auth.isLoggedIn);
 
     useEffect(() => {
         fetchToken();

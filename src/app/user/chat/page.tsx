@@ -1,5 +1,11 @@
+'use client';
+import dynamic from 'next/dynamic';
 import React from 'react';
-import UserChat from '@/features/user/UserChat';
+
+const UserChat = dynamic(
+  () => import('@/features/user/UserChat'),
+  { ssr: false }
+);
 
 const page = () => {
     return (

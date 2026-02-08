@@ -44,7 +44,7 @@ interface BookApartmentI {
 const BookApartment = ({bookingId}: BookApartmentI) => {
 
 
-    const {isLoggedIn, isSubscribed, token} = useSelector((state: any) => state.user);
+    const {isLoggedIn, isSubscribed, token} = useSelector((state: any) => state.auth);
 
     useEffect(() => {
         if (!isLoggedIn) {

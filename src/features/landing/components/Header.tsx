@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux';
 import {RootState} from '@/redux/store';
 import {LogOut, Menu, UserCircle2, X} from 'lucide-react';
 import {motion} from 'framer-motion';
-import {logout, UserState} from '@/redux/userSlice';
+import {AuthState, logout} from '@/redux/authSlice';
 import Image from 'next/image';
 import Logo from '@/components/assets/logo/logo.png'
 import accountRefresher from '@/redux/accountRefresher';
@@ -17,21 +17,19 @@ import RequestForUpdate from "@/features/landing/components/RequestForUpdate";
 const Header = () => {
     const pathname = usePathname();
     const [isMenu, setIsMenu] = useState(false);
+    const [currentProfile, setCurrentProfile] = useState<AuthState>();
     const [isUserMenu, setIsUserMenu] = useState(false);
     const dispatch = useAppDispatch();
-    const user = useSelector((state: RootState) => state.user);
+    const user = useSelector((state: RootState) => state.auth);
+    const admin = useSelector((state: RootState) => state.auth);
+    const agent = useSelector((state: RootState) => state.auth);
+
     const router = useRouter();
 
-    const toggleMenu = () => setIsMenu((prev) => !prev);
-    const toggleUserMenu = () => setIsUserMenu((prev) => !prev);
-
-    // useEffect(()=>{
-
-    // },[user.isLoggedIn]);
     accountRefresher(); // Automatically refresh user state
 
-
     const links = useMemo(() => {
+        // console.log('user',user);
         const baseLinks = [
             {title: 'Home', link: '/'},
             {title: 'Find Homes', link: '/find-homes'},
@@ -39,6 +37,7 @@ const Header = () => {
             {title: 'Contact Us', link: '/contact'},
         ];
         if (user.isLoggedIn && !['agents', 'admins'].includes(String(user.accountType))) {
+            setCurrentProfile(user);
             return [...baseLinks, {title: 'Chats', link: '/user/chat'}, {
                 title: 'Rents',
                 link: '/user/rent'
@@ -47,13 +46,55 @@ const Header = () => {
         return baseLinks;
     }, [user.isLoggedIn, user.accountType]);
 
+
+    const agentLinks = useMemo(() => {
+        // console.log('agents',agent);
+        const baseLinks = [
+            {title: 'Home', link: '/'},
+            {title: 'Find Homes', link: '/find-homes'},
+            {title: 'Rents', link: '/agents/manage-rent'},
+            {title: 'Property', link: '/agents/manage-property'},
+            {title: 'Chats', link: '/agents/messages'},
+            {title: 'Contact Us', link: '/contact'},
+        ];
+
+        if (agent.isLoggedIn) {
+            setCurrentProfile(agent);
+        }
+        return baseLinks;
+    }, [admin.isLoggedIn, admin.accountType]);
+
+
+    const adminLinks = useMemo(() => {
+
+        // console.log('admin',admin);
+        const baseLinks = [
+            {title: 'Home', link: '/'},
+            {title: 'Find Homes', link: '/find-homes'},
+            {
+                title: 'Apartments',
+                link: '/admin/dashboard/view-apartments'
+            },
+            {
+                title: 'Messages',
+                link: '/admin/dashboard/messages'
+            },
+            {title: 'Subscriptions', link: '/admin/dashboard/view-subscriptions'}
+        ];
+        if (admin.isLoggedIn) {
+            setCurrentProfile(admin);
+        }
+        return baseLinks;
+    }, [admin.isLoggedIn, admin.accountType]);
+
+
     const handleLogout = () => {
         dispatch(logout());
         return router.push('/');
     };
 
     const getUserIdDisplay = () => {
-        const storedState = getFormData('userState') as UserState;
+        const storedState = getFormData('userState') as AuthState;
         const parsedState = storedState ? storedState : null;
         const storedUserId = parsedState?.userId;
 
@@ -70,7 +111,7 @@ const Header = () => {
             </Link>
 
             <div className="hidden lg:flex justify-center items-center gap-10 text-white">
-                {links.map((link, index) => (
+                {(adminLinks ?? agentLinks ?? links).map((link, index) => (
                     <div key={index} className="relative group">
                         <Link
                             href={link.link}
@@ -94,7 +135,7 @@ const Header = () => {
             </div>
 
             <div className="hidden lg:flex justify-center items-center gap-4">
-                {user.isLoggedIn ? (
+                {currentProfile && currentProfile.isLoggedIn ? (
                     <div className="flex items-center gap-4">
 
                         <div className='relative'>
@@ -116,22 +157,46 @@ const Header = () => {
                                         </div>
 
                                         <span className="text-orange-500 font-semibold">
-                      Welcome, {user.firstName} {user.lastName}
-                    </span>
+                                        Welcome, {currentProfile && currentProfile.firstName} {currentProfile && currentProfile.lastName}
+                                        </span>
 
-                                        {String(user.accountType) === 'agents' && (
-                                            <Link href='/agents/dashboard'
-                                                  className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                                        {String(currentProfile && currentProfile.accountType) === 'agents' && (
+                                            <><Link href='/agents/dashboard'
+                                                    className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
                                                 Go to Agent Dashboard
                                             </Link>
-                                        )
+
+                                                <Link href='/agents/messages'
+                                                      className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                                                    Chats
+                                                </Link>
+                                                <Link href='/agents/manage-rent'
+                                                      className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                                                    Rents
+                                                </Link>
+
+                                                <Link href='/agents/manage-property'
+                                                      className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                                                    Property
+                                                </Link>
+                                               
+                                            </>)
                                         }
 
-                                        {String(user.accountType) === 'admins' && (
-                                            <Link href='/admin/dashboard'
-                                                  className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                                        {String(currentProfile && currentProfile.accountType) === 'admins' && (
+                                            <><Link href='/admin/dashboard'
+                                                    className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
                                                 Go to Admin Dashboard
-                                            </Link>
+                                            </Link><Link href='/admin/dashboard/messages'
+                                                         className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                                                Messages
+                                            </Link><Link href='/admin/dashboard/view-apartments'
+                                                         className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                                                Apartments
+                                            </Link><Link href='/admin/dashboard/view-subscriptions'
+                                                         className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
+                                                Subscriptions
+                                            </Link></>
                                         )
                                         }
 
@@ -183,7 +248,7 @@ const Header = () => {
                         </div>
 
                         <div className="flex flex-col justify-start items-end gap-2 text-white text-[.9em]">
-                            {links.map((link, index) => (
+                            {links && links.map((link, index) => (
                                 <div key={index} className="relative group">
                                     <Link
                                         href={link.link}
@@ -207,11 +272,11 @@ const Header = () => {
                         </div>
 
                         <div className="flex flex-col justify-start items-end gap-2 text-[.8em]">
-                            {user.isLoggedIn ? (
+                            {currentProfile && currentProfile.isLoggedIn ? (
                                 <>
-                    <span className="text-orange-500 font-semibold">
-                      Welcome, {user.firstName}
-                    </span>
+                                <span className="text-orange-500 font-semibold">
+                                    Welcome, {currentProfile && currentProfile.firstName}
+                                </span>
                                     {/* <Link href='' className="flex items-center gap-2 bg-white border border-red-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
                       My Apartments
                     </Link> */}

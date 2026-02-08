@@ -1,16 +1,6 @@
-import axios from 'axios';
+import {AxiosApi} from "@/lib/utils";
 import {baseURL} from "@/../next.config";
-import {getFormData} from "@/lib/utils";
 
-// Add authentication header to all requests
-const authHeader = () => {
-    const token = getFormData('adminToken');
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-};
 
 export interface RentDetails {
   id: number;
@@ -43,7 +33,7 @@ export const rentApi = {
   // Get all rented apartments
   getAllRents: async (): Promise<PaginatedResponse> => {
     try {
-      const response = await axios.get(`${baseURL}/rented-apartments`, authHeader());
+      const response = await AxiosApi("admin").get(`${baseURL}/rented-apartments`);
       return response.data.data;
     } catch (error) {
       //console.error('API Error:', error);
@@ -54,7 +44,7 @@ export const rentApi = {
   // Get specific rent details
   getRentById: async (rentId: number): Promise<RentDetails> => {
     try {
-      const response = await axios.get(`${baseURL}/rented-apartment/${rentId}`, authHeader());
+      const response = await AxiosApi("admin").get(`${baseURL}/rented-apartment/${rentId}`);
       return response.data.data;
     } catch (error) {
       //console.error('API Error:', error);
@@ -65,7 +55,7 @@ export const rentApi = {
   // Archive/Delete rent
   archiveRent: async (rentId: number): Promise<void> => {
     try {
-      await axios.delete(`${baseURL}/rented-apartment/${rentId}`, authHeader());
+      await AxiosApi("admin").delete(`${baseURL}/rented-apartment/${rentId}`);
     } catch (error) {
       //console.error('API Error:', error);
       throw new Error('Failed to archive rent');
@@ -75,10 +65,11 @@ export const rentApi = {
   // Activate/Confirm rent
   activateRent: async (rentId: number): Promise<void> => {
     try {
-      await axios.post(`${baseURL}/rented-apartment/${rentId}/activate`, {}, authHeader());
+      await AxiosApi("admin").post(`${baseURL}/rented-apartment/${rentId}/activate`, {});
     } catch (error) {
       //console.error('API Error:', error);
       throw new Error('Failed to activate rent');
     }
   },
+
 };

@@ -1,12 +1,5 @@
-import React from 'react'
-import ViewUsers from '@/features/admin/dashboard/components/ViewUsers'
-
-const page = () => {
-  return (
-    <div className='w-full'>
-        <ViewUsers/>
-    </div>
-  )
-}
-
+'use client';
+import dynamic from 'next/dynamic';
+const ViewUsers = dynamic(() => import('@/features/admin/dashboard/components/ViewUsers'), { ssr: false });
+const page = () => <div className='w-full'><ViewUsers/></div>;
 export default page

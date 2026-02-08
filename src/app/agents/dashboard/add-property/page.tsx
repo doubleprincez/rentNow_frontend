@@ -1,12 +1,5 @@
-import React from 'react';
-import AddProperty from '@/features/agent/dashboard/components/AddProperty';
-
-const page = () => {
-  return (
-    <div className='w-full'>
-      <AddProperty/>
-    </div>
-  )
-}
-
+'use client';
+import dynamic from 'next/dynamic';
+const AddProperty = dynamic(() => import('@/features/agent/dashboard/components/AddProperty'), { ssr: false });
+const page = () => <div className='w-full'><AddProperty/></div>;
 export default page

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 interface AgentProfile {
   id: number;
@@ -19,12 +20,6 @@ interface AgentProfile {
   profile_picture?: string;
 }
 
-interface RootState {
-  agent: {
-    token: string | null;
-    userId?: number; 
-  };
-}
 
 const ProfilePage: React.FC = () => {
   const [agentProfile, setAgentProfile] = useState<AgentProfile | null>(null);
@@ -34,7 +29,7 @@ const ProfilePage: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Get token and userId from Redux store
-  const { token, userId } = useSelector((state: RootState) => state.agent);
+  const { token, userId } = useSelector((state: RootState) => state.auth);
 
   // Create axios instance with authentication
   const authenticatedAxios = axios.create({

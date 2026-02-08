@@ -5,5 +5,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="laravel_rent_naija" />
+    <orderEntry type="module" module-name="rentnow_backend" />
   </component>
 </module>

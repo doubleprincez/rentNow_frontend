@@ -43,8 +43,8 @@ const ViewApartmentEnhanced = () => {
     const [filteredCount, setFilteredCount] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
     
-    const isLoggedIn = useSelector((state: any) => state.admin.isLoggedIn);
-    const token = useSelector((state: RootState) => state.admin.token);
+    const isLoggedIn = useSelector((state: any) => state.auth.isLoggedIn);
+    const token = useSelector((state: RootState) => state.auth.token);
 
     const fetchApartments = async () => {
         try {

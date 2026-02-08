@@ -11,7 +11,7 @@ import {Input} from "@/components/ui/input";
 import {Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog";
 import ForgetPwd from "./ForgetPwd";
 import {DialogTitle} from "@radix-ui/react-dialog";
-import {login} from "@/redux/userSlice";
+import {login, setAuth} from "@/redux/authSlice";
 import {useAlert} from '@/contexts/AlertContext';
 import {baseURL} from "@/../next.config";
 import {deleteFormData, getFormData, saveFormData} from "@/lib/utils";
@@ -83,7 +83,7 @@ const Login = ({isPageVisible}: { isPageVisible: boolean }) => {
             firstName,
             lastName,
             email: data.user.email,
-            phoneNumber: data.user.phone ? parseInt(data.user.phone) : null,
+            phoneNumber: data.user.phone,
             userId: data.user.id,
             isSubscribed: data.user.is_subscribed,
             accountType: data.user.account.slug,
@@ -101,7 +101,7 @@ const Login = ({isPageVisible}: { isPageVisible: boolean }) => {
             firstName,
             lastName,
             email: data.data.email,
-            phoneNumber: data.data.phone ? parseInt(data.data.phone) : null,
+            phoneNumber: data.data.phone,
             userId: data.data.id,
             isSubscribed: data.data.is_subscribed,
             accountType: data.data.account.slug,
@@ -149,7 +149,7 @@ const Login = ({isPageVisible}: { isPageVisible: boolean }) => {
                 firstName,
                 lastName,
                 email: data.user.email,
-                phoneNumber: data.user.phone ? parseInt(data.user.phone) : null,
+                phoneNumber: data.user.phone,
                 userId: data.user.id, // Make sure this is being set
                 isSubscribed: data.user.is_subscribed ?? false,
                 accountType: data.user.account.slug,
@@ -159,7 +159,7 @@ const Login = ({isPageVisible}: { isPageVisible: boolean }) => {
 
             // Dispatch login action with user details
 
-            dispatch(login(userData));
+            dispatch(setAuth({ token: data.token, user: { ...userData, account_id: data.user.account.id, businessDetails: { businessName: data.user.business_name, businessEmail: data.user.business_email, businessPhone: data.user.business_phone, businessAddress: data.user.business_address, country: data.user.country, state: data.user.state, city: data.user.city } } }));
             //console.log(userData)
             showAlert("Login Successful", "success");
             if (nextUrl && typeof nextUrl == 'string') {
@@ -208,7 +208,7 @@ const Login = ({isPageVisible}: { isPageVisible: boolean }) => {
             const userData = handleMeResponse(data);
 
             // Dispatch login action with processed user details
-            dispatch(login(userData));
+            // userData already has all needed fields from handleMeResponse
 
         } catch (error) {
             //console.error('Error fetching user data:', error);

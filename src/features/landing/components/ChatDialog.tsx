@@ -7,7 +7,8 @@ import { Send, MessageSquare, Loader2 } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import {baseURL} from "@/../next.config";
-import {ChatDialogProps, Message, RootState} from "@/types/chats";
+import {ChatDialogProps, Message} from "@/types/chats";
+import { RootState } from "@/redux/store";
 
 
 const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
@@ -16,7 +17,7 @@ const ChatDialog: React.FC<ChatDialogProps> = ({ agentId, agentName }) => {
   const [conversationId, setConversationId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [initialFetchDone, setInitialFetchDone] = useState<boolean>(false);
-  const { isLoggedIn, token, userId } = useSelector((state: RootState) => state.user);
+  const { isLoggedIn, token, userId } = useSelector((state: RootState) => state.auth);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollInterval = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();

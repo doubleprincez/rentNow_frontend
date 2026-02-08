@@ -16,7 +16,7 @@ import {Alert, AlertDescription} from "@/components/ui/alert";
 
 
 const ManageRent = () => {
-    const agent = useSelector((state: any) => state.agent);
+    const agent = useSelector((state: any) => state.auth);
 
     const [isLoading, setIsLoading] = useState(false);
     const {showAlert} = useAlert();

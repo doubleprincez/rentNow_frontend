@@ -8,7 +8,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 const AdminHome = () => {
   const dispatch = useDispatch();
-  const token = useSelector((state: RootState) => state.admin.token);
+  const token = useSelector((state: RootState) => state.auth.token);
   const { statistics, chartData, isLoading, error } = useSelector((state: RootState) => state.dashboard);
 
   useEffect(() => {

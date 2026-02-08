@@ -1,28 +1,24 @@
 'use client'
 import React from 'react';
-import { Menu, UserCircle2, X, LogOut } from 'lucide-react';
+import { UserCircle2, LogOut } from 'lucide-react';
 import Logo from '@/components/assets/logo/logo.png';
 import Image from 'next/image';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {  RootState } from '@/redux/store';
-import { logoutAdmin } from '@/redux/adminSlice';
+import { logout } from '@/redux/authSlice';
 import { useRouter } from 'next/navigation';
 import { useAlert } from '@/contexts/AlertContext';
-import accountRefresher from '@/redux/accountRefresher';
 import {useAppDispatch} from "@/redux/hook";
 
 const DashHead = () => {
-    const [isMenu, setIsMenu] = React.useState(false);
     const dispatch = useAppDispatch();
     const router = useRouter();
     const { showAlert } = useAlert();
-    const { firstName, lastName } = useSelector((state: RootState) => state.admin);
+    const { firstName, lastName } = useSelector((state: RootState) => state.auth);
 
-
-    accountRefresher('admin');
     const handleLogout = async () => {
         try {
-            await dispatch(logoutAdmin()).unwrap();
+            await dispatch(logout()).unwrap();
             showAlert('Logged out successfully', 'success');
             router.push('/admin/login');
         } catch (error) {

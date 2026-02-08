@@ -104,6 +104,7 @@ export function saveFormData(name: string, data: any, duration = 30) {
     try {
         const record = typeof data === "string" ? data : JSON.stringify(data);
         localStorage.setItem(name, record);
+        if (typeof window === 'undefined') return;
     } catch (error) {
         console.error(`Failed to save ${name} to localStorage:`, error);
     }
@@ -120,6 +121,7 @@ export function saveFormData(name: string, data: any, duration = 30) {
 
 export function getFormData<T>(key: string): T | null {
     const raw = localStorage.getItem(key);
+    if (typeof window === 'undefined') return null;
     if (!raw) return null;
     if (typeof raw == 'string') return raw as T;
     try {
@@ -149,6 +151,7 @@ export function getFormData<T>(key: string): T | null {
 // }
 
 export function deleteFormData(name: string) {
+    if (typeof window === 'undefined') return;
     return localStorage.removeItem(name);
 }
 
@@ -156,6 +159,7 @@ export function deleteFormData(name: string) {
 // export function deleteFormData(name: string) {
 //     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 // }
+
 
 
 export const AxiosApi = (tokenFor: string = 'user', initialToken: string | undefined = '', customHeaders = {}, strictType = false) => {
@@ -168,10 +172,7 @@ export const AxiosApi = (tokenFor: string = 'user', initialToken: string | undef
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${csrfTokenMeta}`,
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization, X-Request-With'
+                'Content-Type': 'application/json'
             }, ...customHeaders
         },
     });
@@ -185,6 +186,45 @@ export const AxiosApi = (tokenFor: string = 'user', initialToken: string | undef
             return Promise.reject(error);
         }
     );
+
+    instance.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (error.response?.status === 401) {
+                console.log('401 Unauthorized - Logging out...');
+                
+                // Get account_id before clearing to determine correct login route
+                const authState = getFormData('authState');
+                let loginRoute = '/auth/login';
+                
+                if (authState && typeof authState === 'object' && 'account_id' in authState) {
+                    const accountId = (authState as any).account_id;
+                    switch (accountId) {
+                        case 2: loginRoute = '/agents/auth/login'; break;
+                        case 3: loginRoute = '/partners/auth/login'; break;
+                        case 4:
+                        case 5: loginRoute = '/admin/auth/login'; break;
+                        default: loginRoute = '/auth/login';
+                    }
+                }
+                
+                // Clear all auth data
+                deleteFormData('authToken');
+                deleteFormData('authState');
+                deleteFormData('token');
+                deleteFormData('agentToken');
+                deleteFormData('adminToken');
+                
+                if (typeof window !== 'undefined') {
+                    setTimeout(() => {
+                        window.location.href = loginRoute;
+                    }, 100);
+                }
+            }
+            return Promise.reject(error);
+        }
+    );
+
     return instance;
 }
 
@@ -193,37 +233,40 @@ export const getToken = (tokenFor = 'user', initialToken: string = '', strictTyp
     if (initialToken) {
         csrfTokenMeta = initialToken;
     } else {
-        if (strictType) {
-            if (tokenFor == 'admin') {
-                csrfTokenMeta = getFormData('adminToken');
-            } else if (tokenFor == 'agent') {
-                csrfTokenMeta = getFormData('agentToken');
-            } else {
-                csrfTokenMeta = getFormData('token');
-            }
-
-        } else {
-            csrfTokenMeta = getFormData('adminToken') ?? getFormData('agentToken') ?? getFormData('token');
-        }
-
+        // Always try to get the unified authToken first
+        csrfTokenMeta = getFormData('authToken');
+        
+        // Fallback to old token keys for backward compatibility
         if (!csrfTokenMeta) {
-
-            if (tokenFor === 'user' && hasFormData('token')) {
-                csrfTokenMeta = csrfTokenMeta ?? getFormData('token');
+            if (strictType) {
+                if (tokenFor == 'admin') {
+                    csrfTokenMeta = getFormData('adminToken');
+                } else if (tokenFor == 'agent') {
+                    csrfTokenMeta = getFormData('agentToken');
+                } else {
+                    csrfTokenMeta = getFormData('token');
+                }
+            } else {
+                csrfTokenMeta = getFormData('adminToken') ?? getFormData('agentToken') ?? getFormData('token');
             }
 
-            if (tokenFor === 'agent' && hasFormData('agentToken')) {
-                csrfTokenMeta = csrfTokenMeta ?? getFormData('agentToken');
-            }
+            if (!csrfTokenMeta) {
+                if (tokenFor === 'user' && hasFormData('token')) {
+                    csrfTokenMeta = csrfTokenMeta ?? getFormData('token');
+                }
 
-            if (tokenFor === 'admin' && hasFormData('adminToken')) {
-                csrfTokenMeta = csrfTokenMeta ?? getFormData('adminToken');
+                if (tokenFor === 'agent' && hasFormData('agentToken')) {
+                    csrfTokenMeta = csrfTokenMeta ?? getFormData('agentToken');
+                }
+
+                if (tokenFor === 'admin' && hasFormData('adminToken')) {
+                    csrfTokenMeta = csrfTokenMeta ?? getFormData('adminToken');
+                }
             }
         }
     }
     return csrfTokenMeta;
 }
-
 interface PlaceholderImageProps {
     text?: string;
     size?: string;

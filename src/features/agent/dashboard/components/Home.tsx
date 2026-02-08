@@ -38,7 +38,7 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const token = useSelector((state: any) => state.agent.token);
+    const token = useSelector((state: any) => state.auth.token);
 
     useEffect(() => {
         if (!token) {

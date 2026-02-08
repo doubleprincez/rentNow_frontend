@@ -24,7 +24,7 @@ interface BankTransferI {
 const BankTransfer = ({plan, onCompleted}: BankTransferI) => {
     const {showAlert} = useAlert();
     const router = useRouter();
-    const user = useSelector((state: any) => state.user);
+    const user = useSelector((state: any) => state.auth);
 
     const [loading, setLoading] = useState(false);
     const [loadingRef, setLoadingRef] = useState(false);

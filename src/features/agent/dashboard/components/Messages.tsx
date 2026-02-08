@@ -38,8 +38,8 @@ const Messages: React.FC = () => {
     
     // Get current user details from Redux store
     const { token, userId } = useSelector((state: any) => ({
-        token: state.agent.token,
-        userId: state.agent.userId
+        token: state.auth.token,
+        userId: state.auth.userId
     }));
 
     // Configure axios with authentication

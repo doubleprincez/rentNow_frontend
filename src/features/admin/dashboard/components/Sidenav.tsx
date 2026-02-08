@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { BookOpenText, CirclePlus, CircleUser, Home, LogOut, Mail, ContactRound, LayoutGrid, Users, AtSign, Globe, ShoppingBag, BuildingIcon, Building2Icon } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
-import { logoutAdmin } from '@/redux/adminSlice';
+import { logout } from '@/redux/authSlice';
 import { useAlert } from '@/contexts/AlertContext';
 import Logo from '@/components/assets/logo/logo.png';
 import Image from 'next/image';
@@ -18,7 +18,7 @@ const Sidenav = () => {
 
     const handleLogout = async () => {
         try {
-            await dispatch(logoutAdmin()).unwrap();
+            await dispatch(logout()).unwrap();
             showAlert('Logged out successfully', 'success');
             router.push('/admin/login');
         } catch (error) {

@@ -1,12 +1,5 @@
-import React from 'react'
-import ViewApartment from '@/features/admin/dashboard/components/ViewApartments'
-
-const page = () => {
-  return (
-    <div className='w-full'>
-        <ViewApartment/>
-    </div>
-  )
-}
-
+'use client';
+import dynamic from 'next/dynamic';
+const ViewApartments = dynamic(() => import('@/features/admin/dashboard/components/ViewApartments'), { ssr: false });
+const page = () => <div className='w-full'><ViewApartments/></div>;
 export default page

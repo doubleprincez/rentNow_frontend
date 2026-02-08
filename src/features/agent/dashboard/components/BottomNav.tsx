@@ -3,16 +3,16 @@ import React from 'react'
 import {usePathname, useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {BookOpenText, Building2Icon, CirclePlus, Globe, Home, Mail} from 'lucide-react';
-import {useDispatch} from 'react-redux';
-import {logout} from '@/redux/agentSlice';
+import {useAppDispatch} from '@/redux/hook';
+import {logout} from '@/redux/authSlice';
 
 const BottomNav = () => {
     const pathname = usePathname();
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const router = useRouter();
 
-    const handleLogout = () => {
-        dispatch(logout());
+    const handleLogout = async () => {
+        await dispatch(logout());
         router.push('/agents/auth/login');
     };
 
@@ -42,11 +42,6 @@ const BottomNav = () => {
             link: "/agents/dashboard/messages",
             icon: Mail,
         },
-        // {
-        //     name: "Profile", 
-        //     link: "/agents/dashboard/profile",
-        //     icon: CircleUser,
-        // },
         {
             name: "Go to RentNow",
             link: "/",

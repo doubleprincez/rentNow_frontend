@@ -1,12 +1,5 @@
-import React from 'react'
-import ViewAgents from '@/features/admin/dashboard/components/ViewAgents'
-
-const page = () => {
-  return (
-    <div className='w-full'>
-      <ViewAgents/>
-    </div>
-  )
-}
-
+'use client';
+import dynamic from 'next/dynamic';
+const ViewAgents = dynamic(() => import('@/features/admin/dashboard/components/ViewAgents'), { ssr: false });
+const page = () => <div className='w-full'><ViewAgents/></div>;
 export default page

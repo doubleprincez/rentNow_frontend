@@ -30,7 +30,7 @@ const SubTransactions = () => {
     const [loading, setLoading] = useState(false);
     const [transactions, setTransactions] = useState<TransactionHistory[]>([]);
     const [selectedTransaction, setSelectedTransaction] = useState<TransactionHistory>();
-    const token = useSelector((state: RootState) => state.admin.token);
+    const token = useSelector((state: RootState) => state.auth.token);
 
     const fetchTransactions = async () => {
         if (loading) return;
