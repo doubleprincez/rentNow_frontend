@@ -45,18 +45,11 @@ const MapComponent = () => {
     // Fix for default marker icons
     delete (L.Icon.Default.prototype as any)._getIconUrl;
     L.Icon.Default.mergeOptions({
-      iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     });
-
-    return () => {
-      // Cleanup function to remove map container when component unmounts
-      if (document.querySelector('.leaflet-container')) {
-        (document.querySelector('.leaflet-container') as any)._leaflet_id = null;
-      }
-    };
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
   const lagosCenter: [number, number] = [6.5244, 3.3792];
 
@@ -65,8 +58,8 @@ const MapComponent = () => {
       <MapContainer
         center={lagosCenter}
         zoom={12}
-        style={{ height: '100%', width: '100%', borderRadius: '0.5rem' }}
-        key="map" // Add a key to force re-render when needed
+        style={{ height: '100%', width: '100%', borderRadius: '0.5rem', zIndex: 0 }}
+        scrollWheelZoom={false}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -91,7 +84,8 @@ const MapComponent = () => {
 
 // Dynamically import the map component with SSR disabled
 const Map = dynamic(() => Promise.resolve(MapComponent), {
-  ssr: false
+  ssr: false,
+  loading: () => <div className="w-full h-[400px] lg:h-full bg-gray-200 rounded-lg animate-pulse flex items-center justify-center">Loading map...</div>
 });
 
 export default Map;

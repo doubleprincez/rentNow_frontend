@@ -540,7 +540,7 @@ export default function ProductInfoPanel({
                 )}
                 {apartment?.business_email && (
                   <div className="flex items-center gap-2">
-                    <MailIcon className="text-orange-500" />
+                    <MailIcon className="text-orange-500 h-4" />
                     <span className="text-gray-600">Email: <a target='_blank' href={'mailto:'+apartment?.business_email}>{apartment?.business_email}</a></span>
                   </div>
                 )}
@@ -580,7 +580,7 @@ export default function ProductInfoPanel({
                 )}
                 {apartment?.business_email && (
                   <div className="flex items-center gap-2">
-                    <EmailIcon className="text-orange-500" />
+                    <MailIcon className="text-orange-500" />
                     <a href={`mailto:${apartment?.business_email}`} className="text-gray-600 hover:text-orange-500 hover:underline">Email: {apartment?.business_email}</a>
                   </div>
                 )}
