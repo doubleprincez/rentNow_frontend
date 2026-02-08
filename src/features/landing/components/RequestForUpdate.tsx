@@ -51,7 +51,7 @@ const RequestForUpdate: React.FC = () => {
     // This transforms the Redux AuthState structure (e.g., phoneNumber: number)
     // into the FormProfileData structure (e.g., phone: string).
     const mapAuthStateToFormProfileData = (state: AuthState): FormProfileData => {
-        console.log('user state',state);
+        // console.log('user state',state);
         return {
             id: state.userId ?? undefined, // userId from AuthState maps to id in FormProfileData
             firstName: state.firstName,

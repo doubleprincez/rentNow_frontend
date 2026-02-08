@@ -1,10 +1,13 @@
+
+
 import {Suspense} from 'react';
 import ProductMediaViewerWrapper from '@/features/user/ProductMediaViewerWrapper';
 import {Loader2Icon} from 'lucide-react';
 import {AxiosApiServer} from "@/lib/server-utils";
 import {baseURL, frontendURL} from "@/../next.config";
-import {Apartment} from "@/types/apartment";
+import {Apartment, ApiApartmentResponse, ApiResponse} from "@/types/apartment";
 import {Metadata} from "next";
+import { AxiosApi } from '@/lib/utils';
 
 /**
  * Generate metadata for individual apartment pages
@@ -14,8 +17,10 @@ export async function generateMetadata({params}: any): Promise<Metadata> {
     const {id} = await params;
     
     try {
-        const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
-        const apartment: Apartment = response.data.data;
+        const response:ApiApartmentResponse = await AxiosApi()
+        .get(`${baseURL}/apartment/${id}`);
+        console.log('resooponse is ',response);
+        const apartment: Apartment = response.data;
         
         // Get the first image or use default
         const firstImage = apartment.images && Object.values(apartment.images)[0]?.preview_url;
@@ -92,7 +97,9 @@ export async function generateMetadata({params}: any): Promise<Metadata> {
 
 export default async function Page({params}: any) {
     const {id} = await params;
-    const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
+    const response = await AxiosApiServer()
+    .get(`${baseURL}/apartment/${id}`);
+    
     const apartment: Apartment = response.data.data;
 
     if (apartment) {

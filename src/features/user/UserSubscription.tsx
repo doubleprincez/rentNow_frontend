@@ -75,13 +75,18 @@ const UserSubscription = () => {
         fetchSubscriptions();
     }, [isLoggedIn])
 
+    const subscribeNow =()=>{
+           return redirect( '/subscribe');
+    }
 
     
     
-    return <div className={"min-h-screen mt-20"}>
+    return <div className={"min-h-screen pt-40"}>
         <div className={"px-3 md:px-5"}>
             <h3 className={"sm:text-lg font-bold"}>Subscription History</h3>
-            
+            <div className='my-4'>
+               <Button   variant="link" onClick={subscribeNow} >Subscribe Now</Button>
+            </div>
             <PendingInvoice/>
             <div className={"mt-5"}>
                 <div className="p-6">

@@ -117,6 +117,12 @@ export interface ApiResponse {
     };
 }
 
+export interface ApiApartmentResponse{
+ success: boolean;
+    message: string;
+    data: Apartment
+}
+
 
 export interface FindHomesProps {
     initialData?: ApiResponse;

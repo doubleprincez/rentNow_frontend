@@ -19,7 +19,7 @@ export const hasServerFormData = async (name: string) =>{
 }
 
 
-export const AxiosApiServer = (tokenFor = 'user') => {
+export const AxiosApiServer = async (tokenFor = 'user') => {
     const instance = axios.create({
         withCredentials: true,
         headers: {
@@ -30,15 +30,15 @@ export const AxiosApiServer = (tokenFor = 'user') => {
     let token;
 
     if (tokenFor === 'user') {
-        token = getServerFormData('token');
+        token = await getServerFormData('token');
     } else if (tokenFor === 'agent') {
-        token = getServerFormData('agentToken');
+        token = await getServerFormData('agentToken');
     } else {
-        token = getServerFormData('adminToken');
+        token = await getServerFormData('adminToken');
     }
 
     if(!token){
-          token = getServerFormData('token')??getServerFormData('agentToken')?? getServerFormData('adminToken')??null;
+          token = await getServerFormData('token')??await getServerFormData('agentToken')?? await getServerFormData('adminToken')??null;
     }
     if (token) {
         instance.defaults.headers.Authorization = `Bearer ${token}`;

@@ -14,7 +14,8 @@ export async function generateMetadata({params}: any): Promise<Metadata> {
     const {id} = await params;
     
     try {
-        const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
+        const axiosInstance = await AxiosApiServer();
+        const response = await axiosInstance.get(`${baseURL}/apartment/${id}`);
         const apartment: Apartment = response.data.data;
         
         // Get the first image or use default
@@ -94,8 +95,10 @@ export default async function Page({params}: any) {
     const {id} = await params;
     
     try {
-        const response = await AxiosApiServer().get(`${baseURL}/apartment/${id}`);
-        const apartment: Apartment = response.data.data;
+        const axiosInstance = await AxiosApiServer();
+        const response = await axiosInstance.get(`${baseURL}/apartment/${id}`);
+        console.log('API Response:', response);
+        const apartment: Apartment = response.data?.data || response.data;
 
         if (apartment) {
             return (
@@ -117,7 +120,8 @@ export default async function Page({params}: any) {
             );
         }
     } catch (error: any) {
-        // Handle API errors (404, 500, etc.)
+        console.error('Error loading apartment:', error);
+        console.error('Error response:', error?.response);
         const isNotFound = error?.response?.status === 404;
         
         return (
@@ -131,7 +135,12 @@ export default async function Page({params}: any) {
                         : "We're having trouble loading this apartment. Please try again later."
                     }
                 </p>
-                <a href="/find-homes" className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                {process.env.NODE_ENV === 'development' && (
+                    <pre className="text-xs text-red-600 max-w-2xl overflow-auto p-4 bg-gray-100 rounded">
+                        {JSON.stringify(error?.response?.data || error?.message || error, null, 2)}
+                    </pre>
+                )}
+                <a href="/find-homes" className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors mt-4">
                     Browse Other Apartments
                 </a>
             </div>

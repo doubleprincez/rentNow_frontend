@@ -8,6 +8,7 @@ import {
   GlobeIcon,
   HeartIcon,
   Home,
+  Link,
   List,
   LucideEye,
   MailIcon,
@@ -537,16 +538,16 @@ export default function ProductInfoPanel({
                     </span>
                   </div>
                 )}
-                {apartment?.agent_email && (
+                {apartment?.business_email && (
                   <div className="flex items-center gap-2">
                     <MailIcon className="text-orange-500" />
-                    <span className="text-gray-600">Email: {apartment?.agent_email}</span>
+                    <span className="text-gray-600">Email: <a target='_blank' href={'mailto:'+apartment?.business_email}>{apartment?.business_email}</a></span>
                   </div>
                 )}
-                {apartment?.agent_phone && (
+                {apartment?.business_phone && (
                   <div className="flex items-center gap-2">
                     <PhoneCallIcon className="text-orange-500" />
-                    <span className="text-gray-600">Phone: {apartment?.agent_phone}</span>
+                    <span className="text-gray-600">Phone: <a target="_blank" href={'tel:'+apartment?.business_phone} >{apartment?.business_phone}</a></span>
                   </div>
                 )}
               </>
@@ -580,13 +581,13 @@ export default function ProductInfoPanel({
                 {apartment?.business_email && (
                   <div className="flex items-center gap-2">
                     <EmailIcon className="text-orange-500" />
-                    <span className="text-gray-600">Email: {apartment?.business_email}</span>
+                    <a href={`mailto:${apartment?.business_email}`} className="text-gray-600 hover:text-orange-500 hover:underline">Email: {apartment?.business_email}</a>
                   </div>
                 )}
                 {apartment?.business_phone && (
                   <div className="flex items-center gap-2">
                     <PhoneCallIcon className="text-orange-500" />
-                    <span className="text-gray-600">Phone: {apartment?.business_phone}</span>
+                    <a href={`tel:${apartment?.business_phone}`} className="text-gray-600 hover:text-orange-500 hover:underline">Phone: {apartment?.business_phone}</a>
                   </div>
                 )}
               </>

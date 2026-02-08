@@ -36,12 +36,10 @@ const ManageRent = () => {
         try {
             const response = await getAgentRents(currentPage, searchTerm, agent?.token);
 
-            if (response.success && response.data) {
+            if (response.success==true && response.data) {
                 setRents(response.data.data);
                 setTotalPages(Math.ceil(response.data.total / 20));
-            } else {
-                throw new Error('Invalid response format');
-            }
+            } 
             setError('');
         } catch (err: any) {
             showAlert(
@@ -100,11 +98,10 @@ const ManageRent = () => {
             setVisitLoading(() => true);
             const response = await getAgentVisits(currentPage, searchTerm);
 
-            if (response.success && response.data) {
+            // console.log('visit response',response);
+            if (response.success==true && response.data) {
                 setVisits(response.data.data);
                 setVisitTotalPages(Math.ceil(response.data.total / 20));
-            } else {
-                throw new Error('Invalid response format');
             }
 
             setVisitError('');

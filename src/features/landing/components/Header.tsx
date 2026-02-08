@@ -16,62 +16,33 @@ import RequestForUpdate from "@/features/landing/components/RequestForUpdate";
 
 const Header = () => {
     const pathname = usePathname();
-    const [isMenu, setIsMenu] = useState(false);
-    const [currentProfile, setCurrentProfile] = useState<AuthState>();
+    const [isMenu, setIsMenu] = useState(false); 
     const [isUserMenu, setIsUserMenu] = useState(false);
     const dispatch = useAppDispatch();
-    const user = useSelector((state: RootState) => state.auth);
-    const admin = useSelector((state: RootState) => state.auth);
-    const agent = useSelector((state: RootState) => state.auth);
+    const user = useSelector((state: RootState) => state.auth); 
 
     const router = useRouter();
 
     accountRefresher(); // Automatically refresh user state
 
-    const links = useMemo(() => {
-        // console.log('user',user);
-        const baseLinks = [
-            {title: 'Home', link: '/'},
-            {title: 'Find Homes', link: '/find-homes'},
-            {title: 'About', link: '/about'},
-            {title: 'Contact Us', link: '/contact'},
-        ];
-        if (user.isLoggedIn && !['agents', 'admins'].includes(String(user.accountType))) {
-            setCurrentProfile(user);
-            return [...baseLinks, {title: 'Chats', link: '/user/chat'}, {
+    const getAdditionalLinks=(user:AuthState)=>{
+    
+        if (user.isLoggedIn && user.accountType==='users') {
+        // console.log('is user',user);
+            return [{title: 'Chats', link: '/user/chat'}, {
                 title: 'Rents',
                 link: '/user/rent'
             }, {title: 'Subscriptions', link: '/user/subscriptions'}];
-        }
-        return baseLinks;
-    }, [user.isLoggedIn, user.accountType]);
-
-
-    const agentLinks = useMemo(() => {
-        // console.log('agents',agent);
-        const baseLinks = [
-            {title: 'Home', link: '/'},
-            {title: 'Find Homes', link: '/find-homes'},
-            {title: 'Rents', link: '/agents/manage-rent'},
+        }else 
+        if (user.isLoggedIn && user.accountType==='agents'){
+            return [ {title: 'Rents', link: '/agents/manage-rent'},
             {title: 'Property', link: '/agents/manage-property'},
-            {title: 'Chats', link: '/agents/messages'},
-            {title: 'Contact Us', link: '/contact'},
-        ];
+            {title: 'Chats', link: '/agents/messages'}];
 
-        if (agent.isLoggedIn) {
-            setCurrentProfile(agent);
         }
-        return baseLinks;
-    }, [admin.isLoggedIn, admin.accountType]);
-
-
-    const adminLinks = useMemo(() => {
-
-        // console.log('admin',admin);
-        const baseLinks = [
-            {title: 'Home', link: '/'},
-            {title: 'Find Homes', link: '/find-homes'},
-            {
+         if (user.isLoggedIn && user.accountType==='admins'){
+            return [
+                {
                 title: 'Apartments',
                 link: '/admin/dashboard/view-apartments'
             },
@@ -80,14 +51,25 @@ const Header = () => {
                 link: '/admin/dashboard/messages'
             },
             {title: 'Subscriptions', link: '/admin/dashboard/view-subscriptions'}
-        ];
-        if (admin.isLoggedIn) {
-            setCurrentProfile(admin);
+            ];
+
         }
+        return [];
+    }
+
+
+    const links = useMemo(() => {
+        const baseLinks = [
+            {title: 'Home', link: '/'},
+            {title: 'Find Homes', link: '/find-homes'},
+            {title: 'About', link: '/about'},
+            {title: 'Contact Us', link: '/contact'},
+        ];
+    
         return baseLinks;
-    }, [admin.isLoggedIn, admin.accountType]);
+    }, [user.isLoggedIn, user.accountType]);
 
-
+ 
     const handleLogout = () => {
         dispatch(logout());
         return router.push('/');
@@ -111,7 +93,7 @@ const Header = () => {
             </Link>
 
             <div className="hidden lg:flex justify-center items-center gap-10 text-white">
-                {(adminLinks ?? agentLinks ?? links).map((link, index) => (
+                {(links).map((link, index) => (
                     <div key={index} className="relative group">
                         <Link
                             href={link.link}
@@ -135,7 +117,7 @@ const Header = () => {
             </div>
 
             <div className="hidden lg:flex justify-center items-center gap-4">
-                {currentProfile && currentProfile.isLoggedIn ? (
+                {user && user.isLoggedIn ? (
                     <div className="flex items-center gap-4">
 
                         <div className='relative'>
@@ -157,10 +139,10 @@ const Header = () => {
                                         </div>
 
                                         <span className="text-orange-500 font-semibold">
-                                        Welcome, {currentProfile && currentProfile.firstName} {currentProfile && currentProfile.lastName}
+                                        Welcome, {user && user.firstName} {user && user.lastName}
                                         </span>
 
-                                        {String(currentProfile && currentProfile.accountType) === 'agents' && (
+                                        {String(user && user.accountType) === 'agents' && (
                                             <><Link href='/agents/dashboard'
                                                     className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
                                                 Go to Agent Dashboard
@@ -183,7 +165,7 @@ const Header = () => {
                                             </>)
                                         }
 
-                                        {String(currentProfile && currentProfile.accountType) === 'admins' && (
+                                        {String(user && user.accountType) === 'admins' && (
                                             <><Link href='/admin/dashboard'
                                                     className="text-sm mt-5 flex items-center gap-2 bg-white hover:bg-green-500 border border-green-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
                                                 Go to Admin Dashboard
@@ -199,6 +181,16 @@ const Header = () => {
                                             </Link></>
                                         )
                                         }
+                                         {
+                                        getAdditionalLinks(user)?.map((linker)=> <Link
+                                        href={linker.link}
+                                        className={`px-3 text-start ${
+                                            pathname === linker.link ? 'text-orange-500' : 'text-white'
+                                        } duration-200 ease-in-out transition-all`}
+                                    >
+                                        {linker.title}
+                                    </Link>)
+                                    }
 
                                         <button
                                             onClick={handleLogout}
@@ -272,14 +264,22 @@ const Header = () => {
                         </div>
 
                         <div className="flex flex-col justify-start items-end gap-2 text-[.8em]">
-                            {currentProfile && currentProfile.isLoggedIn ? (
+                            {user && user.isLoggedIn ? (
                                 <>
                                 <span className="text-orange-500 font-semibold">
-                                    Welcome, {currentProfile && currentProfile.firstName}
+                                    Welcome, {user && user.firstName}
                                 </span>
-                                    {/* <Link href='' className="flex items-center gap-2 bg-white border border-red-500 text-green-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300">
-                      My Apartments
-                    </Link> */}
+                                
+                                    {
+                                        getAdditionalLinks(user)?.map((linker)=> <Link
+                                        href={linker.link}
+                                        className={`px-3 text-start ${
+                                            pathname === linker.link ? 'text-orange-500' : 'text-white'
+                                        } duration-200 ease-in-out transition-all`}
+                                    >
+                                        {linker.title}
+                                    </Link>)
+                                    }
                                     <button
                                         onClick={handleLogout}
                                         className="flex items-center gap-2 bg-transparent border border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-md transition-all duration-300"

@@ -40,7 +40,8 @@ export default function AdGatedAgentDetails({
 
     // Update show details when unlock state changes
     useEffect(() => {
-        setShowDetails(isUnlocked);
+        // console.log("[AdGatedAgentDetails] isUnlocked:", isUnlocked);
+         setShowDetails(isUnlocked);
     }, [isUnlocked]);
 
     const handleViewDetailsClick = () => {
@@ -77,7 +78,7 @@ export default function AdGatedAgentDetails({
                     <span className={`text-gray-600 transition-all duration-300 ${
                         showDetails ? '' : 'blur-sm select-none'
                     }`}>
-                        Email: {showDetails ? apartment?.business_email || 'Not provided' : '••••••@••••••.com'}
+                        Email: {showDetails ? (apartment?.business_email || 'Not provided') : '••••••@••••••.com'}
                     </span>
                     {!showDetails && (
                         <EyeOff className="w-3 h-3 text-gray-400 ml-1"/>
@@ -90,7 +91,7 @@ export default function AdGatedAgentDetails({
                     <span className={`text-gray-600 transition-all duration-300 ${
                         showDetails ? '' : 'blur-sm select-none'
                     }`}>
-                        Phone: {showDetails ? apartment?.business_phone || 'Not provided' : '+234 ••• ••• ••••'}
+                        Phone: {showDetails ? (apartment?.business_phone || 'Not provided') : '+234 ••• ••• ••••'}
                     </span>
                     {!showDetails && (
                         <EyeOff className="w-3 h-3 text-gray-400 ml-1"/>
@@ -126,8 +127,8 @@ export default function AdGatedAgentDetails({
                         <div className="flex items-center justify-center gap-2 mb-2">
                             <Eye className="w-5 h-5 text-orange-600"/>
                             <span className="text-sm font-medium text-gray-700">
-                Contact details are hidden
-              </span>
+                            Contact details are hidden
+                        </span>
                         </div>
 
                         <p className="text-xs text-gray-600 mb-3">

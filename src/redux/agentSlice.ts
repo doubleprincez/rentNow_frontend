@@ -219,14 +219,17 @@ export const agentLogout = createAsyncThunk(
                     }
                 );
             }
-            removeFromStorage('agentToken');
-            removeFromStorage('agentState');
             return null;
         } catch (error) {
             // Even if the logout API fails, we still want to clear local state
+
+            return null;
+        }finally
+        {
             removeFromStorage('agentToken');
             removeFromStorage('agentState');
-            return null;
+            removeFromStorage('authToken');
+            removeFromStorage('authState');
         }
     }
 );

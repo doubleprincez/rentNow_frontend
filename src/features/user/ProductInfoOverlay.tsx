@@ -688,7 +688,7 @@ export default function ProductInfoOverlay({
               </div>
 
               {/* Agent/Business Information - Ad Gated */}
-              {isSubscribed ? (
+              {(isSubscribed || isAgentDetailsUnlocked) ? (
                 // Subscribed users see details immediately
                 <div className="space-y-3 pt-4 border-t">
                   <h3 className="text-base font-semibold text-gray-800">{String(apartment.agent_type).toLocaleUpperCase()} Information</h3>
@@ -704,11 +704,18 @@ export default function ProductInfoOverlay({
                             />
                           </div>
                         )}
-                        {apartment?.business_name && (
+                        {apartment?.business_name ? (
                           <div className="flex items-center gap-2">
                             <BuildingIcon className="text-orange-500 w-5 h-5" />
                             <span className="text-gray-600 text-sm">
                               {String(apartment.agent_type).toLocaleUpperCase()}: {apartment?.business_name}
+                            </span>
+                          </div>
+                        ):apartment?.agent && (
+                          <div className="flex items-center gap-2">
+                            <BuildingIcon className="text-orange-500 w-5 h-5" />
+                            <span className="text-gray-600 text-sm">
+                              {String(apartment.agent_type).toLocaleUpperCase()}: {apartment?.agent}
                             </span>
                           </div>
                         )}
@@ -722,13 +729,13 @@ export default function ProductInfoOverlay({
                       {apartment?.business_email && (
                         <div className="flex items-center gap-2">
                           <EmailIcon className="text-orange-500 w-5 h-5" />
-                          <span className="text-gray-600 text-sm">Email: {apartment?.business_email}</span>
+                          <a href={`mailto:${apartment?.business_email}`} className="text-gray-600 text-sm hover:text-orange-500 hover:underline">Email: {apartment?.business_email}</a>
                         </div>
                       )}
                       {apartment?.business_phone && (
                         <div className="flex items-center gap-2">
                           <PhoneCallIcon className="text-orange-500 w-5 h-5" />
-                          <span className="text-gray-600 text-sm">Phone: {apartment?.business_phone}</span>
+                          <a href={`tel:${apartment?.business_phone}`} className="text-gray-600 text-sm hover:text-orange-500 hover:underline">Phone: {apartment?.business_phone}</a>
                         </div>
                       )}
                     </>
