@@ -9,7 +9,7 @@ import {Search} from 'lucide-react';
 import {useToast} from '@/components/ui/use-toast';
 import {Conversation, conversationApi} from '@/features/admin/dashboard/api/conversationApi';
 import {getUsers, User} from '../api/userApi';
-import axios from 'axios';
+import {AxiosApi} from '@/lib/utils';
 import {RootState} from '@/redux/store';
 import {useSelector} from 'react-redux';
 import {baseURL} from "@/../next.config";
@@ -46,14 +46,6 @@ const Messages = () => {
     }, [messages, hasNewMessage]);
 
     const getAuthHeader = () => ({
-        headers: {
-            'Authorization': `Bearer ${getFormData('agentToken')}`,
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization, X-Request-With'
-        },
         withCredentials: true
     });
 
@@ -62,11 +54,10 @@ const Messages = () => {
         if (!selectedUser?.id || !userId) return;
 
         try {
-            const response = await axios.get(
+            const response = await AxiosApi('agent').get(
                 `${baseURL}/conversation/${selectedUser.id}`,
                 {
-                    ...getAuthHeader(),
-                    withCredentials: true
+                    ...getAuthHeader()
                 }
             );
 
@@ -152,7 +143,7 @@ const Messages = () => {
                 }
 
                 // Get admin profile to get the correct ID
-                const response = await axios.get(
+                const response = await AxiosApi('agent').get(
                     `${baseURL}/admin/profile`,
                     getAuthHeader()
                 );

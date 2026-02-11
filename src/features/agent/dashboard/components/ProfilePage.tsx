@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { AxiosApi } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 
@@ -31,14 +31,6 @@ const ProfilePage: React.FC = () => {
   // Get token and userId from Redux store
   const { token, userId } = useSelector((state: RootState) => state.auth);
 
-  // Create axios instance with authentication
-  const authenticatedAxios = axios.create({
-    baseURL: 'https://api.rentnow.ng/api',
-    headers: {
-      'Authorization': `Bearer ${token}`
-    }
-  });
-
   // Fetch agent profile
   useEffect(() => {
     const fetchAgentProfile = async () => {
@@ -50,7 +42,7 @@ const ProfilePage: React.FC = () => {
       }
 
       try {
-        const response = await authenticatedAxios.get(`/agent/${userId}`);
+        const response = await AxiosApi('agent', token).get(`https://api.rentnow.ng/api/agent/${userId}`);
         setAgentProfile(response.data);
       } catch (err) {
         setError('Failed to load agent profile information.');
@@ -68,7 +60,7 @@ const ProfilePage: React.FC = () => {
     if (!agentProfile || !token || !userId) return;
 
     try {
-      await authenticatedAxios.put(`/agent/${userId}`, agentProfile);
+      await AxiosApi('agent', token).put(`https://api.rentnow.ng/api/agent/${userId}`, agentProfile);
       //setSuccessMessage('Profile updated successfully!');
       setIsEditing(false);
     } catch (err) {
@@ -84,11 +76,7 @@ const ProfilePage: React.FC = () => {
     formData.append('profile_picture', e.target.files[0]);
 
     try {
-      const response = await authenticatedAxios.post(`/agent/${userId}/profile-picture`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await AxiosApi('agent', token, {'Content-Type': 'multipart/form-data'}).post(`https://api.rentnow.ng/api/agent/${userId}/profile-picture`, formData);
       if (agentProfile) {
         setAgentProfile({ ...agentProfile, profile_picture: response.data.profile_picture });
       }

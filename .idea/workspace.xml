@@ -6,17 +6,22 @@
   <component name="ChangeListManager">
     <list default="true" id="40655083-c67c-4337-ba24-203a7d4b2a4e" name="Changes" comment="added google adsense">
       <change beforePath="$PROJECT_DIR$/../rentnow_backend/.env" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Auth/AuthInterface.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Auth/AuthInterface.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Auth/AuthRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Auth/AuthRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Conversations/ConversationRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Conversations/ConversationRepository.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Transaction/TransactionRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Transaction/TransactionRepository.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Users/UserRepository.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Repositories/Users/UserRepository.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Traits/HelperTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Classes/Traits/HelperTrait.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Http/Controllers/Auth/RegisteredUserController.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Http/Controllers/Auth/RegisteredUserController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Http/Requests/Auth/LoginRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Http/Requests/Auth/LoginRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Http/Requests/ProfileUpdateRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Http/Requests/ProfileUpdateRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Models/Apartment.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Models/Apartment.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/app/Providers/AppServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/app/Providers/AppServiceProvider.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rentnow_backend/config/cors.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/config/cors.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rentnow_backend/public/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/public/.htaccess" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../rentnow_backend/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/laravel-idea-personal.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/laravel-idea-personal.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rentnow_backend/routes/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/../rentnow_backend/routes/auth.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/next.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/redux/agentSlice.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/agentSlice.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,20 +64,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/doubleprince/Desktop/Server Files/Tenant Plus/rentnow_frontend&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/home/doubleprince/Desktop/Server Files/Tenant Plus/rentnow_frontend/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/home/doubleprince/Desktop/Server Files/Gst Place/gst_tusk_and_bead",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "/home/doubleprince/Desktop/Server Files/Tenant Plus/rentnow_frontend/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="Push.Settings">
     <force-push-targets>
       <force-push-target remote-path="origin" branch="dev" />
@@ -117,6 +122,7 @@
       <workItem from="1770508529547" duration="589000" />
       <workItem from="1770534109697" duration="215000" />
       <workItem from="1770534327180" duration="513000" />
+      <workItem from="1770646003017" duration="63000" />
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />

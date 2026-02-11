@@ -38,10 +38,15 @@ const ViewApartmentEnhanced = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
     const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
-    const [sortByRecent, setSortByRecent] = useState(true); // Default to newest first
+    const [sortByRecent, setSortByRecent] = useState(true);
     const [dateFilter, setDateFilter] = useState<'all' | '24h' | '7d' | '30d'>('all');
     const [filteredCount, setFilteredCount] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
+    const [categoryFilter, setCategoryFilter] = useState<string>('');
+    const [publishedFilter, setPublishedFilter] = useState<string>('');
+    const [minPrice, setMinPrice] = useState<string>('');
+    const [maxPrice, setMaxPrice] = useState<string>('');
+    const [roomsFilter, setRoomsFilter] = useState<string>('');
     
     const isLoggedIn = useSelector((state: any) => state.auth.isLoggedIn);
     const token = useSelector((state: RootState) => state.auth.token);
@@ -49,16 +54,17 @@ const ViewApartmentEnhanced = () => {
     const fetchApartments = async () => {
         try {
             setLoading(() => true);
-            const response = await getAllApartments(currentPage, debouncedSearchTerm, token, sortByRecent, dateFilter);
+            const response = await getAllApartments(currentPage, debouncedSearchTerm, token, sortByRecent, dateFilter, categoryFilter, minPrice, maxPrice, roomsFilter);
 
             if (response.success && response.data) {
-                const apartmentData = Object.values(response.data.data) as Apartment[];
+                let apartmentData = Object.values(response.data.data) as Apartment[];
                 
-                // Debug: Log the first apartment to see the data structure
-                if (apartmentData.length > 0) {
-                    console.log('Sample apartment data:', apartmentData[0]);
-                    console.log('created_at field:', apartmentData[0].created_at);
+                if (publishedFilter) {
+                    apartmentData = apartmentData.filter(p => 
+                        publishedFilter === 'published' ? p.published : !p.published
+                    );
                 }
+                
                 setApartments(apartmentData);
                 setTotalPages(response.data.last_page);
                 setFilteredCount(response.data.filtered_count || response.data.total);
@@ -80,7 +86,7 @@ const ViewApartmentEnhanced = () => {
         if (isLoggedIn) {
             fetchApartments().then(r => r);
         }
-    }, [currentPage, debouncedSearchTerm, isLoggedIn, sortByRecent, dateFilter]);
+    }, [currentPage, debouncedSearchTerm, isLoggedIn, sortByRecent, dateFilter, categoryFilter, minPrice, maxPrice, roomsFilter, publishedFilter]);
 
     const handleDelete = async (id: number) => {
         if (window.confirm('Are you sure you want to delete this apartment?')) {
@@ -157,6 +163,49 @@ const ViewApartmentEnhanced = () => {
                             onChange={handleSearch}
                         />
                     </div>
+                    
+                    <Input
+                        type="text"
+                        placeholder="Category ID"
+                        value={categoryFilter}
+                        onChange={(e) => { setCategoryFilter(e.target.value); setCurrentPage(1); }}
+                        className="w-32"
+                    />
+                    
+                    <Input
+                        type="number"
+                        placeholder="Min Price"
+                        value={minPrice}
+                        onChange={(e) => { setMinPrice(e.target.value); setCurrentPage(1); }}
+                        className="w-32"
+                    />
+                    
+                    <Input
+                        type="number"
+                        placeholder="Max Price"
+                        value={maxPrice}
+                        onChange={(e) => { setMaxPrice(e.target.value); setCurrentPage(1); }}
+                        className="w-32"
+                    />
+                    
+                    <Input
+                        type="number"
+                        placeholder="Rooms"
+                        value={roomsFilter}
+                        onChange={(e) => { setRoomsFilter(e.target.value); setCurrentPage(1); }}
+                        className="w-24"
+                    />
+                    
+                    <Select value={publishedFilter} onValueChange={(v) => { setPublishedFilter(v); setCurrentPage(1); }}>
+                        <SelectTrigger className="w-32">
+                            <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="">All Status</SelectItem>
+                            <SelectItem value="published">Published</SelectItem>
+                            <SelectItem value="unpublished">Unpublished</SelectItem>
+                        </SelectContent>
+                    </Select>
                     
                     <Select value={dateFilter} onValueChange={handleDateFilterChange}>
                         <SelectTrigger className="w-[180px]">

@@ -49,7 +49,11 @@ export const getAllApartments = async (
     search: string = '',
     adminToken: string | null | undefined = null,
     sortByRecent: boolean = false,
-    dateFilter: 'all' | '24h' | '7d' | '30d' = 'all'
+    dateFilter: 'all' | '24h' | '7d' | '30d' = 'all',
+    categoryFilter: string = '',
+    minPrice: string = '',
+    maxPrice: string = '',
+    roomsFilter: string = ''
 ) => {
     try {
         let token: string | null | undefined = adminToken;
@@ -58,11 +62,37 @@ export const getAllApartments = async (
             token = getFormData('adminToken');
         }
 
-        const sortParam = sortByRecent ? '&sort=created_at&order=desc' : '';
-        const dateParam = dateFilter !== 'all' ? `&date_filter=${dateFilter}` : '';
+        const params = new URLSearchParams();
+        params.append('page', page.toString());
+        if (search) params.append('search', search);
+        if (sortByRecent) {
+            params.append('sort', 'created_at');
+            params.append('order', 'desc');
+        }
+        if (dateFilter !== 'all') params.append('date_filter', dateFilter);
+        if (categoryFilter) {
+            params.append('filter_name', 'category_id');
+            params.append('filter_dir', 'eq');
+            params.append('filter_val', categoryFilter);
+        }
+        if (minPrice) {
+            params.append('filter_name', 'amount');
+            params.append('filter_dir', 'gte');
+            params.append('filter_val', minPrice);
+        }
+        if (maxPrice) {
+            params.append('filter_name', 'amount');
+            params.append('filter_dir', 'lte');
+            params.append('filter_val', maxPrice);
+        }
+        if (roomsFilter) {
+            params.append('filter_name', 'number_of_rooms');
+            params.append('filter_dir', 'eq');
+            params.append('filter_val', roomsFilter);
+        }
         
         const response = await axios.get<ApiResponse>(
-            baseURL + `/apartments?page=${page}&search=${search}${sortParam}${dateParam}`,
+            `${baseURL}/apartments?${params.toString()}`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

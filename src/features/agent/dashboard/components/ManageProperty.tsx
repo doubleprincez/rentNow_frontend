@@ -1,6 +1,6 @@
 'use client';
 import React, {useEffect, useState} from 'react';
-import axios from 'axios';
+import {AxiosApi} from '@/lib/utils';
 import {useSelector} from 'react-redux';
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {baseURL} from "@/../next.config";
@@ -71,6 +71,11 @@ const ManageProperty: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+    const [categoryFilter, setCategoryFilter] = useState<string>('');
+    const [publishedFilter, setPublishedFilter] = useState<string>('');
+    const [minPrice, setMinPrice] = useState<string>('');
+    const [maxPrice, setMaxPrice] = useState<string>('');
+    const [roomsFilter, setRoomsFilter] = useState<string>('');
     const token = useSelector((state: any) => state.auth.token);
 
     useEffect(() => {
@@ -81,13 +86,30 @@ const ManageProperty: React.FC = () => {
                 return;
             }
             try {
-                const response = await axios.get<{ success: boolean; message: string; data: PaginatedResponse }>(
-                    baseURL + '/my-apartments',
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
+                const params = new URLSearchParams();
+                if (searchQuery) params.append('search', searchQuery);
+                if (categoryFilter) params.append('filter_name', 'category_id');
+                if (categoryFilter) params.append('filter_dir', 'eq');
+                if (categoryFilter) params.append('filter_val', categoryFilter);
+                if (minPrice) {
+                    params.append('filter_name', 'amount');
+                    params.append('filter_dir', 'gte');
+                    params.append('filter_val', minPrice);
+                }
+                if (maxPrice) {
+                    params.append('filter_name', 'amount');
+                    params.append('filter_dir', 'lte');
+                    params.append('filter_val', maxPrice);
+                }
+                if (roomsFilter) {
+                    params.append('filter_name', 'number_of_rooms');
+                    params.append('filter_dir', 'eq');
+                    params.append('filter_val', roomsFilter);
+                }
+                params.append('page', currentPage.toString());
+
+                const response = await AxiosApi('agent', token).get<{ success: boolean; message: string; data: PaginatedResponse }>(
+                    `${baseURL}/my-apartments?${params.toString()}`
                 );
                 if (response.data?.success && response.data?.data?.data) {
                     setProperties(response.data.data.data);
@@ -95,17 +117,15 @@ const ManageProperty: React.FC = () => {
                     setCurrentPage(response.data.data.current_page);
                 } else {
                     setError('Invalid data format received from server');
-                    //console.error('Invalid response format:', response.data);
                 }
                 setLoading(() => false);
             } catch (err) {
-                //console.error('Error fetching properties:', err);
                 setError('Failed to load properties');
                 setLoading(() => false);
             }
         };
         fetchProperties();
-    }, [token]);
+    }, [token, searchQuery, categoryFilter, minPrice, maxPrice, roomsFilter, currentPage]);
 
     const getFirstImageUrl = (property: Property) => {
         const images = Object.values(property.images);
@@ -113,16 +133,13 @@ const ManageProperty: React.FC = () => {
     };
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const query = e.target.value.toLowerCase();
-        setSearchQuery(query);
+        setSearchQuery(e.target.value);
+        setCurrentPage(1);
     };
 
-    const filteredProperties = properties.filter(
-        (property) =>
-            property?.title?.toLowerCase().includes(searchQuery) ||
-            property?.category?.toLowerCase().includes(searchQuery) ||
-            property?.state_code?.toLowerCase().includes(searchQuery)
-    );
+    const filteredProperties = publishedFilter 
+        ? properties.filter(p => publishedFilter === 'published' ? p.published : !p.published)
+        : properties;
 
     const handlePropertyClick = (property: Property) => {
         setSelectedProperty(property);
@@ -136,11 +153,7 @@ const ManageProperty: React.FC = () => {
         }
         if (confirm('Are you sure you want to delete this property?')) {
             try {
-                await axios.delete(baseURL + `/apartment/${propertyId}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                await AxiosApi('agent', token).delete(baseURL + `/apartment/${propertyId}`);
                 setProperties((prev) => prev.filter((property) => property.id !== propertyId));
                 alert('Property deleted successfully!');
             } catch (err) {
@@ -159,15 +172,51 @@ const ManageProperty: React.FC = () => {
             <h1 className="text-black/80 text-[1.5rem] font-semibold">Manage Properties</h1>
             <div className="w-full flex flex-col items-center gap-4 ">
                 <div className='w-full'>
-
-                    <div className="mb-6  max-w-2xl w-2/3 md:w-1/4">
+                    <div className="mb-6 flex flex-wrap gap-3">
                         <input
                             type="text"
-                            placeholder="Search properties by title, category, or location..."
+                            placeholder="Search properties..."
                             value={searchQuery}
                             onChange={handleSearch}
-                            className="w-full text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                            className="flex-1 min-w-[200px] text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
                         />
+                        <input
+                            type="text"
+                            placeholder="Category ID"
+                            value={categoryFilter}
+                            onChange={(e) => { setCategoryFilter(e.target.value); setCurrentPage(1); }}
+                            className="w-32 text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                        />
+                        <input
+                            type="number"
+                            placeholder="Min Price"
+                            value={minPrice}
+                            onChange={(e) => { setMinPrice(e.target.value); setCurrentPage(1); }}
+                            className="w-32 text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                        />
+                        <input
+                            type="number"
+                            placeholder="Max Price"
+                            value={maxPrice}
+                            onChange={(e) => { setMaxPrice(e.target.value); setCurrentPage(1); }}
+                            className="w-32 text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                        />
+                        <input
+                            type="number"
+                            placeholder="Rooms"
+                            value={roomsFilter}
+                            onChange={(e) => { setRoomsFilter(e.target.value); setCurrentPage(1); }}
+                            className="w-24 text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                        />
+                        <select
+                            value={publishedFilter}
+                            onChange={(e) => { setPublishedFilter(e.target.value); setCurrentPage(1); }}
+                            className="w-32 text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                        >
+                            <option value="">All Status</option>
+                            <option value="published">Published</option>
+                            <option value="unpublished">Unpublished</option>
+                        </select>
                     </div>
                 </div>
 

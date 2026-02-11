@@ -2,7 +2,7 @@
 import {Eye, Home as HomeIcon, Star} from 'lucide-react';
 import React, {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
-import axios from 'axios';
+import {AxiosApi} from '@/lib/utils';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {baseURL} from "@/../next.config";
 import {useRouter} from "next/navigation";
@@ -54,11 +54,8 @@ const Home = () => {
             if (!token) return;
 
             try {
-                const headers = {Authorization: `Bearer ${token}`};
-
                 // Fetch statistics
-                const statsResponse = await axios.get(baseURL + '/statistics', {
-                    headers,
+                const statsResponse = await AxiosApi('agent', token).get(baseURL + '/statistics', {
                     validateStatus: function (status) {
                         return status === 200;
                     }
@@ -70,8 +67,7 @@ const Home = () => {
                 }
 
                 // Fetch chart data
-                const chartResponse = await axios.get(baseURL + '/bar-chart', {
-                    headers,
+                const chartResponse = await AxiosApi('agent', token).get(baseURL + '/bar-chart', {
                     validateStatus: function (status) {
                         return status === 200;
                     }

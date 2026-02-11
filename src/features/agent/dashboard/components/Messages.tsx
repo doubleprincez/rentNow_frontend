@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import { AxiosApi } from '@/lib/utils';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import {baseURL} from "@/../next.config";
 
@@ -42,16 +42,10 @@ const Messages: React.FC = () => {
         userId: state.auth.userId
     }));
 
-    // Configure axios with authentication
-    const api = axios.create({
-        baseURL: baseURL,
-        headers: { Authorization: `Bearer ${token}` }
-    });
-
     // Fetch all conversations
     const fetchConversations = async () => {
         try {
-            const response = await api.get('/conversations');
+            const response = await AxiosApi('agent', token).get(baseURL + '/conversations');
             setConversations(response.data.data);
         } catch (error) {
             //console.error('Error fetching conversations:', error);
@@ -61,7 +55,7 @@ const Messages: React.FC = () => {
     // Fetch messages for a specific conversation
     const fetchMessages = async (userId: number) => {
         try {
-            const response = await api.get(`/conversation/${userId}`);
+            const response = await AxiosApi('agent', token).get(baseURL + `/conversation/${userId}`);
             setMessages(response.data.data);
             setSelectedUser(userId);
         } catch (error) {
@@ -75,7 +69,7 @@ const Messages: React.FC = () => {
         if (!selectedUser || !newMessage.trim()) return;
 
         try {
-            await api.post(`/conversation`, {
+            await AxiosApi('agent', token).post(baseURL + `/conversation`, {
                 from_id: userId,
                 message: newMessage,
                 to_id: selectedUser
