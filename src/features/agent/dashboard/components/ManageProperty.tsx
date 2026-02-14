@@ -191,6 +191,7 @@ const ManageProperty: React.FC = () => {
                             type="number"
                             placeholder="Min Price"
                             value={minPrice}
+                            min={0}
                             onChange={(e) => { setMinPrice(e.target.value); setCurrentPage(1); }}
                             className="w-32 text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
                         />
@@ -198,6 +199,7 @@ const ManageProperty: React.FC = () => {
                             type="number"
                             placeholder="Max Price"
                             value={maxPrice}
+                            min={0}
                             onChange={(e) => { setMaxPrice(e.target.value); setCurrentPage(1); }}
                             className="w-32 text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
                         />
@@ -205,6 +207,7 @@ const ManageProperty: React.FC = () => {
                             type="number"
                             placeholder="Rooms"
                             value={roomsFilter}
+                            min={0}
                             onChange={(e) => { setRoomsFilter(e.target.value); setCurrentPage(1); }}
                             className="w-24 text-[.8em] border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-orange-500"
                         />
