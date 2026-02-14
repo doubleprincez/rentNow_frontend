@@ -35,9 +35,9 @@ const Header = () => {
             }, {title: 'Subscriptions', link: '/user/subscriptions'}];
         }else 
         if (user.isLoggedIn && user.accountType==='agents'){
-            return [ {title: 'Rents', link: '/agents/manage-rent'},
-            {title: 'Property', link: '/agents/manage-property'},
-            {title: 'Chats', link: '/agents/messages'}];
+            return [ {title: 'Rents', link: '/agents/dashboard/manage-rent'},
+            {title: 'Property', link: '/agents/dashboard/manage-property'},
+            {title: 'Chats', link: '/agents/dashboard/messages'}];
 
         }
          if (user.isLoggedIn && user.accountType==='admins'){
