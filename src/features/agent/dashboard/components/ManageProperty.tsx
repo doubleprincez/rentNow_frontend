@@ -1,6 +1,6 @@
 'use client';
 import React, {useEffect, useState} from 'react';
-import {AxiosApi} from '@/lib/utils';
+import {AxiosApi, getFormData} from '@/lib/utils';
 import {useSelector} from 'react-redux';
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {baseURL} from "@/../next.config";
@@ -76,7 +76,7 @@ const ManageProperty: React.FC = () => {
     const [minPrice, setMinPrice] = useState<string>('');
     const [maxPrice, setMaxPrice] = useState<string>('');
     const [roomsFilter, setRoomsFilter] = useState<string>('');
-    const token = useSelector((state: any) => state.auth.token);
+    const token = useSelector((state: any) => state.auth.token) || getFormData('authToken');
 
     useEffect(() => {
         const fetchProperties = async () => {
