@@ -4,13 +4,12 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import Image from 'next/image';
 import {Banknote, MapPin} from 'lucide-react';
 import {useRouter} from 'next/navigation';
-import type {Apartment, ApiResponse} from '@/types/apartment';
+import type {Apartment} from '@/types/apartment';
 import House from '@/components/assets/house1.jpeg';
 import House2 from '@/components/assets/house2.jpeg';
 import House3 from '@/components/assets/house3.jpeg';
 import House4 from '@/components/assets/house4.jpeg';
 import House5 from '@/components/assets/house5.jpeg';
-import {baseURL} from "@/../next.config";
 import {shouldShowAsNew} from "@/lib/apartment-utils";
 
 const tabs = [
@@ -54,46 +53,20 @@ const ApartmentCard = ({apartment, onClick}: { apartment: Apartment, onClick: (a
     </div>
 );
 
-const ComfortLiving = ({initialData}: { initialData?: ApiResponse }) => {
-    const [apartments, setApartments] = useState<Apartment[]>([]);
+const ComfortLiving = ({apartments: initialApartments = []}: { apartments?: Apartment[] }) => {
+    const [apartments, setApartments] = useState<Apartment[]>(initialApartments);
     const [categories, setCategories] = useState<Array<{ value: string, tabImage: typeof House }>>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(!initialData);
-    const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const router = useRouter();
 
     useEffect(() => {
-        if (initialData) {
-            setApartments(initialData.data.data);
-            const uniqueCategories = [...new Set(initialData.data.data.map(apt => apt.category))]
+        if (initialApartments.length > 0) {
+            setApartments(initialApartments);
+            const uniqueCategories = [...new Set(initialApartments.map(apt => apt.category))]
                 .filter((category): category is string => category !== undefined);
             processCategories(uniqueCategories);
-            return;
         }
-
-        const fetchApartments = async () => {
-            try {
-                setIsLoading(true);
-                const response = await fetch(baseURL + '/apartments');
-                const data: ApiResponse = await response.json();
-
-                if (data.success) {
-                    setApartments(data.data.data);
-                    const uniqueCategories = [...new Set(data.data.data.map(apt => apt.category))]
-                        .filter((category): category is string => category !== undefined);
-                    processCategories(uniqueCategories);
-                } else {
-                    setError(data.message || 'Failed to fetch apartments');
-                }
-            } catch (error) {
-                setError('Failed to fetch apartments');
-                //console.error('Error fetching apartments:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchApartments();
-    }, [initialData]);
+    }, [initialApartments]);
 
     const processCategories = (uniqueCategories: string[]) => {
         if (uniqueCategories) {
@@ -118,14 +91,6 @@ const ComfortLiving = ({initialData}: { initialData?: ApiResponse }) => {
         return (
             <div className="w-full min-h-screen flex items-center justify-center">
                 <p className="text-gray-600">Loading apartments...</p>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="w-full min-h-screen flex items-center justify-center">
-                <p className="text-red-500">{error}</p>
             </div>
         );
     }

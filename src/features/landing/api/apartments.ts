@@ -6,7 +6,9 @@ import {ApiResponse} from "@/types/apartment";
 
 export async function getApartments(queryParams:any=null) {
     try {
-        const response = await fetch(`${baseURL}/apartments${queryParams.toString() ? `?${queryParams.toString()}` : ''}`);
+        const response = await fetch(`/api/apartments${queryParams?.toString() ? `?${queryParams.toString()}` : ''}`, {
+            cache: 'no-store',
+        });
         return response.json();
     } catch (error) {
         throw error;

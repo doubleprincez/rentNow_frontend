@@ -3,51 +3,26 @@ import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import Image from 'next/image';
 import {Banknote, Bed, Home, MapPin, Scaling} from 'lucide-react';
-import type {Apartment, ApiResponse} from '@/types/apartment';
+import type {Apartment} from '@/types/apartment';
 import Maps from './Maps';
-import {backendUrl, baseURL, frontendURL} from "@/../next.config";
 import {shouldShowAsNew} from "@/lib/apartment-utils";
 
 
-interface PointContactI {
-    apartments: Apartment[]
+interface PointContactProps {
+    apartments?: Apartment[]
 }
 
-const PointContact = () => {
+const PointContact = ({ apartments = [] }: PointContactProps) => {
 
-    const [aparmtents,setApartments]= useState<Apartment[]>([]);
-    const [displayedApartments, setDisplayedApartments] = useState<Apartment[]>();
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [displayedApartments, setDisplayedApartments] = useState<Apartment[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
 
-    useEffect(()=>{
-        const fetchApartments =async()=>{
-            try{
-                const response = await fetch(baseURL + '/apartments');
-                const data: ApiResponse = await response.json();
-            
-                setApartments(data.data.data);
-            }catch(e){
-
-            }finally{
-                setIsLoading(false)
-            }
-                
-
+    useEffect(() => {
+        if (apartments.length > 0) {
+            setDisplayedApartments(apartments.slice(0, 6));
         }
-        fetchApartments();
-    }
-    ,[]);
-    // useEffect(() => {
-    //     const fetchAndProcessApartments = async () => {
-    //         try {
-    //             setIsLoading(true);
-    //             const response = await fetch(baseUrl+'/api/apartments');
-    //             const data: ApiResponse = await response.json();
-    //
-    //             if (data.success && data.data.data) {
-    //                 const apartments = data.data.data;
+    }, [apartments]);
     //                 const categories = [...new Set(apartments.map(apt => apt.category))];
     //
     //                 const selected = categories.slice(0, 5).map(category => {
@@ -117,7 +92,7 @@ const PointContact = () => {
                 </p>
 
                 <div className='mt-4 w-full flex flex-col gap-2'>
-                    {aparmtents&&aparmtents?.map((apartment) => (
+                    {displayedApartments?.map((apartment) => (
                         <div
                             key={apartment.id}
                             className='w-full h-[100px] sm:h-[120px] bg-white p-2 md:p-4 rounded-xl md:rounded-2xl overflow-hidden shadow-md flex items-center gap-3 cursor-pointer hover:shadow-lg transition-shadow relative'
@@ -170,7 +145,7 @@ const PointContact = () => {
             </div>
 
             <div className='relative z-0 w-full min-h-[300px] lg:h-full flex items-end overflow-hidden'>
-                <Maps/>
+                <Maps location={displayedApartments[0]?.state_code ? `${displayedApartments[0].state_code}, Nigeria` : 'Lagos, Nigeria'} />
             </div>
         </div>
     );

@@ -75,7 +75,7 @@ export function prepareMediaItems(apartment: Apartment): MediaItem[] {
     ? Object.values(apartment.images).map((image: Image, index: number) => ({
       id: `image-${index}`,
       type: 'image' as const,
-      url: image.preview_url,
+      url: image.original_url,
       thumbnail: image.preview_url
     }))
     : [];

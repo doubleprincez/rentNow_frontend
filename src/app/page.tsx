@@ -7,17 +7,58 @@ import Reviews from "@/features/landing/components/Reviews";
 import BecomeAgent from "@/features/landing/components/BecomeAgent";
 import Subscribe from "@/features/landing/components/Subscribe";
 import WhatsAppFloater from "./WhatsappFloater";
-import {baseURL, frontendURL} from "../../next.config";
-import type {ApiResponse} from "@/types/apartment";
-import {NextSeo} from "next-seo";
+import {baseURL} from "../../next.config";
+
+export const dynamic = 'force-dynamic';
+
+async function getInitialApartments() {
+    try {
+        const response = await fetch(`${baseURL}/apartments`, {
+            headers: { 'Accept': 'application/json' },
+            cache: 'no-store',
+        });
+        const data = await response.json();
+        
+        if (data.success && data.data?.data) {
+            // Filter sensitive data
+            const filtered = data.data.data.map((apt: any) => ({
+                id: apt.id,
+                category: apt.category,
+                state_code: apt.state_code,
+                city_code: apt.city_code,
+                title: apt.title,
+                description: apt.description,
+                amount: apt.amount,
+                duration: apt.duration,
+                images: apt.images,
+                created_at: apt.created_at,
+            }));
+            
+            const categories = [...new Set(filtered.map((a: any) => a.category))].filter(Boolean) as string[];
+            const states = [...new Set(filtered.map((a: any) => a.state_code))].filter(Boolean) as string[];
+            
+            return {
+                apartments: filtered,
+                categories,
+                states,
+            };
+        }
+    } catch (error) {
+        console.error('Server fetch error:', error);
+    }
+    
+    return { apartments: [], categories: [], states: [] };
+}
 
 const Page = async () => {
+    const initialData = await getInitialApartments();
+    
     return (
         <WhatsAppFloater>
             <Header/>
-            <Home/>
-            <ComfortLiving />
-            <PointContact />
+            <Home initialData={initialData} />
+            <ComfortLiving apartments={initialData.apartments} />
+            <PointContact apartments={initialData.apartments} />
             <Reviews/>
             <BecomeAgent/>
             <Subscribe/>

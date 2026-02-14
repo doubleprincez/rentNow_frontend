@@ -6,19 +6,23 @@ import {fadeIn} from '@/lib/variants';
 import {Star, Target} from "lucide-react";
 import {Dialog, DialogContent} from "@/components/ui/dialog";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {baseURL} from "@/../next.config";
-import type {Apartment, ApiResponse} from '@/types/apartment';
+import type {Apartment} from '@/types/apartment';
 import House from '@/components/assets/house1.jpeg';
 import House2 from '@/components/assets/house2.jpeg';
 import House3 from '@/components/assets/house4.jpeg';
 import House4 from '@/components/assets/house5.jpeg';
-
-
 import {useRouter} from 'next/navigation';
 import {shouldShowAsNew} from "@/lib/apartment-utils";
-import {getApartments} from "@/features/landing/api/apartments";
 
-const Home: React.FC = () => {
+interface HomeProps {
+    initialData: {
+        apartments: Apartment[];
+        categories: string[];
+        states: string[];
+    };
+}
+
+const Home: React.FC<HomeProps> = ({ initialData }) => {
     const images = [
         House,
         House2,
@@ -31,14 +35,12 @@ const Home: React.FC = () => {
         country: 'NGA'
     });
     const [searchResults, setSearchResults] = useState<Apartment[]>([]);
-    // const [selectedApartment, setSelectedApartment] = useState<Apartment | null>(null);
-
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const [categories, setCategories] = useState<string[]>([]);
-    const [states, setStates] = useState<string[]>([]);
+    const [categories] = useState<string[]>(initialData.categories);
+    const [states] = useState<string[]>(initialData.states);
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [loadedImages, setLoadedImages] = useState<boolean[]>(new Array(images.length).fill(false));
@@ -49,32 +51,6 @@ const Home: React.FC = () => {
     const handleApartmentClick = (apartment: Apartment) => {
         router.push(`/find-homes/${apartment.id}`);
     };
-
-    // Modified fetchOptions to only get categories and states
-    useEffect(() => {
-        
-        const fetchOptions = async () => {
-            try {
-                const response =  (await getApartments().then(r=>r));
-
-                const data:ApiResponse = response;
-
-                if (data.success) {
-                    const uniqueStates = [...new Set(data.data.data.map(apt => apt.state_code))]
-                        .filter((category): category is string => category !== undefined);
-
-                    const uniqueCategories = [...new Set(data.data.data.map(apt => apt.category))]
-                        .filter((category): category is string => category !== undefined);
-                    setCategories(uniqueCategories);
-                    setStates(uniqueStates);
-                }
-            } catch (error) {
-                //console.error('Error fetching options:', error);
-            }
-        };
-
-        fetchOptions();
-    }, []);
 
     // Preload images
     useEffect(() => {
@@ -132,23 +108,19 @@ const Home: React.FC = () => {
         setError(null);
 
         try {
-            const queryParams = new URLSearchParams();
-
-            // Only add parameters if they're not 'all'
-            if (searchParams.category !== 'all') queryParams.append('category', searchParams.category);
-            if (searchParams.state !== 'all') queryParams.append('state_code', searchParams.state);
-            // Always include country_code=NGA
-            queryParams.append('country_code', 'NGA');
+            const { searchApartments } = await import('@/app/actions/apartments');
             
-            const response = await getApartments(queryParams).then(r=>r);
-            const data:ApiResponse = response;
+            const result = await searchApartments({
+                category: searchParams.category !== 'all' ? searchParams.category : undefined,
+                state_code: searchParams.state !== 'all' ? searchParams.state : undefined,
+                country_code: 'NGA',
+            });
 
-            console.log('with query ',data);
-            if (data.success) {
-                setSearchResults(data.data.data);
+            if (result.success) {
+                setSearchResults(result.data);
                 setIsDialogOpen(true);
             } else {
-                setError(data.message || 'Failed to fetch apartments');
+                setError(result.message || 'Failed to fetch apartments');
             }
         } catch (error) {
             setError('Failed to fetch apartments');
