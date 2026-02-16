@@ -44,7 +44,7 @@ const AdAnalyticsDashboard = () => {
   const fetchAnalytics = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') ?? undefined;
       const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
       
       const [dashboardRes, breakdownRes] = await Promise.all([
