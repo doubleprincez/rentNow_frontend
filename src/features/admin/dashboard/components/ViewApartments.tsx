@@ -43,7 +43,7 @@ const ViewApartmentEnhanced = () => {
     const [filteredCount, setFilteredCount] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
     const [categoryFilter, setCategoryFilter] = useState<string>('');
-    const [publishedFilter, setPublishedFilter] = useState<string>('');
+    const [publishedFilter, setPublishedFilter] = useState<string>('all');
     const [minPrice, setMinPrice] = useState<string>('');
     const [maxPrice, setMaxPrice] = useState<string>('');
     const [roomsFilter, setRoomsFilter] = useState<string>('');
@@ -59,7 +59,7 @@ const ViewApartmentEnhanced = () => {
             if (response.success && response.data) {
                 let apartmentData = Object.values(response.data.data) as Apartment[];
                 
-                if (publishedFilter) {
+                if (publishedFilter && publishedFilter !== 'all') {
                     apartmentData = apartmentData.filter(p => 
                         publishedFilter === 'published' ? p.published : !p.published
                     );
@@ -201,7 +201,7 @@ const ViewApartmentEnhanced = () => {
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="">All Status</SelectItem>
+                            <SelectItem value="all">All Status</SelectItem>
                             <SelectItem value="published">Published</SelectItem>
                             <SelectItem value="unpublished">Unpublished</SelectItem>
                         </SelectContent>
