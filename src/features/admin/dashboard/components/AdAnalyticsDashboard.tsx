@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { AxiosApi } from '@/services/backend-api';
+import { AxiosApi } from '@/lib/utils';
 import {
   Table,
   TableBody,
