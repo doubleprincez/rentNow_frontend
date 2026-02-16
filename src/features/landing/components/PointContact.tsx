@@ -120,7 +120,7 @@ const PointContact = ({ apartments = [] }: PointContactProps) => {
                                     <div className='flex items-center gap-1'>
                                         <MapPin className='text-orange-500 w-4 md:w-5 h-4 md:h-5'/>
                                         <span
-                                            className='text-[.7em] md:text-[.9em]'>{`${apartment.city_code}, ${apartment.country_code}`}</span>
+                                            className='text-[.7em] md:text-[.9em]'>{`${apartment.city_code}, ${apartment.state_code}`}</span>
                                     </div>
                                 </div>
                                 <div className='flex flex-wrap items-center gap-2'>

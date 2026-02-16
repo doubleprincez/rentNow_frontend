@@ -22,19 +22,10 @@ interface ChartData {
     total_apartments: number;
 }
 
-const generateMockData = () => {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return months.map(month => ({
-        name: month,
-        total_rent: 0,
-        total_apartments: 0
-    }));
-};
-
 const Home = () => {
     const router = useRouter();
     const [statistics, setStatistics] = useState<Statistics | null>(null);
-    const [chartData, setChartData] = useState<ChartData[]>(generateMockData());
+    const [chartData, setChartData] = useState<ChartData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 

@@ -31,7 +31,7 @@ export const GOOGLE_ADSENSE_CLIENT_ID = 'ca-pub-3051384019314375';
 // Google Ad Manager Network Code (8-10 digit number)
 // Get this from: https://admanager.google.com/
 // Leave empty to use fallback video
-export const GOOGLE_AD_MANAGER_NETWORK_CODE = '134-671-0282';
+export const GOOGLE_AD_MANAGER_NETWORK_CODE = '';
 
 // Custom Ad Endpoint (your own video URL)
 // Example: 'https://yourdomain.com/videos/promo.mp4'

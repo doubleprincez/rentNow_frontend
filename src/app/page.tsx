@@ -24,6 +24,7 @@ async function getInitialApartments() {
             const filtered = data.data.data.map((apt: any) => ({
                 id: apt.id,
                 category: apt.category,
+                country_code: apt.country_code,
                 state_code: apt.state_code,
                 city_code: apt.city_code,
                 title: apt.title,

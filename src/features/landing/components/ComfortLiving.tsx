@@ -42,7 +42,7 @@ const ApartmentCard = ({apartment, onClick}: { apartment: Apartment, onClick: (a
                 <p className='text-[.9em] mdl:text-[1.2em] font-semibold text-gray-700'>{apartment.title}</p>
                 <div className='flex items-center gap-2'>
                     <MapPin className='text-orange-500' size={16}/>
-                    <p className='text-[.7em] mdl:text-[.9em] text-gray-600'>{`${apartment.city_code}, ${apartment.country_code}`}</p>
+                    <p className='text-[.7em] mdl:text-[.9em] text-gray-600'>{`${apartment.city_code}, ${apartment.state_code}`}</p>
                 </div>
                 <div className='flex items-center gap-2'>
                     <Banknote className='text-orange-500' size={16}/>
