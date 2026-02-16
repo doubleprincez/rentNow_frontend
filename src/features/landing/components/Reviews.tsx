@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Card, CardContent } from '@/components/ui/card'
 import { ColonIcon } from '@/icons';
-import { AxiosApi } from '@/services/backend-api';
+import { AxiosApi } from '@/lib/utils';
 
 interface Review {
   id: number;

@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { AxiosApi } from '@/services/backend-api';
+import { AxiosApi } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { Card } from '@/components/ui/card';

@@ -1,14 +1,17 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { AxiosApi } from '@/services/backend-api';
+import { AxiosApi } from '@/lib/utils';
 
 interface Testimonial {
   id: number;
   user: { name: string };
   rating: number;
   comment: string;
-  apartment?: { title: string };
+  apartment?: { 
+    title: string;
+    media?: Array<{ url: string }>;
+  };
 }
 
 const TestimonialCarousel = () => {
