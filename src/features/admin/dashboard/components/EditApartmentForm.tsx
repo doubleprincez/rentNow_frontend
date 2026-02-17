@@ -160,9 +160,6 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
                     baseURL + '/apartment-types');
                 if (response.data.success) {
                     setCategories(response.data.data);
-                    if (property && property.category_id && response.data.data.some(cat => cat.id === property.category_id)) {
-                        setValue('category_id', property.category_id);
-                    }
                 }
             } catch (error) {
                 if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -172,7 +169,14 @@ const EditApartmentForm: React.FC<EditApartmentFormProps> = ({property}) => {
         };
 
         fetchCategories();
-    }, [setCategories, setValue, property]);
+    }, []);
+
+    // Set category after both property and categories are loaded
+    useEffect(() => {
+        if (property?.category_id && categories.length > 0) {
+            setValue('category_id', property.category_id);
+        }
+    }, [property?.category_id, categories, setValue]);
 
     const validateStep = async (): Promise<boolean> => {
         let fieldsToValidate: Array<keyof PropertyFormData> = [];

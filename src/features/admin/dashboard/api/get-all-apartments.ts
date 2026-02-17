@@ -19,6 +19,8 @@ export interface Apartment {
     city_code: string;
     created_at: string;
     new: boolean;
+    views?: number;
+    likes?: number;
     images: Record<string, {
         preview_url: string;
         original_url: string;

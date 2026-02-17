@@ -354,6 +354,12 @@ const ViewApartmentEnhanced = () => {
                                                                     <strong>Uploaded:</strong> {relativeTime}
                                                                 </p>
                                                             )}
+                                                            {apartment.views !== undefined && (
+                                                                <p><strong>Views:</strong> {apartment.views}</p>
+                                                            )}
+                                                            {apartment.likes !== undefined && (
+                                                                <p><strong>Likes:</strong> {apartment.likes}</p>
+                                                            )}
                                                             <p>
                                                                 <strong>Status:</strong> 
                                                                 <Badge variant={apartment.published ? "default" : "secondary"} className="ml-2 text-xs">
@@ -362,6 +368,21 @@ const ViewApartmentEnhanced = () => {
                                                             </p>
                                                         </div>
                                                     </div>
+                                                    {apartment.videos && Object.keys(apartment.videos).length > 0 && (
+                                                        <div>
+                                                            <h3 className="font-semibold mb-2">Videos</h3>
+                                                            <div className="grid grid-cols-2 gap-2">
+                                                                {Object.values(apartment.videos).map((video, index) => (
+                                                                    <video
+                                                                        key={index}
+                                                                        src={video.original_url}
+                                                                        controls
+                                                                        className="w-full rounded-lg"
+                                                                    />
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                     <div>
                                                         <h3 className="font-semibold mb-2">Description</h3>
                                                         <p>{apartment.description}</p>
