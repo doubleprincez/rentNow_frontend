@@ -66,7 +66,7 @@ const accountRefresher = () => {
     useEffect(() => {
         if (isLoggedIn && token) {
             fetchUserData();
-            const interval = setInterval(fetchUserData, 10 * 60 * 1000);
+            const interval = setInterval(fetchUserData, 30 * 60 * 1000); // Increased to 30 minutes
             return () => clearInterval(interval);
         }
     }, [isLoggedIn, token]);

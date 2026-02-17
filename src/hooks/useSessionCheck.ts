@@ -6,7 +6,7 @@ import { RootState } from '@/redux/store';
 import { AxiosApi, deleteFormData } from '@/lib/utils';
 import { baseURL } from '@/../next.config';
 
-const SESSION_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
+const SESSION_CHECK_INTERVAL = 15 * 60 * 1000; // Increased to 15 minutes
 
 export const useSessionCheck = () => {
     const { isLoggedIn, token, account_id } = useSelector((state: RootState) => state.auth);

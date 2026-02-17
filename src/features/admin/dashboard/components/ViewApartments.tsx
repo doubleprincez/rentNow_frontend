@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect, useState, useMemo} from 'react';
+import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {useSelector} from 'react-redux';
 import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
@@ -8,6 +8,7 @@ import {Dialog, DialogContent, DialogHeader, DialogTrigger,} from '@/components/
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {type Apartment, deleteApartment, getAllApartments, publishApartment} from '../api/get-all-apartments';
+import {debounce, getCachedData, setCachedData, clearCache} from '@/lib/apiOptimization';
 import {ChevronLeft, ChevronRight, Pencil, Search, Clock, Sparkles, AlertCircle, Calendar} from 'lucide-react';
 import Link from "next/link";
 import {DialogDescription} from '@radix-ui/react-dialog';
@@ -51,7 +52,18 @@ const ViewApartmentEnhanced = () => {
     const isLoggedIn = useSelector((state: any) => state.auth.isLoggedIn);
     const token = useSelector((state: RootState) => state.auth.token);
 
-    const fetchApartments = async () => {
+    const fetchApartments = useCallback(async () => {
+        const cacheKey = `apartments_${currentPage}_${debouncedSearchTerm}_${sortByRecent}_${dateFilter}_${categoryFilter}_${minPrice}_${maxPrice}_${roomsFilter}_${publishedFilter}`;
+        
+        const cached = getCachedData(cacheKey);
+        if (cached) {
+            setApartments(cached.apartments);
+            setTotalPages(cached.totalPages);
+            setFilteredCount(cached.filteredCount);
+            setTotalCount(cached.totalCount);
+            return;
+        }
+
         try {
             setLoading(() => true);
             const response = await getAllApartments(currentPage, debouncedSearchTerm, token, sortByRecent, dateFilter, categoryFilter, minPrice, maxPrice, roomsFilter, publishedFilter);
@@ -63,6 +75,13 @@ const ViewApartmentEnhanced = () => {
                 setTotalPages(response.data.last_page);
                 setFilteredCount(response.data.filtered_count || response.data.total);
                 setTotalCount(response.data.total_count || response.data.total);
+                
+                setCachedData(cacheKey, {
+                    apartments: apartmentData,
+                    totalPages: response.data.last_page,
+                    filteredCount: response.data.filtered_count || response.data.total,
+                    totalCount: response.data.total_count || response.data.total
+                });
             } else {
                 throw new Error('Invalid response format');
             }
@@ -74,18 +93,19 @@ const ViewApartmentEnhanced = () => {
         } finally {
             setLoading(() => false);
         }
-    };
+    }, [currentPage, debouncedSearchTerm, token, sortByRecent, dateFilter, categoryFilter, minPrice, maxPrice, roomsFilter, publishedFilter]);
 
     useEffect(() => {
         if (isLoggedIn) {
-            fetchApartments().then(r => r);
+            fetchApartments();
         }
-    }, [currentPage, debouncedSearchTerm, isLoggedIn, sortByRecent, dateFilter, categoryFilter, minPrice, maxPrice, roomsFilter, publishedFilter]);
+    }, [isLoggedIn, fetchApartments]);
 
     const handleDelete = async (id: number) => {
         if (window.confirm('Are you sure you want to delete this apartment?')) {
             try {
                 await deleteApartment(id);
+                clearCache(); // Clear cache after mutation
                 await fetchApartments();
             } catch (err: any) {
                 setError(err.message || 'Failed to delete apartment');
@@ -97,6 +117,7 @@ const ViewApartmentEnhanced = () => {
         if (window.confirm('Please Confirm Action')) {
             try {
                 await publishApartment(id, dir);
+                clearCache(); // Clear cache after mutation
                 await fetchApartments();
             } catch (err: any) {
                 setError(err.message || 'Failed to update apartment');
@@ -104,10 +125,10 @@ const ViewApartmentEnhanced = () => {
         }
     };
 
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(e.target.value);
+    const handleSearch = debounce((value: string) => {
+        setSearchTerm(value);
         setCurrentPage(1);
-    };
+    }, 500);
 
     const handleDateFilterChange = (value: string) => {
         setDateFilter(value as 'all' | '24h' | '7d' | '30d');
@@ -153,8 +174,8 @@ const ViewApartmentEnhanced = () => {
                         <Input
                             placeholder="Search Apartments..."
                             className="pl-8"
-                            value={searchTerm}
-                            onChange={handleSearch}
+                            defaultValue={searchTerm}
+                            onChange={(e) => handleSearch(e.target.value)}
                         />
                     </div>
                     

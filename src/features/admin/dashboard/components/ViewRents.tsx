@@ -100,7 +100,7 @@ const ViewRents = () => {
 
   if (!rentData || !rentData.data || rentData.data.length === 0) {
     return (
-      <div className="container mx-auto py-6">
+      <div className="containe p-8">
         <h1 className="text-2xl font-bold mb-6">Rent Requests</h1>
         <div className="text-center py-8">
           No rent requests found.
@@ -110,7 +110,7 @@ const ViewRents = () => {
   }
 
   return (
-    <div className="w-full mx-auto py-6 px-4 poppins">
+    <div className="w-full p-8 poppins">
       <h1 className="text-2xl font-bold mb-6">Rent Requests</h1>
       
       <div className="rounded-md border">

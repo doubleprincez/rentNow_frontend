@@ -35,7 +35,7 @@ const ViewSubscriptions = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-10">
+    <div className="p-8 mt-10">
       {/* Tab Navigation */}
       <div className="flex border-b border-gray-300">
         {validTabs.map((tab) => (
