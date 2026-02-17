@@ -113,7 +113,7 @@ export const getAllApartments = async (
 
 export const deleteApartment = async (id: number) => {
     try {
-        const token = getFormData('adminToken');
+        const token = getFormData('authToken');
         if (!token) {
             throw new Error('No authentication token found');
         }
@@ -135,7 +135,7 @@ export const deleteApartment = async (id: number) => {
 };
 export const updateApartment = async (id: number, data: object) => {
     try {
-        const token = getFormData('adminToken');
+        const token = getFormData('authToken');
         if (!token) {
             throw new Error('No authentication token found');
         }
