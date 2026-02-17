@@ -53,7 +53,8 @@ export const getAllApartments = async (
     categoryFilter: string = '',
     minPrice: string = '',
     maxPrice: string = '',
-    roomsFilter: string = ''
+    roomsFilter: string = '',
+    publishedFilter: string = 'all'
 ) => {
     try {
         let token: string | null | undefined = adminToken;
@@ -89,6 +90,9 @@ export const getAllApartments = async (
             params.append('filter_name', 'number_of_rooms');
             params.append('filter_dir', 'eq');
             params.append('filter_val', roomsFilter);
+        }
+        if (publishedFilter !== 'all') {
+            params.append('published', publishedFilter === 'published' ? '1' : '0');
         }
         
         const response = await axios.get<ApiResponse>(

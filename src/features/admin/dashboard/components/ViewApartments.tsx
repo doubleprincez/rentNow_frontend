@@ -54,16 +54,10 @@ const ViewApartmentEnhanced = () => {
     const fetchApartments = async () => {
         try {
             setLoading(() => true);
-            const response = await getAllApartments(currentPage, debouncedSearchTerm, token, sortByRecent, dateFilter, categoryFilter, minPrice, maxPrice, roomsFilter);
+            const response = await getAllApartments(currentPage, debouncedSearchTerm, token, sortByRecent, dateFilter, categoryFilter, minPrice, maxPrice, roomsFilter, publishedFilter);
 
             if (response.success && response.data) {
                 let apartmentData = Object.values(response.data.data) as Apartment[];
-                
-                if (publishedFilter && publishedFilter !== 'all') {
-                    apartmentData = apartmentData.filter(p => 
-                        publishedFilter === 'published' ? p.published : !p.published
-                    );
-                }
                 
                 setApartments(apartmentData);
                 setTotalPages(response.data.last_page);

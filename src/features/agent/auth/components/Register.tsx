@@ -13,14 +13,14 @@ const registerSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters'),
   password_confirmation: z.string(),
   business_name: z.string().min(1, 'Business name is required').max(255),
-  business_email: z.string().email('Invalid business email').max(255).optional(),
+  business_email: z.string().email('Invalid business email').max(255).optional().or(z.literal('')),
   business_phone: z.string().max(255),
-  business_address: z.string().max(255).nullable(),
+  business_address: z.string().max(255).nullable().or(z.literal('')),
   country: z.string().min(1, 'Country is required').max(255),
-  state: z.string().max(255).nullable(),
-  city: z.string().max(255).nullable(),
-  lat: z.string().max(255).nullable(),
-  long: z.string().max(255).nullable(),
+  state: z.string().max(255).nullable().or(z.literal('')),
+  city: z.string().max(255).nullable().or(z.literal('')),
+  lat: z.string().max(255).nullable().or(z.literal('')),
+  long: z.string().max(255).nullable().or(z.literal('')),
   agent_type: z.string().min(1, 'Agent type is required'),
 }).refine((data) => data.password === data.password_confirmation, {
   message: "Passwords don't match",
@@ -76,10 +76,18 @@ const Register: React.FC = () => {
     try {
       const validatedData = registerSchema.parse(formData);
 
-      const payload = {
+      // Remove empty optional fields
+      const payload: any = {
         ...validatedData,
         account_id: 2 
       };
+      
+      if (!payload.business_email) delete payload.business_email;
+      if (!payload.business_address) delete payload.business_address;
+      if (!payload.state) delete payload.state;
+      if (!payload.city) delete payload.city;
+      if (!payload.lat) delete payload.lat;
+      if (!payload.long) delete payload.long;
 
       const response = await axios.post(baseURL+'/register-agent', payload);
 
