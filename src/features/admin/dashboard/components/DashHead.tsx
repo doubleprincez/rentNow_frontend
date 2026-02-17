@@ -14,7 +14,7 @@ const DashHead = () => {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const { showAlert } = useAlert();
-    const { firstName, lastName } = useSelector((state: RootState) => state.admin);
+    const { firstName, lastName } = useSelector((state: RootState) => state.auth);
 
     const handleLogout = async () => {
         try {
