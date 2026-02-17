@@ -133,6 +133,31 @@ export const deleteApartment = async (id: number) => {
         throw error;
     }
 };
+
+export const publishApartment = async (id: number, published: boolean) => {
+    try {
+        const token = getFormData('authToken');
+        if (!token) {
+            throw new Error('No authentication token found');
+        }
+
+        const response = await AxiosApi("admin").patch(
+            baseURL + `/apartment/${id}/publish`,
+            { published },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: 'application/json',
+                },
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const updateApartment = async (id: number, data: object) => {
     try {
         const token = getFormData('authToken');

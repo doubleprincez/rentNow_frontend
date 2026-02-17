@@ -7,7 +7,7 @@ import {Input} from '@/components/ui/input';
 import {Dialog, DialogContent, DialogHeader, DialogTrigger,} from '@/components/ui/dialog';
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from '@/components/ui/table';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
-import {type Apartment, deleteApartment, getAllApartments, updateApartment} from '../api/get-all-apartments';
+import {type Apartment, deleteApartment, getAllApartments, publishApartment} from '../api/get-all-apartments';
 import {ChevronLeft, ChevronRight, Pencil, Search, Clock, Sparkles, AlertCircle, Calendar} from 'lucide-react';
 import Link from "next/link";
 import {DialogDescription} from '@radix-ui/react-dialog';
@@ -96,7 +96,7 @@ const ViewApartmentEnhanced = () => {
     const handlePublish = async (id: number, dir: boolean) => {
         if (window.confirm('Please Confirm Action')) {
             try {
-                await updateApartment(id, {published: dir});
+                await publishApartment(id, dir);
                 await fetchApartments();
             } catch (err: any) {
                 setError(err.message || 'Failed to update apartment');
