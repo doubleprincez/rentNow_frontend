@@ -194,10 +194,10 @@ const ViewApartmentEnhanced = () => {
                         <SelectTrigger className="w-32">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Status</SelectItem>
-                            <SelectItem value="published">Published</SelectItem>
-                            <SelectItem value="unpublished">Unpublished</SelectItem>
+                        <SelectContent className="bg-white dark:bg-gray-800 text-black dark:text-white">
+                            <SelectItem value="all" className="bg-white dark:bg-gray-800 text-black dark:text-white">All Status</SelectItem>
+                            <SelectItem value="published" className="bg-white dark:bg-gray-800 text-black dark:text-white">Published</SelectItem>
+                            <SelectItem value="unpublished" className="bg-white dark:bg-gray-800 text-black dark:text-white">Unpublished</SelectItem>
                         </SelectContent>
                     </Select>
                     
@@ -206,9 +206,9 @@ const ViewApartmentEnhanced = () => {
                             <Calendar className="h-4 w-4 mr-2" />
                             <SelectValue placeholder="Filter by date" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-white dark:bg-gray-800 text-black dark:text-white">
                             {dateFilterOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
+                                <SelectItem key={option.value} value={option.value} className="bg-white dark:bg-gray-800 text-black dark:text-white">
                                     <div className="flex flex-col">
                                         <span>{option.label}</span>
                                         <span className="text-xs text-muted-foreground">{option.description}</span>
