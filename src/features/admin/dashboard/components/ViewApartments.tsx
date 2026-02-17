@@ -373,7 +373,7 @@ const ViewApartmentEnhanced = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell className={'flex gap-2'}>
-                                        <Link className={"mt-1"}
+                                        <Link className={"mt-1 px-3 py-1 text-center border-1 border-gray-200"}
                                               href={"/admin/dashboard/edit-apartment/" + apartment.id}>
                                             <Pencil className="h-4 w-4"/>
                                         </Link>
