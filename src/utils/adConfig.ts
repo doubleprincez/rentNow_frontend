@@ -59,7 +59,7 @@ export function createAdConfiguration(): AdConfiguration {
     customVideoUrl: config.CUSTOM_AD_ENDPOINT,
     skipDelay: config.AD_SKIP_DELAY,
     fallbackContent: {
-      videoUrl: '/videos/platform-promo.mp4', // Fallback promotional video
+      videoUrl:CUSTOM_AD_ENDPOINT, // Fallback promotional video
       title: 'Discover Amazing Properties on RentNow.ng',
       description: 'Find your perfect home with thousands of verified listings'
     }
@@ -94,7 +94,7 @@ export function getFallbackConfiguration(): AdConfiguration {
     provider: 'fallback',
     skipDelay: AD_SKIP_DELAY,
     fallbackContent: {
-      videoUrl: '/videos/platform-promo.mp4',
+      videoUrl: CUSTOM_AD_ENDPOINT,
       title: 'Welcome to RentNow.ng',
       description: 'Your trusted platform for finding quality rental properties'
     }

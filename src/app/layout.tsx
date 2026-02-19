@@ -52,13 +52,17 @@ export default function RootLayout({children}: Readonly<{
         </Script>
         <Script async src="https://www.googletagmanager.com/gtag/js?id=G-G2XXGJB22B" 
             crossOrigin="anonymous" strategy="afterInteractive">
-        </Script>
+        </Script> 
+        <Script async src="https://www.googletagmanager.com/gtag/js?id=AW-17801862381" crossOrigin="anonymous" strategy="afterInteractive"></Script>
+        <Script dangerouslySetInnerHTML={{__html:`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'AW-17801862381');`}} ></Script>
         <Script id="gtag-init" strategy="afterInteractive" dangerouslySetInnerHTML={{__html:"window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)}gtag('js', new Date());gtag('config', 'G-G2XXGJB22B');"}}></Script>
         <Script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3051384019314375" crossOrigin="anonymous" strategy="afterInteractive" />
         <Metas metadata={metadata}/>
 
         <Script data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/ee3b128a02ade.js" data-cmp-host="b.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="16"></Script>
+       
         <body className="w-full flex flex-col">
+
         <Providers>
             {children}
         </Providers>
