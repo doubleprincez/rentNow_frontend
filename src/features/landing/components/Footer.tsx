@@ -90,26 +90,65 @@ import { Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import Image from 'next/image';
 import Logo from '@/components/assets/logo/logo.png'
 
+const linkClass = 'hover:underline duration-300 ease-in-out hover:text-orange-500 cursor-pointer';
+
 const Footer = () => {
   return (
-    <div className='w-full flex flex-col justify-center items-center bg-black'>
-      <div className=' w-full flex flex-col justify-center items-center py-10 gap-2 md:gap-3'>
-          <Link href="/">
-          <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
-          </Link>
-          <p className="text-[.8em] md:text-[.9em] md:leading-6 md:font-medium text-white">
-              Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria.
+    <div className='w-full flex flex-col bg-black'>
+      <div className='px-4 lg:px-16 py-10 md:py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
 
+        {/* Brand */}
+        <div className='flex flex-col gap-3'>
+          <Link href="/">
+            <Image src={Logo} alt='logo' width={500} height={500} className='w-[120px] h-[50px] object-contain'/>
+          </Link>
+          <p className="text-[.8em] md:text-[.9em] leading-6 text-white">
+            Perfect Firm For Renting and Leasing Houses, Flats and Duplexes all over Nigeria.
           </p>
-          <div className='flex items-center gap-5 md:mt-4'>
-            <a href={"https://www.facebook.com/share/16UZ45mRaX/"} > <Facebook className='text-white'/></a>
-              <a href={"https://www.instagram.com/tenantplus?igsh=MWxpYXZvMDdrOXM1dA=="} > <Instagram className='text-white'/> </a>
-                    <Linkedin className='text-white'/>
-                    <Twitter className='text-white'/>
+          <div className='flex items-center gap-5 mt-2'>
+            <a href="https://www.facebook.com/share/16UZ45mRaX/"><Facebook className='text-white'/></a>
+            <a href="https://www.instagram.com/tenantplus?igsh=MWxpYXZvMDdrOXM1dA=="><Instagram className='text-white'/></a>
+            <Linkedin className='text-white'/>
+            <Twitter className='text-white'/>
           </div>
         </div>
 
-      <div className='w-full px-2 md:px-8 py-4 md:py-8 flex flex-col md:flex-row items-center justify-center md:justify-between text-[.7em] md:text-[.8em] font-medium text-orange-500 border-t border-orange-500'>
+        {/* Pages */}
+        <div className='flex flex-col gap-3'>
+          <h3 className='text-orange-500 font-semibold text-[.95em]'>Pages</h3>
+          <ul className='text-gray-300 text-[.85em] flex flex-col gap-2'>
+            <li><Link href="/" className={linkClass}>Home</Link></li>
+            <li><Link href="/find-homes" className={linkClass}>Find Homes</Link></li>
+            <li><Link href="/about" className={linkClass}>About Us</Link></li>
+            <li><Link href="/contact" className={linkClass}>Contact</Link></li>
+            <li><Link href="/subscribe" className={linkClass}>Subscribe</Link></li>
+            <li><Link href="/agents" className={linkClass}>Become an Agent</Link></li>
+          </ul>
+        </div>
+
+        {/* Legal */}
+        <div className='flex flex-col gap-3'>
+          <h3 className='text-orange-500 font-semibold text-[.95em]'>Legal</h3>
+          <ul className='text-gray-300 text-[.85em] flex flex-col gap-2'>
+            <li><Link href="/terms-and-conditions" className={linkClass}>Terms & Conditions</Link></li>
+            <li><Link href="/privacy-policy" className={linkClass}>Privacy Policy</Link></li>
+          </ul>
+        </div>
+
+        {/* Account */}
+        <div className='flex flex-col gap-3'>
+          <h3 className='text-orange-500 font-semibold text-[.95em]'>Account</h3>
+          <ul className='text-gray-300 text-[.85em] flex flex-col gap-2'>
+            <li><Link href="/auth/login" className={linkClass}>Tenant Login</Link></li>
+            <li><Link href="/auth/signup" className={linkClass}>Tenant Sign Up</Link></li>
+            <li><Link href="/agents/auth/login" className={linkClass}>Agent Login</Link></li>
+            <li><Link href="/agents/auth/register" className={linkClass}>Agent Sign Up</Link></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div className='w-full px-4 md:px-8 py-4 md:py-6 flex flex-col md:flex-row items-center justify-center md:justify-between text-[.7em] md:text-[.8em] font-medium text-orange-500 border-t border-orange-500'>
         <span>Copyright &copy; 2025 RentNow, All rights reserved</span>
         <span>Developed by DEENOluwatobi</span>
       </div>
