@@ -55,6 +55,7 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
     const [page, setPage] = useState<number>(1); // For pagination
 
     // Filter states
+    const [searchTerm, setSearchTerm] = useState<string>('');
     const [stateCodeFilter, setStateCodeFilter] = useState<string>('');
     const [cityCodeFilter, setCityCodeFilter] = useState<string>('');
     const [amenitiesFilter, setAmenitiesFilter] = useState<string>('');
@@ -63,13 +64,15 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
     const [filterVal, setFilterVal] = useState<string>('');
 
     // Debounced values
+    const [debouncedSearch] = useDebounce(searchTerm, 500);
     const [debouncedStateCode] = useDebounce(stateCodeFilter, 500);
     const [debouncedCityCode] = useDebounce(cityCodeFilter, 500);
 
     const fetchApartments = useCallback(async () => {
         setIsLoading(true);
-        let url = `${baseURL}/apartments?page=${page}&`; // Include pagination
+        let url = `${baseURL}/apartments?page=${page}&`;
 
+        if (debouncedSearch) url += `search=${encodeURIComponent(debouncedSearch)}&`;
         if (debouncedStateCode) url += `state_code=${debouncedStateCode}&`;
         if (debouncedCityCode) url += `city_code=${debouncedCityCode}&`;
         if (amenitiesFilter) url += `amenities=${amenitiesFilter}&`;
@@ -95,22 +98,23 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
         } finally {
             setIsLoading(false);
         }
-    }, [page, debouncedStateCode, debouncedCityCode, amenitiesFilter, filterName, filterDir, filterVal]);
+    }, [page, debouncedSearch, debouncedStateCode, debouncedCityCode, amenitiesFilter, filterName, filterDir, filterVal]);
 
 
     useEffect(() => {
         if (initialData?.data) {
-            // setApartments(initialData?.data?.data);
-            // const uniqueCategories = [...new Set(initialData?.data.map(apt => apt.category))]
-            //     .filter((category): category is string => category !== undefined);
-            // setCategories(uniqueCategories);
             return;
         }
-        fetchApartments().then(r => r); // Use debounced fetch
-    }, [initialData, fetchApartments, debouncedStateCode, debouncedCityCode]);
+        fetchApartments();
+    }, [initialData, fetchApartments]);
 
     const handleApartmentClick = (apartment: Apartment) => {
         router.push(`/find-homes/${apartment.id}`);
+    };
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value);
+        setPage(1);
     };
 
     const handleStateCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,12 +152,6 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
         setPage(prev => prev + 1);
     }, []);
 
-    useEffect(() => {
-        if (page > 1) {
-            fetchApartments().then(r => r);
-        }
-    }, [page, fetchApartments]);
-
 
     const headerSection = () => {
         return <><p className="text-gray-700 text-[1.3em] text-center md:text-start md:text-[2em] font-semibold">
@@ -163,6 +161,9 @@ const FindHomes: React.FC<FindHomesProps> = ({initialData}) => {
                 <h3 className="text-lg font-semibold text-gray-700">Filter Options</h3>
                 <div className={"flex flex-wrap gap-3"}>
                     <div className="flex flex-wrap sm:flex-row gap-2">
+                        <div><input type="text" placeholder="Search apartments..." value={searchTerm}
+                                    onChange={handleSearchChange}
+                                    className="p-2 border rounded min-w-[200px]"/></div>
                         <div><input type="text" placeholder="State" value={stateCodeFilter}
                                     onChange={handleStateCodeChange}
                                     className="p-2 border rounded"/></div>

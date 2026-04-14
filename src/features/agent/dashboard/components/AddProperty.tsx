@@ -8,6 +8,7 @@ import {baseURL} from "@/../next.config";
 import {AxiosApi} from "@/lib/utils";
 import {useSelector} from "react-redux";
 import {allStates, AVAILABLE_AMENITIES} from "@/types/apartment";
+import { compressImage } from "@/lib/image-compression";
 
 
 interface Category {
@@ -44,6 +45,8 @@ const AddProperty: React.FC = () => {
     const [step, setStep] = useState(1);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isCompressing, setIsCompressing] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState<number | null>(null);
     const [uploadedImages, setUploadedImages] = useState<File[]>([]);
     const [uploadedVideos, setUploadedVideos] = useState<File[]>([]);
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
@@ -118,14 +121,25 @@ const AddProperty: React.FC = () => {
     };
 
     // handle images
-    const handleDropImages = (e: React.DragEvent<HTMLDivElement>) => {
+    const handleDropImages = async (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         const droppedFiles = Array.from(e.dataTransfer.files).filter(file =>
             file.type.startsWith("image/")
         );
 
-        const totalFiles = [...uploadedImages, ...droppedFiles].slice(0, MAX_FILES);
-        setUploadedImages(totalFiles);
+        setIsCompressing(true);
+        try {
+            const compressedFiles = await Promise.all(
+                droppedFiles.map(file => compressImage(file))
+            );
+            const totalFiles = [...uploadedImages, ...compressedFiles].slice(0, MAX_FILES);
+            setUploadedImages(totalFiles);
+        } catch (error) {
+            console.error("Compression failed:", error);
+            showAlert("Some images failed to process", "error");
+        } finally {
+            setIsCompressing(false);
+        }
     };
 
     // handle videos and files dropping
@@ -151,13 +165,24 @@ const AddProperty: React.FC = () => {
 
     // Handle File Input
 
-    const handleImageInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageInput = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = Array.from(e.target.files || []).filter(file =>
             file.type.startsWith("image/")
         );
 
-        const totalFiles = [...uploadedImages, ...selectedFiles].slice(0, MAX_FILES);
-        setUploadedImages(totalFiles);
+        setIsCompressing(true);
+        try {
+            const compressedFiles = await Promise.all(
+                selectedFiles.map(file => compressImage(file))
+            );
+            const totalFiles = [...uploadedImages, ...compressedFiles].slice(0, MAX_FILES);
+            setUploadedImages(totalFiles);
+        } catch (error) {
+            console.error("Compression failed:", error);
+            showAlert("Some images failed to process", "error");
+        } finally {
+            setIsCompressing(false);
+        }
     };
     const handleVideoInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = Array.from(e.target.files || []).filter(file =>
@@ -184,6 +209,7 @@ const AddProperty: React.FC = () => {
 
         if (isLoading) return;
         setIsLoading(true);
+        setUploadProgress(0);
 
         const formData = new FormData();
 
@@ -209,8 +235,14 @@ const AddProperty: React.FC = () => {
                 return;
             }
 
-            const response = await AxiosApi('agent', token, {'Content-Type': 'multipart/form-data'}).post(
-                baseURL + '/apartment', formData);
+            const response = await AxiosApi('agent', token, {
+                'Content-Type': 'multipart/form-data',
+            }).post(baseURL + '/apartment', formData, {
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 100));
+                    setUploadProgress(percentCompleted);
+                }
+            });
 
             if (response.data.success) {
                 showAlert('Property successfully added!', 'success');
@@ -220,15 +252,13 @@ const AddProperty: React.FC = () => {
                 setSelectedAmenities([]);
                 setStep(1);
             }
-
-            // setUploadProgress(100);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 showAlert(error.response?.data?.message || 'Failed to add property. Please try again.', 'error');
             }
         } finally {
-            // setTimeout(() => setUploadProgress(null), 1500);
             setIsLoading(false);
+            setTimeout(() => setUploadProgress(null), 2000);
         }
     };
     return (
@@ -433,15 +463,16 @@ const AddProperty: React.FC = () => {
                                         cursor: uploadedImages.length >= MAX_FILES ? "not-allowed" : "pointer"
                                     }}
                                 >
-                                    <p>{uploadedImages.length >= MAX_FILES ? "Maximum image limit reached" : "Drag & drop images here, or click to select"}</p>
+                                    <p>{uploadedImages.length >= MAX_FILES ? "Maximum image limit reached" : (isCompressing ? "Compressing images..." : "Drag & drop images here, or click to select")}</p>
                                     <input
                                         type="file"
                                         accept="image/*"
                                         multiple
                                         onChange={handleImageInput}
-                                        disabled={uploadedImages.length >= MAX_FILES}
+                                        disabled={uploadedImages.length >= MAX_FILES || isCompressing}
                                     />
                                 </div>
+                                {isCompressing && <p className="text-orange-500 text-sm animate-pulse">Processing images, please wait...</p>}
                                 <div style={{display: "flex", gap: "10px", flexWrap: "wrap"}}>
                                     {uploadedImages && uploadedImages.map((file, index) => (
                                         <div key={index} style={{position: "relative"}}>
@@ -566,12 +597,23 @@ const AddProperty: React.FC = () => {
                 </div>
             </form>
 
-            {/*{uploadProgress !== null && (*/}
-            {/*    <div style={{marginTop: "10px"}}>*/}
-            {/*        <progress value={uploadProgress} max={100} style={{width: "100%"}}/>*/}
-            {/*        <p>{uploadProgress}%</p>*/}
-            {/*    </div>*/}
-            {/*)}*/}
+            {uploadProgress !== null && (
+                <div className="mt-4 p-4 bg-black/80 rounded-xl border border-orange-600/30">
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="text-white text-sm font-medium">Uploading Property Data...</span>
+                        <span className="text-orange-500 text-sm font-bold">{uploadProgress}%</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                        <div 
+                            className="bg-orange-500 h-2.5 rounded-full transition-all duration-300 ease-out" 
+                            style={{width: `${uploadProgress}%`}}
+                        ></div>
+                    </div>
+                    <p className="text-gray-400 text-[0.7rem] mt-2 italic text-center">
+                        {uploadProgress < 100 ? "Please do not close this window." : "Finalizing..."}
+                    </p>
+                </div>
+            )}
         </div>
     );
 };

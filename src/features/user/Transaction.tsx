@@ -10,6 +10,7 @@ import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "@radix-ui/react
 import {Button} from "@/components/ui/button";
 import {DialogHeader} from "@/components/ui/dialog";
 import {useSelector} from "react-redux";
+import { compressImage } from "@/lib/image-compression";
 
 interface TransactionI {
     reference: number | string;
@@ -22,6 +23,8 @@ const Transaction = ({reference}: TransactionI) => {
     const [loading, setLoading] = useState(false);
     const [proofFile, setProofFile] = useState<File | null>(null);
     const [uploading, setUploading] = useState(false); // Prevents multiple uploads
+    const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+    const [isCompressing, setIsCompressing] = useState(false);
     const user = useSelector((state: any) => state.auth);
 
 
@@ -47,10 +50,24 @@ const Transaction = ({reference}: TransactionI) => {
     }, [reference]);
 
     // Handle File Selection
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (uploading) return; // Prevent selecting new file while uploading
         if (e.target.files && e.target.files[0]) {
-            setProofFile(e.target.files[0]);
+            const file = e.target.files[0];
+            if (file.type.startsWith("image/")) {
+                setIsCompressing(true);
+                try {
+                    const compressed = await compressImage(file);
+                    setProofFile(compressed);
+                } catch (error) {
+                    console.error("Compression failed:", error);
+                    setProofFile(file); // Fallback
+                } finally {
+                    setIsCompressing(false);
+                }
+            } else {
+                setProofFile(file);
+            }
         }
     };
 
@@ -63,6 +80,7 @@ const Transaction = ({reference}: TransactionI) => {
         }
         if (uploading) return; // Prevent re-submitting
         setUploading(true);
+        setUploadProgress(0);
 
         const formData = new FormData();
         if (transaction?.payable_id) {
@@ -74,6 +92,10 @@ const Transaction = ({reference}: TransactionI) => {
         try {
             const response = await AxiosApi().post(baseURL + `/bank/upload/`, formData, {
                 headers: {"Content-Type": "multipart/form-data"},
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 100));
+                    setUploadProgress(percentCompleted);
+                }
             });
 
             if (response.data.original.errors) {
@@ -86,6 +108,7 @@ const Transaction = ({reference}: TransactionI) => {
             showAlert(error?.response?.data?.message || "Upload failed!", "error");
         } finally {
             setUploading(false);
+            setTimeout(() => setUploadProgress(null), 2000);
         }
     };
 
@@ -117,16 +140,25 @@ const Transaction = ({reference}: TransactionI) => {
                                         <div className="p-2">
                                             <label
                                                 className="cursor-pointer border p-2 rounded bg-gray-100 hover:bg-gray-200 flex space-x-2"
-                                                htmlFor="proof">
-                                                <FileIcon/> Upload File {proofFile &&
+                                                for="proof">
+                                                <FileIcon/> {isCompressing ? "Processing..." : "Upload File"} {proofFile &&
                                                 <CheckCheckIcon className="text-green-400"/>}
                                             </label>
                                             <input type="file" id="proof" hidden name="proof_of_payment"
-                                                   onChange={handleFileChange} disabled={uploading}/>
+                                                   onChange={handleFileChange} disabled={uploading || isCompressing}/>
                                         </div>
+                                        {uploadProgress !== null && (
+                                            <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div 
+                                                    className="bg-orange-500 h-2.5 rounded-full transition-all duration-300" 
+                                                    style={{width: `${uploadProgress}%`}}
+                                                ></div>
+                                                <p className="text-xs text-gray-500 mt-1">{uploadProgress}% uploaded</p>
+                                            </div>
+                                        )}
                                         <div>
                                             <Button type="submit" className="bg-green-500 hover:bg-green-600 text-white"
-                                                    disabled={uploading}>
+                                                    disabled={uploading || isCompressing}>
                                                 {uploading ? "Uploading..." : "Submit"}
                                             </Button>
                                         </div>

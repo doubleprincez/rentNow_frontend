@@ -44,7 +44,7 @@ const ViewApartmentEnhanced = () => {
     const [filteredCount, setFilteredCount] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
     const [categoryFilter, setCategoryFilter] = useState<string>('');
-    const [publishedFilter, setPublishedFilter] = useState<string>('all');
+    const [publishedFilter, setPublishedFilter] = useState<string>('unpublished');
     const [minPrice, setMinPrice] = useState<string>('');
     const [maxPrice, setMaxPrice] = useState<string>('');
     const [roomsFilter, setRoomsFilter] = useState<string>('');
@@ -218,7 +218,7 @@ const ViewApartmentEnhanced = () => {
                         <SelectContent>
                             <SelectItem value="all">All Status</SelectItem>
                             <SelectItem value="published">Published</SelectItem>
-                            <SelectItem value="unpublished">Unpublished</SelectItem>
+                            <SelectItem value="unpublished">Pending</SelectItem>
                         </SelectContent>
                     </Select>
                     

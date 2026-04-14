@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { AxiosApi } from '@/lib/utils';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import { compressImage } from '@/lib/image-compression';
 
 interface AgentProfile {
   id: number;
@@ -27,6 +28,8 @@ const ProfilePage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isCompressing, setIsCompressing] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   // Get token and userId from Redux store
   const { token, userId } = useSelector((state: RootState) => state.auth);
@@ -72,16 +75,37 @@ const ProfilePage: React.FC = () => {
   const handleProfilePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0] || !token || !userId) return;
 
+    let file = e.target.files[0];
+    
+    setIsCompressing(true);
+    try {
+      if (file.type.startsWith('image/')) {
+        file = await compressImage(file, 0.8, 800, 800);
+      }
+    } catch (error) {
+      console.error("Compression failed:", error);
+    } finally {
+      setIsCompressing(false);
+    }
+
     const formData = new FormData();
-    formData.append('profile_picture', e.target.files[0]);
+    formData.append('profile_picture', file);
+    setUploadProgress(0);
 
     try {
-      const response = await AxiosApi('agent', token, {'Content-Type': 'multipart/form-data'}).post(`https://api.rentnow.ng/api/agent/${userId}/profile-picture`, formData);
+      const response = await AxiosApi('agent', token, {'Content-Type': 'multipart/form-data'}).post(`https://api.rentnow.ng/api/agent/${userId}/profile-picture`, formData, {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 100));
+          setUploadProgress(percentCompleted);
+        }
+      });
       if (agentProfile) {
         setAgentProfile({ ...agentProfile, profile_picture: response.data.profile_picture });
       }
     } catch (err) {
       setError('Failed to upload profile picture.');
+    } finally {
+      setTimeout(() => setUploadProgress(null), 2000);
     }
   };
 
@@ -102,16 +126,23 @@ const ProfilePage: React.FC = () => {
       {!isLoading && agentProfile && (
         <div className="space-y-6">
           <div className="flex items-center space-x-4">
-            <div className="w-24 h-24 rounded-full overflow-hidden border">
+            <div className="w-24 h-24 rounded-full overflow-hidden border relative">
               <img
                 src={agentProfile.profile_picture || '/default-avatar.png'}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
+              {(isCompressing || uploadProgress !== null) && (
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                   <span className="text-white text-[10px] font-bold">
+                    {isCompressing ? "..." : `${uploadProgress}%`}
+                   </span>
+                </div>
+              )}
             </div>
-            <label className="text-orange-500 cursor-pointer">
-              <input type="file" className="hidden" onChange={handleProfilePictureChange} />
-              Change Picture
+            <label className={`text-orange-500 cursor-pointer ${(isCompressing || uploadProgress !== null) ? 'opacity-50 pointer-events-none' : ''}`}>
+              <input type="file" className="hidden" onChange={handleProfilePictureChange} disabled={isCompressing || uploadProgress !== null} />
+              {isCompressing ? "Processing..." : (uploadProgress !== null ? "Uploading..." : "Change Picture")}
             </label>
           </div>
 
