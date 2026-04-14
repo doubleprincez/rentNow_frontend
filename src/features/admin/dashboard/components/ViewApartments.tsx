@@ -167,6 +167,16 @@ const ViewApartmentEnhanced = () => {
 
     return (
         <div className="p-6">
+            <div className="mb-4 flex items-center gap-3">
+                <h2 className="text-xl font-bold text-gray-800">
+                    {publishedFilter === 'unpublished' ? 'Pending Approval' : publishedFilter === 'published' ? 'Published Apartments' : 'All Apartments'}
+                </h2>
+                {publishedFilter === 'unpublished' && !loading && filteredCount > 0 && (
+                    <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                        {filteredCount} pending
+                    </span>
+                )}
+            </div>
             <div className="mb-6 space-y-4">
                 <div className="flex gap-4 items-center flex-wrap">
                     <div className="relative flex-1 min-w-[200px]">
