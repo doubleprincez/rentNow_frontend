@@ -1,12 +1,12 @@
 "use client"
 import React, { useState } from 'react';
 import { usePathname } from 'next/navigation'; 
-import { Inter } from "next/font/google";
+
 import { motion } from 'framer-motion';
 import House from '@/components/assets/house2.jpeg';
 import { ScrollArea } from '@/components/ui/scrollArea';
 
-const inter = Inter({ subsets: ["latin"] });
+
 
 export default function RootLayout({
   children,
@@ -21,7 +21,7 @@ export default function RootLayout({
   const [isPageVisible, setIsPageVisible] = useState(false);
 
   return ( 
-      <body className={inter.className}>
+      <body>
         {/* LARGER SCREEN */}
         <div className="hidden lg:flex h-screen w-full"> 
           {isLoginPage && (
