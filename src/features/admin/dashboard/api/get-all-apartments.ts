@@ -1,4 +1,3 @@
-import axios from 'axios';
 import {AxiosApi} from "@/lib/utils";
 import {baseURL} from "@/../next.config";
 import {getFormData} from "@/lib/utils";
@@ -59,12 +58,6 @@ export const getAllApartments = async (
     publishedFilter: string = 'all'
 ) => {
     try {
-        let token: string | null | undefined = adminToken;
-
-        if (!token) {
-            token = getFormData('adminToken');
-        }
-
         const params = new URLSearchParams();
         params.append('page', page.toString());
         if (search) params.append('search', search);
@@ -96,15 +89,9 @@ export const getAllApartments = async (
         if (publishedFilter !== 'all') {
             params.append('published', publishedFilter === 'published' ? '1' : '0');
         }
-        
-        const response = await axios.get<ApiResponse>(
-            `${baseURL}/apartments?${params.toString()}`,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    Accept: 'application/json',
-                },
-            }
+
+        const response = await AxiosApi('admin').get<ApiResponse>(
+            `${baseURL}/apartments?${params.toString()}`
         );
 
         return response.data;
