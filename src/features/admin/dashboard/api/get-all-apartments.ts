@@ -91,7 +91,7 @@ export const getAllApartments = async (
         }
 
         const response = await AxiosApi('admin').get<ApiResponse>(
-            `${baseURL}/apartments?${params.toString()}`
+            `${baseURL}/admin/apartments?${params.toString()}`
         );
 
         return response.data;
