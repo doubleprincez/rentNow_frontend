@@ -44,7 +44,7 @@ const ViewApartmentEnhanced = () => {
     const [filteredCount, setFilteredCount] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
     const [categoryFilter, setCategoryFilter] = useState<string>('');
-    const [publishedFilter, setPublishedFilter] = useState<string>('unpublished');
+    const [publishedFilter, setPublishedFilter] = useState<string>('all');
     const [minPrice, setMinPrice] = useState<string>('');
     const [maxPrice, setMaxPrice] = useState<string>('');
     const [roomsFilter, setRoomsFilter] = useState<string>('');
@@ -96,6 +96,7 @@ const ViewApartmentEnhanced = () => {
     }, [currentPage, debouncedSearchTerm, token, sortByRecent, dateFilter, categoryFilter, minPrice, maxPrice, roomsFilter, publishedFilter]);
 
     useEffect(() => {
+        clearCache(); // clear stale cache on mount
         if (isLoggedIn) {
             fetchApartments();
         }
