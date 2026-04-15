@@ -140,7 +140,7 @@ const Transaction = ({reference}: TransactionI) => {
                                         <div className="p-2">
                                             <label
                                                 className="cursor-pointer border p-2 rounded bg-gray-100 hover:bg-gray-200 flex space-x-2"
-                                                for="proof">
+                                                htmlFor="proof">
                                                 <FileIcon/> {isCompressing ? "Processing..." : "Upload File"} {proofFile &&
                                                 <CheckCheckIcon className="text-green-400"/>}
                                             </label>
